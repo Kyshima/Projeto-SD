@@ -63,12 +63,22 @@ public class Frogger extends MovingEntity {
     public boolean cheating = false;
     
     public boolean hw_hasMoved = false;
+
+	public int num = 0;
     
     private Main game;
     
     /**
      * Build frogger!
      */
+	public Frogger (Main g, int n) {
+		super(Main.SPRITE_SHEET + "#frog");
+		num = n;
+		game = g;
+		resetFrog();
+		collisionObjects.add(new CollisionObject(position));
+	}
+
 	public Frogger (Main g) {
 		super(Main.SPRITE_SHEET + "#frog");
 		game = g;
@@ -84,7 +94,7 @@ public class Frogger extends MovingEntity {
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
-		position = Main.FROGGER_START;
+		position = Main.FROGGER_START[num];
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
 	

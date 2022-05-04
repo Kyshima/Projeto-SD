@@ -26,6 +26,8 @@
 package frogger;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
 import jig.engine.ImageResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -39,7 +41,8 @@ import jig.engine.util.Vector2D;
 public class Main extends StaticScreenGame {
 	static final int WORLD_WIDTH = (13*32);
 	static final int WORLD_HEIGHT = (14*32);
-	static final Vector2D FROGGER_START = new Vector2D(6*32,WORLD_HEIGHT-32);
+	//private static ArrayList<Vector2D> ff = new ArrayList<>(/*new Vector2D(4*32,WORLD_HEIGHT-32), new Vector2D(8*32,WORLD_HEIGHT-32)*/);
+	static final Vector2D[] FROGGER_START = {new Vector2D(4*32,WORLD_HEIGHT-32), new Vector2D(8*32,WORLD_HEIGHT-32)};
 	
 	static final String RSC_PATH = "resources/";
 	static final String SPRITE_SHEET = RSC_PATH + "frogger_sprites.png";
@@ -49,7 +52,9 @@ public class Main extends StaticScreenGame {
 	static final int DEFAULT_LEVEL_TIME = 60;
 	
 	private FroggerCollisionDetection frogCol;
+	private FroggerCollisionDetection frogCol2;
 	private Frogger frog;
+	private Frogger frog2;
 	private AudioEfx audiofx;
 	private FroggerUI ui;
 	private WindGust wind;
@@ -113,8 +118,10 @@ public class Main extends StaticScreenGame {
 		PaintableCanvas.loadDefaultFrames("col", 30, 30, 2, JIGSHAPE.RECTANGLE, null);
 		PaintableCanvas.loadDefaultFrames("colSmall", 4, 4, 2, JIGSHAPE.RECTANGLE, null);
 			
-		frog = new Frogger(this);
+		frog = new Frogger(this,0);
+		frog2 = new Frogger(this,1);
 		frogCol = new FroggerCollisionDetection(frog);
+		frogCol2 = new FroggerCollisionDetection(frog2);
 		audiofx = new AudioEfx(frogCol,frog);
 		ui = new FroggerUI(this);
 		wind = new WindGust();
@@ -262,10 +269,22 @@ public class Main extends StaticScreenGame {
 			keyReleased = true;
 		
 		if (listenInput) {
-		    if (downPressed) frog.moveDown();
-		    if (upPressed) frog.moveUp();
-		    if (leftPressed) frog.moveLeft();
-	 	    if (rightPressed) frog.moveRight();
+		    if (downPressed) {
+				frog.moveDown();
+				frog2.moveDown();
+			}
+		    if (upPressed) {
+				frog.moveUp();
+				frog2.moveUp();
+			}
+		    if (leftPressed) {
+				frog.moveLeft();
+				frog2.moveLeft();
+			}
+	 	    if (rightPressed) {
+				 frog.moveRight();
+				 frog2.moveRight();
+				 }
 	 	    
 	 	    if (keyPressed)
 	            listenInput = false;
@@ -306,7 +325,8 @@ public class Main extends StaticScreenGame {
 				GameScore = 0;
 				GameLevel = STARTING_LEVEL;
 				levelTimer = DEFAULT_LEVEL_TIME;
-				frog.setPosition(FROGGER_START);
+				frog.setPosition(FROGGER_START[0]);
+				frog2.setPosition(FROGGER_START[1]);
 				GameState = GAME_PLAY;
 				audiofx.playGameMusic();
 				initializeLevel(GameLevel);			
@@ -339,11 +359,13 @@ public class Main extends StaticScreenGame {
 			wind.update(deltaMs);
 			hwave.update(deltaMs);
 			frog.update(deltaMs);
+			frog2.update(deltaMs);
 			audiofx.update(deltaMs);
 			ui.update(deltaMs);
 
 			cycleTraffic(deltaMs);
 			frogCol.testCollision(movingObjectsLayer);
+			frogCol2.testCollision(movingObjectsLayer);
 			
 			// Wind gusts work only when Frogger is on the river
 			if (frogCol.isInRiver())
@@ -400,9 +422,11 @@ public class Main extends StaticScreenGame {
 			if (frog.isAlive) {
 				movingObjectsLayer.render(rc);
 				//frog.collisionObjects.get(0).render(rc);
-				frog.render(rc);		
+				frog.render(rc);
+				frog2.render(rc);
 			} else {
 				frog.render(rc);
+				frog2.render(rc);
 				movingObjectsLayer.render(rc);				
 			}
 			
