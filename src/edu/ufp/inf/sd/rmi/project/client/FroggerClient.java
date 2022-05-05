@@ -6,9 +6,8 @@ import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 import frogger.Main;
 
-import java.rmi.RemoteException;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
+import java.net.SocketException;
+import java.rmi.*;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,16 +91,21 @@ public class FroggerClient {
     }
     
     private void playService(String u, String p) {
+        //============ Call HelloWorld remote service ============
+        //guest ufp
         try {
-            //============ Call HelloWorld remote service ============
-            //guest ufp
-            GameSessionRI gameSession = this.gameFactoryRI.login(u,p);
-            if(gameSession!=null) System.out.println("Usuario " + u + " a entrar com sucesso!");
+            GameSessionRI gameSession = this.gameFactoryRI.login(u, p);
+            if (gameSession != null) System.out.println("Usuario " + u + " a entrar com sucesso!");
             gameSession.criarJogo();
 
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR finish, bye. ;)");
-        } catch (RemoteException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            if (ex instanceof ConnectException){
+                System.out.println("Username/Password Errado");
+            }else if(ex instanceof UnmarshalException){
+                System.out.println("Jogo Fechado com Sucesso");
+            }else Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+
         }
     }
 }

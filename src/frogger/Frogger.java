@@ -27,6 +27,8 @@ package frogger;
 
 import jig.engine.util.Vector2D;
 
+import static java.lang.Math.random;
+
 /**
  * Main sprite in the game that a player can control
  * 
@@ -72,19 +74,14 @@ public class Frogger extends MovingEntity {
      * Build frogger!
      */
 	public Frogger (Main g, int n) {
-		super(Main.SPRITE_SHEET + "#frog");
+		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
 		num = n;
 		game = g;
 		resetFrog();
 		collisionObjects.add(new CollisionObject(position));
 	}
 
-	public Frogger (Main g) {
-		super(Main.SPRITE_SHEET + "#frog");
-		game = g;
-		resetFrog();
-		collisionObjects.add(new CollisionObject(position));
-	}
+
 	
 	/**
 	 * Reset the Frogger to default state and position
