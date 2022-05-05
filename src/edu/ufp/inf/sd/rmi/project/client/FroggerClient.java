@@ -12,6 +12,7 @@ import java.rmi.Remote;
 import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Scanner;
 
 /**
  * <p>
@@ -47,7 +48,10 @@ public class FroggerClient {
             //2. ============ Lookup service ============
             hwc.lookupService();
             //3. ============ Play with service ============
-            hwc.playService();
+            Scanner in = new Scanner(System.in);
+            String u = in.next();
+            String p = in.next();
+            hwc.playService(u,p);
         }
     }
 
@@ -87,12 +91,13 @@ public class FroggerClient {
         return gameFactoryRI;
     }
     
-    private void playService() {
+    private void playService(String u, String p) {
         try {
             //============ Call HelloWorld remote service ============
-            GameSessionRI gameSession = this.gameFactoryRI.login("guest", "ufp");
+            //guest ufp
+            GameSessionRI gameSession = this.gameFactoryRI.login(u,p);
+            if(gameSession!=null) System.out.println("Usuario " + u + " a entrar com sucesso!");
             gameSession.criarJogo();
-
 
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR finish, bye. ;)");
         } catch (RemoteException ex) {
