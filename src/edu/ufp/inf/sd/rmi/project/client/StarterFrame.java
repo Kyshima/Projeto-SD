@@ -66,8 +66,8 @@ public class StarterFrame extends JFrame implements ActionListener {
     }
 
     public void setLocationAndSizeStarter() {
-        registerButtonC.setBounds(50, 300, 100, 30);
-        loginButtonC.setBounds(200, 300, 100, 30);
+        registerButtonC.setBounds(75, 150, 200, 30);
+        loginButtonC.setBounds(75, 220, 200, 30);
     }
 
     public void setLocationAndSizeRegister() {
