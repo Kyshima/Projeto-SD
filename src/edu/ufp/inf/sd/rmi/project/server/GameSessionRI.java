@@ -5,6 +5,6 @@ import java.rmi.RemoteException;
 
 
 public interface GameSessionRI extends Remote {
-    public void criarJogo() throws RemoteException;
+    public FroggerGameRI criarJogo() throws RemoteException;
     public void listarJogos() throws RemoteException;
 }

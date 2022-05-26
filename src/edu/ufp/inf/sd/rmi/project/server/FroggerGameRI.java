@@ -14,4 +14,6 @@ public interface FroggerGameRI extends Remote {
     State getState() throws RemoteException;
 
     void setState(State state) throws RemoteException;
+
+    void startGame() throws RemoteException;
 }

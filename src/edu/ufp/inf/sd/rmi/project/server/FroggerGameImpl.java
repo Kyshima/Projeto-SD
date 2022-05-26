@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
 import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
+import frogger.Main;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -37,6 +38,13 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
         this.subjectState = state;
         notifyAllObservers();
     }
+
+    @Override
+    public void startGame() throws RemoteException {
+        Main f = new Main();
+        f.run();
+    }
+
 
     public void notifyAllObservers() throws RemoteException {
         for (ObserverRI o : observers) {

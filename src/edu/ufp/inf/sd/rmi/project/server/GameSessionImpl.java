@@ -21,9 +21,11 @@ public class GameSessionImpl extends UnicastRemoteObject implements GameSessionR
 
 
     @Override
-    public void criarJogo() throws RemoteException {
-        Main f = new Main();
-        f.run();
+    public FroggerGameRI criarJogo() throws RemoteException {
+        FroggerGameImpl froggerGame = new FroggerGameImpl();
+        //froggerGame.attach();
+        froggerGame.startGame();
+        return froggerGame;
     }
 
     @Override
