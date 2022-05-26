@@ -65,23 +65,18 @@ public class Frogger extends MovingEntity {
     public boolean cheating = false;
     
     public boolean hw_hasMoved = false;
-
-	public int num = 0;
     
     private Main game;
     
     /**
      * Build frogger!
      */
-	public Frogger (Main g, int n) {
+	public Frogger (Main g) {
 		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
-		num = n;
 		game = g;
 		resetFrog();
 		collisionObjects.add(new CollisionObject(position));
 	}
-
-
 	
 	/**
 	 * Reset the Frogger to default state and position
@@ -91,7 +86,7 @@ public class Frogger extends MovingEntity {
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
-		position = Main.FROGGER_START[num];
+		position = Main.FROGGER_START;
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
 	
@@ -242,7 +237,7 @@ public class Frogger extends MovingEntity {
 	
 	/**
 	 * Effect of Heat Wave on Frogger
-	 * @param randDuration
+	 * @param rDir
 	 */
 	public void randomJump(final int rDir) {
 		switch(rDir) {
