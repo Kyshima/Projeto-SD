@@ -152,7 +152,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                 emailText = emailTextField.getText();
                 pwdText = String.valueOf(passwordField.getPassword());
                 try {
-                    boolean r = FroggerClient.gameFactoryRI.register(emailText, pwdText);
+                    boolean r = FroggerClient.froggerGameRI.register(emailText, pwdText);
                     if (r) {
                         container.remove(emailLabel);
                         container.remove(passwordLabel);
@@ -183,7 +183,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                 pwdText = String.valueOf(passwordField.getPassword());
 
                 try {
-                    GameSessionRI gameSession = FroggerClient.gameFactoryRI.login(emailText, pwdText);
+                    GameSessionRI gameSession = FroggerClient.froggerGameRI.login(emailText, pwdText);
                     if (gameSession != null) {
                         setVisible(false);
                         dispose();

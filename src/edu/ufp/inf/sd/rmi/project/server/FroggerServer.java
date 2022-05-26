@@ -34,7 +34,7 @@ public class FroggerServer {
     /**
      * Remote interface that will hold reference MAIL_TO_ADDR the Servant impl
      */
-    private GameFactoryRI gameFactoryRI;
+    private FroggerGameRI froggerGameRI;
 
     public static void main(String[] args) {
         if (args != null && args.length < 3) {
@@ -80,7 +80,7 @@ public class FroggerServer {
             //Bind service on rmiregistry and wait for calls
             if (registry != null) {
                 //============ Create Servant ============
-                gameFactoryRI = new GameFactoryImpl();
+                froggerGameRI = new FroggerGameImpl();
 
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);
@@ -88,7 +88,7 @@ public class FroggerServer {
 
                 //============ Rebind servant ============
                 //Naming.bind(serviceUrl, helloWorldRI);
-                registry.rebind(serviceUrl, gameFactoryRI);
+                registry.rebind(serviceUrl, froggerGameRI);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "service bound and running. :)");
             } else {
                 //System.out.println("HelloWorldServer - Constructor(): create registry on port 1099");
