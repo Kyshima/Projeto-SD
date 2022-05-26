@@ -29,9 +29,10 @@ public class GameFactoryImpl extends UnicastRemoteObject implements GameFactoryR
     }
 
     @Override
-    public void register(String usr, String pwd) throws RemoteException {
+    public boolean register(String usr, String pwd) throws RemoteException {
         if (!dbMockup.exists(usr, pwd)){
             dbMockup.register(usr,pwd);
-        }
+            return true;
+        } else return false;
     }
 }
