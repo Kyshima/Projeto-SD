@@ -1,7 +1,5 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
-import edu.ufp.inf.sd.rmi.project.server.User;
-
 import java.util.ArrayList;
 
 /**

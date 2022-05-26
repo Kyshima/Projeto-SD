@@ -59,7 +59,7 @@ public class FroggerServer {
      * 
      * @param args 
      */
-    public FroggerServer(String args[]) {
+    public FroggerServer(String[] args) {
         try {
             //============ List and Set args ============
             SetupContextRMI.printArgs(this.getClass().getName(), args);
