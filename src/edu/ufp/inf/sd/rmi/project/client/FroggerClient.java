@@ -35,7 +35,7 @@ public class FroggerClient {
     /**
      * Remote interface that will hold the Servant proxy
      */
-    private GameFactoryRI gameFactoryRI;
+    public static GameFactoryRI gameFactoryRI;
 
     public static void main(String[] args) {
         if (args != null && args.length < 2) {
@@ -47,10 +47,7 @@ public class FroggerClient {
             //2. ============ Lookup service ============
             hwc.lookupService();
             //3. ============ Play with service ============
-            Scanner in = new Scanner(System.in);
-            String u = in.next();
-            String p = in.next();
-            hwc.playService(u,p);
+            hwc.playService();
         }
     }
 
@@ -90,13 +87,19 @@ public class FroggerClient {
         return gameFactoryRI;
     }
     
-    private void playService(String u, String p) {
+    private void playService() {
+        StarterFrame.main();
+
+
         //============ Call HelloWorld remote service ============
         //guest ufp
-        try {
+        /*try {
             GameSessionRI gameSession = this.gameFactoryRI.login(u, p);
-            if (gameSession != null) System.out.println("Usuario " + u + " a entrar com sucesso!");
-            gameSession.criarJogo();
+            if (gameSession != null)
+            {
+                System.out.println("Usuario " + u + " a entrar com sucesso!");
+                gameSession.criarJogo();
+            }
 
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR finish, bye. ;)");
         } catch (Exception ex) {
@@ -105,7 +108,6 @@ public class FroggerClient {
             }else if(ex instanceof UnmarshalException){
                 System.out.println("Jogo Fechado com Sucesso");
             }else Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-
-        }
+        }*/
     }
 }

@@ -22,9 +22,6 @@ public class DBMockup {
      */
     public DBMockup() {
         users = new ArrayList();
-
-        //Add one user
-        users.add(new User("guest", "ufp"));
     }
 
     /**
@@ -53,6 +50,5 @@ public class DBMockup {
             }
         }
         return false;
-        //return ((u.equalsIgnoreCase("guest") && p.equalsIgnoreCase("ufp")) ? true : false);
     }
 }
