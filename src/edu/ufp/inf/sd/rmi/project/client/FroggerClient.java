@@ -37,8 +37,9 @@ public class FroggerClient {
     //public static GameFactoryRI gameFactoryRI;
     public static FroggerGameRI froggerGameRI;
     public static ObserverImpl observer;
+    public boolean f = false;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         if (args != null && args.length < 2) {
             System.err.println("usage: java [options] edu.ufp.sd.inf.rmi._01_helloworld.server.HelloWorldClient <rmi_registry_ip> <rmi_registry_port> <service_name>");
             System.exit(-1);
@@ -84,7 +85,7 @@ public class FroggerClient {
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR lookup service @ {0}", serviceUrl);
-                
+
                 //============ Get proxy MAIL_TO_ADDR HelloWorld service ============
                 froggerGameRI = (FroggerGameRI) registry.lookup(serviceUrl);
             } else {
@@ -118,9 +119,14 @@ public class FroggerClient {
         }
         return gameFactoryRI;
     }*/
-    
-    private void playService() {
-        StarterFrame.main();
+
+    private void playService() throws InterruptedException {
+        StarterFrame.main(this);
+        while(!f){
+            Thread.sleep(500);
+        }
+        Main f = new Main();
+        f.run();
 
 
         //============ Call HelloWorld remote service ============

@@ -13,8 +13,10 @@ import java.rmi.UnmarshalException;
 
 public class StarterFrame extends JFrame implements ActionListener {
     protected static StarterFrame frame;
+    public static FroggerClient fg;
 
-    public static void main() {
+    public static void main(FroggerClient froggerClient) {
+        fg = froggerClient;
         frame = new StarterFrame();
         frame.setTitle("Start");
         frame.setVisible(true);
@@ -190,8 +192,9 @@ public class StarterFrame extends JFrame implements ActionListener {
                         dispose();
                         System.out.println("Usuario " + emailText + " a entrar com sucesso!");
                         //gameSession.criarJogo();
-                        Main f = new Main();
-                        f.run();
+                        //Main f = new Main();
+                        //f.run();
+                        fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
                     }
