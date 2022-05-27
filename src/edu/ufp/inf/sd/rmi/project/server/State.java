@@ -8,6 +8,8 @@
  */
 package edu.ufp.inf.sd.rmi.project.server;
 
+import frogger.MovingEntityFactory;
+
 import java.io.Serializable;
 
 /**
@@ -15,38 +17,17 @@ import java.io.Serializable;
  * @author rui
  */
 public class State implements Serializable {
-    private String msg;
-    private String id;
+    private MovingEntityFactory[] moving;
 
-    /**
-     * 
-     *
-     */
-    public State() {
-
+    public State(MovingEntityFactory[] moving) {
+        this.moving = moving;
     }
 
-    /**
-     * 
-     * @return 
-     */
-    public String getId() {
-        return id;
+    public MovingEntityFactory[] getMoving() {
+        return moving;
     }
 
-    /**
-     * 
-     * @return 
-     */
-    public String getInfo(){
-        return this.msg;
-    }
-
-    /**
-     * 
-     * @param m 
-     */
-    public void setInfo(String m){
-        this.msg = m;
+    public void setMoving(MovingEntityFactory[] moving) {
+        this.moving = moving;
     }
 }

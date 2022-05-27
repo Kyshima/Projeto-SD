@@ -36,8 +36,20 @@ import jig.engine.hli.StaticScreenGame;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.util.Vector2D;
 
-public class Main extends StaticScreenGame {
-	static final int WORLD_WIDTH = (13*32);
+public class Main_SAVE extends StaticScreenGame {
+	/**
+	 * Creates a new static screen game.
+	 *
+	 * @param desiredWidth     the desired width of the game's drawing surface
+	 * @param desiredHeight    the desired height of the game's drawing surface
+	 * @param preferFullscreen <code>true</code> if a fullscreen exclusive presentation is
+	 *                         preferred
+	 */
+	public Main_SAVE(int desiredWidth, int desiredHeight, boolean preferFullscreen) {
+		super(desiredWidth, desiredHeight, preferFullscreen);
+	}
+
+	/*static final int WORLD_WIDTH = (13*32);
 	static final int WORLD_HEIGHT = (14*32);
 	static final Vector2D FROGGER_START = new Vector2D(6*32,WORLD_HEIGHT-32);
 	
@@ -56,7 +68,7 @@ public class Main extends StaticScreenGame {
 	private HeatWave hwave;
 	private GoalManager goalmanager;
 	
-	public static AbstractBodyLayer<MovingEntity> movingObjectsLayer;
+	private AbstractBodyLayer<MovingEntity> movingObjectsLayer;
 	private AbstractBodyLayer<MovingEntity> particleLayer;
 	
 	private MovingEntityFactory roadLine1;
@@ -90,10 +102,7 @@ public class Main extends StaticScreenGame {
     private boolean space_has_been_released = false;
 	private boolean keyPressed = false;
 	private boolean listenInput = true;
-	
-    /**
-	 * Initialize game objects
-	 */
+
 	public Main () {
 		
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
@@ -130,13 +139,11 @@ public class Main extends StaticScreenGame {
 	
 	public void initializeLevel(int level) {
 
-		/* dV is the velocity multiplier for all moving objects at the current game level */
 		double dV = level*0.05 + 1;
 		
 		movingObjectsLayer.clear();
-		
-		// River Traffic
-		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32),
+
+		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32), 
 				new Vector2D(0.06*dV,0)); 
 		
 		riverLine2 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,3*32),  
@@ -150,8 +157,7 @@ public class Main extends StaticScreenGame {
 		
 		riverLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,6*32), 
 				new Vector2D(-0.045*dV,0));
-		
-		// Road Traffic
+
 		roadLine1 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 8*32), 
 				new Vector2D(-0.1*dV, 0)); 
 		
@@ -165,27 +171,19 @@ public class Main extends StaticScreenGame {
 				new Vector2D(0.075*dV, 0));
 		
 		roadLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 12*32),
-				new Vector2D(-0.05*dV, 0));
+				new Vector2D(-0.05*dV, 0)); 
 		
 		goalmanager.init(level);
 		for (Goal g : goalmanager.get()) {
 			movingObjectsLayer.add(g);
 		}
-			
-		/* Build some traffic before game starts buy running MovingEntityFactories for fews cycles */
+
 		for (int i=0; i<500; i++)
 			cycleTraffic(10);
 	}
-	
-	
-	/**
-	 * Populate movingObjectLayer with a cycle of cars/trucks, moving tree logs, etc
-	 * 
-	 * @param deltaMs
-	 */
+
 	public void cycleTraffic(long deltaMs) {
 		MovingEntity m;
-		/* Road traffic updates */
 		roadLine1.update(deltaMs);
 	    if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
 		
@@ -201,8 +199,7 @@ public class Main extends StaticScreenGame {
 		roadLine5.update(deltaMs);
 	    if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
 	    
-		
-		/* River traffic updates */
+
 		riverLine1.update(deltaMs);
 	    if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
 		
@@ -227,10 +224,7 @@ public class Main extends StaticScreenGame {
 	    movingObjectsLayer.update(deltaMs);
 	    particleLayer.update(deltaMs);
 	}
-	
-	/**
-	 * Handling Frogger movement from keyboard input
-	 */
+
 	public void froggerKeyboardHandler() {
  		keyboard.poll();
 		
@@ -250,12 +244,7 @@ public class Main extends StaticScreenGame {
 			initializeLevel(GameLevel);
 		}
 		
-		
-		/*
-		 * This logic checks for key strokes.
-		 * It registers a key press, and ignores all other key strokes
-		 * until the first key has been released
-		 */
+
 		if (downPressed || upPressed || leftPressed || rightPressed)
 			keyPressed = true;
 		else if (keyPressed)
@@ -279,10 +268,7 @@ public class Main extends StaticScreenGame {
 		if (keyboard.isPressed(KeyEvent.VK_ESCAPE))
 			GameState = GAME_INTRO;
 	}
-	
-	/**
-	 * Handle keyboard events while at the game intro menu
-	 */
+
 	public void menuKeyboardHandler() {
 		keyboard.poll();
 		
@@ -315,10 +301,7 @@ public class Main extends StaticScreenGame {
 		if (keyboard.isPressed(KeyEvent.VK_H))
 			GameState = GAME_INSTRUCTIONS;
 	}
-	
-	/**
-	 * Handle keyboard when finished a level
-	 */
+
 	public void finishLevelKeyboardHandler() {
 		keyboard.poll();
 		if (keyboard.isPressed(KeyEvent.VK_SPACE)) {
@@ -328,10 +311,7 @@ public class Main extends StaticScreenGame {
 		}
 	}
 	
-	
-	/**
-	 * w00t
-	 */
+
 	public void update(long deltaMs) {
 		switch(GameState) {
 		case GAME_PLAY:
@@ -387,10 +367,7 @@ public class Main extends StaticScreenGame {
 		}
 	}
 	
-	
-	/**
-	 * Rendering game objects
-	 */
+
 	public void render(RenderingContext rc) {
 		switch(GameState) {
 		case GAME_FINISH_LEVEL:
@@ -419,4 +396,9 @@ public class Main extends StaticScreenGame {
 			break;		
 		}
 	}
+	
+	public static void main (String[] args) {
+		Main f = new Main();
+		f.run();
+	}*/
 }

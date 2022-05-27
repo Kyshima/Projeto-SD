@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import frogger.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,8 +13,10 @@ import java.rmi.UnmarshalException;
 
 public class StarterFrame extends JFrame implements ActionListener {
     protected static StarterFrame frame;
+    public static FroggerClient fg;
 
-    public static void main() {
+    public static void main(FroggerClient froggerClient) {
+        fg = froggerClient;
         frame = new StarterFrame();
         frame.setTitle("Start");
         frame.setVisible(true);
@@ -152,7 +155,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                 emailText = emailTextField.getText();
                 pwdText = String.valueOf(passwordField.getPassword());
                 try {
-                    boolean r = FroggerClient.gameFactoryRI.register(emailText, pwdText);
+                    boolean r = FroggerClient.froggerGameRI.register(emailText, pwdText);
                     if (r) {
                         container.remove(emailLabel);
                         container.remove(passwordLabel);
@@ -183,12 +186,15 @@ public class StarterFrame extends JFrame implements ActionListener {
                 pwdText = String.valueOf(passwordField.getPassword());
 
                 try {
-                    GameSessionRI gameSession = FroggerClient.gameFactoryRI.login(emailText, pwdText);
+                    GameSessionRI gameSession = FroggerClient.froggerGameRI.login(emailText, pwdText);
                     if (gameSession != null) {
                         setVisible(false);
                         dispose();
                         System.out.println("Usuario " + emailText + " a entrar com sucesso!");
-                        gameSession.criarJogo();
+                        //gameSession.criarJogo();
+                        //Main f = new Main();
+                        //f.run();
+                        fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
                     }
