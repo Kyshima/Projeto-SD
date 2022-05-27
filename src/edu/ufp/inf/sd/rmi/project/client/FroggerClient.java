@@ -98,28 +98,6 @@ public class FroggerClient {
         return froggerGameRI;
     }
 
-    /*private Remote lookupServiceGF() {
-        try {
-            //Get proxy MAIL_TO_ADDR rmiregistry
-            Registry registry = contextRMI.getRegistry();
-            //Lookup service on rmiregistry and wait for calls
-            if (registry != null) {
-                //Get service url (including servicename)
-                String serviceUrl = contextRMI.getServicesUrl(0);
-                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR lookup service @ {0}", serviceUrl);
-
-                //============ Get proxy MAIL_TO_ADDR HelloWorld service ============
-                gameFactoryRI = (GameFactoryRI) registry.lookup(serviceUrl);
-            } else {
-                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "registry not bound (check IPs). :(");
-                //registry = LocateRegistry.createRegistry(1099);
-            }
-        } catch (RemoteException | NotBoundException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
-        return gameFactoryRI;
-    }*/
-
     private void playService() throws InterruptedException {
         StarterFrame.main(this);
         while(!f){
@@ -127,25 +105,5 @@ public class FroggerClient {
         }
         Main f = new Main();
         f.run();
-
-
-        //============ Call HelloWorld remote service ============
-        //guest ufp
-        /*try {
-            GameSessionRI gameSession = this.gameFactoryRI.login(u, p);
-            if (gameSession != null)
-            {
-                System.out.println("Usuario " + u + " a entrar com sucesso!");
-                gameSession.criarJogo();
-            }
-
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR finish, bye. ;)");
-        } catch (Exception ex) {
-            if (ex instanceof ConnectException){
-                System.out.println("Username/Password Errado");
-            }else if(ex instanceof UnmarshalException){
-                System.out.println("Jogo Fechado com Sucesso");
-            }else Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }*/
     }
 }

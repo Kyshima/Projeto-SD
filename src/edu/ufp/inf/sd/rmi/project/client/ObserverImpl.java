@@ -33,6 +33,12 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
         this.moving = moving;
     }
 
+    public ObserverImpl(FroggerGameRI froggerGameRI) throws RemoteException {
+        super();
+        this.frogger = froggerGameRI;
+        this.frogger.attach(this);
+    }
+
     @Override
     public void update() throws RemoteException {
         this.lastObserverState = frogger.getState();

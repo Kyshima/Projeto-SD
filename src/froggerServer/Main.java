@@ -22,8 +22,8 @@ import jig.engine.util.Vector2D;
 import java.awt.event.KeyEvent;
 
 public class Main extends StaticScreenGame{
-    static final int WORLD_WIDTH = /*(13*32)*/140;
-    static final int WORLD_HEIGHT = /*(14*32)*/72;
+    static final int WORLD_WIDTH = /*(13*32)*/280;
+    static final int WORLD_HEIGHT = /*(14*32)*/144;
     static final Vector2D FROGGER_START = new Vector2D(6*32,WORLD_HEIGHT-32);
 
     static final String RSC_PATH = "resources/";
@@ -83,7 +83,7 @@ public class Main extends StaticScreenGame{
 
         super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
-        gameframe.setTitle("Frogger");
+        gameframe.setTitle("Server");
 
         ResourceFactory.getFactory().loadResources(RSC_PATH, "resources.xml");
 
