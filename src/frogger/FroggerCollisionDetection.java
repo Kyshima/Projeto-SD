@@ -26,6 +26,8 @@
 package frogger;
 import java.util.List;
 
+import froggerServer.CollisionObject;
+import froggerServer.MovingEntity;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.util.Vector2D;
 

@@ -1,5 +1,6 @@
 package froggerServer;
 
+import edu.ufp.inf.sd.rmi.project.server.State;
 import froggerServer.AudioEfx;
 import froggerServer.Frogger;
 import froggerServer.FroggerCollisionDetection;
@@ -198,6 +199,8 @@ public class Main extends StaticScreenGame{
         if ((m = hwave.genParticles(frog.getCenterPosition())) != null) particleLayer.add(m);*/
 
         movingObjectsLayer.update(deltaMs);
+        State.setTraffic(movingObjectsLayer);
+        System.out.println("S " + movingObjectsLayer);
         //particleLayer.update(deltaMs);
     }
 

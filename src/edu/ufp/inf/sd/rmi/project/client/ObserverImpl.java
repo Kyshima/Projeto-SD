@@ -1,21 +1,17 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
-import frogger.Main;
-import frogger.MovingEntity;
 import frogger.MovingEntityFactory;
-import jig.engine.util.Vector2D;
+import froggerServer.MovingEntity;
+import jig.engine.physics.AbstractBodyLayer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
-    public MovingEntityFactory[] moving;
+    public static AbstractBodyLayer<MovingEntity> traffic;
     private State lastObserverState;
 
     public State getLastObserverState() {
@@ -24,13 +20,12 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     protected FroggerGameRI frogger;
 
-    public ObserverImpl() throws RemoteException {
+    public ObserverImpl(AbstractBodyLayer<MovingEntity> traffic) throws RemoteException {
         super();
     }
 
-    public ObserverImpl(MovingEntityFactory[] moving) throws RemoteException {
+    public ObserverImpl() throws RemoteException {
         super();
-        this.moving = moving;
     }
 
     public ObserverImpl(FroggerGameRI froggerGameRI) throws RemoteException {
@@ -41,6 +36,5 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     @Override
     public void update() throws RemoteException {
-        this.lastObserverState = frogger.getState();
     }
 }

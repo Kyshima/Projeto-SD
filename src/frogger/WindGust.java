@@ -27,6 +27,7 @@ package frogger;
 
 import java.util.Random;
 
+import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
 /**
  * Generating the Wind effect in Frogger
