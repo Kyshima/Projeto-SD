@@ -49,8 +49,8 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     @Override
     public void startGame() throws RemoteException {
-        MainServerSide s = new MainServerSide();
-        s.run();
+        /*MainServerSide s = new MainServerSide();
+        s.run();*/
         Main f = new Main();
         f.run();
     }

@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import frogger.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -188,7 +189,9 @@ public class StarterFrame extends JFrame implements ActionListener {
                         setVisible(false);
                         dispose();
                         System.out.println("Usuario " + emailText + " a entrar com sucesso!");
-                        gameSession.criarJogo();
+                        //gameSession.criarJogo();
+                        Main f = new Main();
+                        f.run();
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
                     }
