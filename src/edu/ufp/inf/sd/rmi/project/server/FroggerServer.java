@@ -90,6 +90,7 @@ public class FroggerServer {
                 //Naming.bind(serviceUrl, helloWorldRI);
                 registry.rebind(serviceUrl, froggerGameRI);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "service bound and running. :)");
+                froggerGameRI.startGame();
             } else {
                 //System.out.println("HelloWorldServer - Constructor(): create registry on port 1099");
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "registry not bound (check IPs). :(");

@@ -1,8 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
 import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
-import frogger.Main;
-import frogger.MainServerSide;
+import froggerServer.Main;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -49,10 +48,10 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     @Override
     public void startGame() throws RemoteException {
-        /*MainServerSide s = new MainServerSide();
-        s.run();*/
-        Main f = new Main();
-        f.run();
+        Main s = new Main();
+        s.run();
+        /*frogger.Main f = new frogger.Main();
+        f.run();*/
     }
 
 
