@@ -13,7 +13,7 @@ public interface ObserverRI extends Remote {
 
     void update() throws RemoteException;
 
-    public String getId();
+    public String getId() throws RemoteException;
 
-    public State getLastObserverState();
+    public State getLastObserverState() throws RemoteException;
 }

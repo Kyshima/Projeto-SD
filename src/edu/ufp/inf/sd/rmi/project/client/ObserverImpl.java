@@ -28,11 +28,11 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
     //public static AbstractBodyLayer<MovingEntity> traffic;
 
 
-    public String getId() {
+    public String getId() throws RemoteException {
         return id;
     }
 
-    public State getLastObserverState() {
+    public State getLastObserverState() throws RemoteException {
         return lastObserverState;
     }
 

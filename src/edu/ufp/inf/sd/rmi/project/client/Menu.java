@@ -19,8 +19,14 @@ public class Menu extends JFrame implements ActionListener {
     protected static Menu frame;
     public static FroggerClient fg;
 
-    public void main(FroggerClient froggerClient) {
+    public static void main(FroggerClient froggerClient) throws RemoteException {
         fg = froggerClient;
+        int games = FroggerGameImpl.observers.size();
+        System.out.println(games);
+        for (int i = 0; i < games; i++) {
+            GamesText.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JLabel(String.valueOf(i)));
+            GamesButton.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JButton(String.valueOf(i)));
+        }
         frame = new Menu();
         frame.setTitle("Menu");
         frame.setVisible(true);
@@ -30,8 +36,10 @@ public class Menu extends JFrame implements ActionListener {
     }
 
     Container container = getContentPane();
-    ArrayList<JLabel> GamesText = new ArrayList<JLabel>();
-    ArrayList<JButton> GamesButton = new ArrayList<JButton>();
+    static ArrayList<JLabel> GamesText = new ArrayList<JLabel>();
+    static ArrayList<JButton> GamesButton = new ArrayList<JButton>();
+
+    JButton plus = new JButton("+");
 
     Menu() {
         setLayoutManager();
@@ -45,52 +53,47 @@ public class Menu extends JFrame implements ActionListener {
     }
 
     public void setLocationAndSizeStarter() {
-        for(int i = 0; i<GamesText.size(); i++){
-            GamesText.get(i).setBounds(50, 150 + (i-1)*70, 189, 30);
-            GamesButton.get(i).setBounds(150, 150 + (i-1)*70, 81, 30);
+        for (int i = 0; i < GamesText.size(); i++) {
+            GamesText.get(i).setBounds(50, 150 + (i - 1) * 70, 189, 30);
+            GamesButton.get(i).setBounds(150, 150 + (i - 1) * 70, 81, 30);
         }
+        plus.setBounds(270, 515, 50, 30);
     }
 
     public void addComponentsToContainerStarter() {
-        for(int i = 0; i<GamesText.size(); i++){
+        for (int i = 0; i < GamesText.size(); i++) {
             container.add(GamesButton.get(i));
         }
+        container.add(plus);
     }
 
     public void addActionEventStart() {
-        for(int i = 0; i<GamesText.size(); i++) {
+        for (int i = 0; i < GamesText.size(); i++) {
             GamesButton.get(i).addActionListener(this);
         }
+        plus.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < GamesText.size(); i++) {
             if (e.getSource() == GamesButton.get(i)) {
-                for(int j = 0; j< FroggerGameImpl.observers.size();j++){
-                    if (FroggerGameImpl.observers.get(j).getId().equals(Integer.toString(i))){
-                        try {
-                            System.out.println("old");
-                            Main m = new Main();
-                            FroggerGameImpl.observers.get(j).update();
-                            m.run();
-                        } catch (RemoteException ex) {
-                            throw new RuntimeException(ex);
+                for (int j = 0; j < FroggerGameImpl.observers.size(); j++) {
+                    try {
+                        if (FroggerGameImpl.observers.get(j).getId().equals(Integer.toString(i))) {
+                            fg.create = i;
+                            fg.f = true;
                         }
-                    } else {
-                        try {
-                            System.out.println("novo");
-                            FroggerGameRI r = new FroggerGameImpl();
-                            Main m = new Main();
-                            ObserverImpl ob = new ObserverImpl(Integer.toString(i),m,r);
-                            m.run();
-                        } catch (RemoteException ex) {
-                            throw new RuntimeException(ex);
-                        }
-
+                    } catch (RemoteException ex) {
+                        throw new RuntimeException(ex);
                     }
                 }
             }
         }
-    }
+
+            if (e.getSource() == plus) {
+                fg.create = -1;
+                fg.f = true;
+            }
+        }
 }

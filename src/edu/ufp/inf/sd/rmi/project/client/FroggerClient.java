@@ -44,11 +44,12 @@ public class FroggerClient {
     }
 
     public boolean f = false;
+    public int create = -1;
     public static Main g;
     public static ObserverImpl observer;
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, RemoteException {
         if (args != null && args.length < 2) {
             System.err.println("usage: java [options] edu.ufp.sd.inf.rmi._01_helloworld.server.HelloWorldClient <rmi_registry_ip> <rmi_registry_port> <service_name>");
             System.exit(-1);
@@ -97,12 +98,24 @@ public class FroggerClient {
         return froggerGameRI;
     }
 
-    private void playService() throws InterruptedException {
+    private void playService() throws InterruptedException, RemoteException {
         StarterFrame.main(this);
-        /*while(!f){
+        while(!f){
             Thread.sleep(500);
         }
-        Main g = new Main();
+        if(create != -1){
+            System.out.println("old");
+            Main m = new Main();
+            FroggerGameImpl.observers.get(create).update();
+            m.run();
+        }else{
+            System.out.println("novo");
+            FroggerGameRI r = new FroggerGameImpl();
+            Main m = new Main();
+            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, r);
+            m.run();
+        }
+        /*Main g = new Main();
         g.run();*/
     }
 

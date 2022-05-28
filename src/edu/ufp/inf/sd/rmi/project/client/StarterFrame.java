@@ -197,7 +197,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                         //gameSession.criarJogo();
                         //Main f = new Main();
                         //f.run();
-                        new Menu();
+                        Menu.main(fg);
                         //fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
