@@ -24,8 +24,6 @@
  */
 
 package frogger;
-import froggerServer.CollisionObject;
-import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
   
 /**
@@ -38,7 +36,7 @@ import jig.engine.util.Vector2D;
  * @author vitaliy
  *
  */
-public class Turtles extends MovingEntity {
+public class Turtles extends MovingEntity{
 	
 	private long underwaterTime   = 0;
 	private long underwaterPeriod = 1200;

@@ -25,7 +25,6 @@
 
 package frogger;
 
-import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
 
 /**

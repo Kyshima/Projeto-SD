@@ -23,10 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package froggerServer;
+package frogger;
 
-import froggerServer.CollisionObject;
-import froggerServer.Main;
 import jig.engine.physics.Body;
 import jig.engine.util.Vector2D;
 

@@ -1,8 +1,6 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
-import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionImpl;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi.project.server.*;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 import frogger.Goal;
 import frogger.Main;
@@ -36,6 +34,15 @@ public class FroggerClient {
     private SetupContextRMI contextRMI;
     //public static GameFactoryRI gameFactoryRI;
     public static FroggerGameRI froggerGameRI;
+
+    static {
+        try {
+            froggerGameRI = new FroggerGameImpl();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean f = false;
     public static Main g;
     public static ObserverImpl observer;
@@ -92,11 +99,11 @@ public class FroggerClient {
 
     private void playService() throws InterruptedException {
         StarterFrame.main(this);
-        while(!f){
+        /*while(!f){
             Thread.sleep(500);
         }
         Main g = new Main();
-        g.run();
+        g.run();*/
     }
 
     public static void initObserver(String args[]) {
@@ -105,5 +112,9 @@ public class FroggerClient {
         } catch (Exception e) {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
+    }
+
+    public static void updateMoving() {
+        Main.movingObjectsLayer = State.traffic;
     }
 }

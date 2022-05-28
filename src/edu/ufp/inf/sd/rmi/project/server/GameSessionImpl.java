@@ -3,8 +3,6 @@ package edu.ufp.inf.sd.rmi.project.server;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import froggerServer.Main;
-
 
 public class GameSessionImpl extends UnicastRemoteObject implements GameSessionRI {
     private FroggerGameRI froggerGame;
@@ -12,8 +10,8 @@ public class GameSessionImpl extends UnicastRemoteObject implements GameSessionR
 
     public GameSessionImpl() throws RemoteException {
         super();
-        Main s = new Main();
-        s.run();
+        /*Main s = new Main();
+        s.run();*/
     }
 
     public GameSessionImpl(FroggerGameImpl froggerGame, String user) throws RemoteException

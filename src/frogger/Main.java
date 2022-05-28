@@ -26,10 +26,8 @@
 package frogger;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
-import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
-import edu.ufp.inf.sd.rmi.project.server.State;
-import froggerServer.MovingEntity;
 import jig.engine.ImageResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -43,7 +41,8 @@ import jig.engine.util.Vector2D;
 public class Main extends StaticScreenGame {
 	static final int WORLD_WIDTH = (13*32);
 	static final int WORLD_HEIGHT = (14*32);
-	static final Vector2D FROGGER_START = new Vector2D(6*32,WORLD_HEIGHT-32);
+	//private static ArrayList<Vector2D> ff = new ArrayList<>(/*new Vector2D(4*32,WORLD_HEIGHT-32), new Vector2D(8*32,WORLD_HEIGHT-32)*/);
+	static final Vector2D[] FROGGER_START = {new Vector2D(4*32,WORLD_HEIGHT-32), new Vector2D(8*32,WORLD_HEIGHT-32)};
 	
 	static final String RSC_PATH = "resources/";
 	static final String SPRITE_SHEET = RSC_PATH + "frogger_sprites.png";
@@ -51,16 +50,19 @@ public class Main extends StaticScreenGame {
     static final int FROGGER_LIVES      = 5;
     static final int STARTING_LEVEL     = 1;
 	static final int DEFAULT_LEVEL_TIME = 60;
-	
+	public static AbstractBodyLayer<MovingEntity> movingObjectsLayer;
+
 	private FroggerCollisionDetection frogCol;
+	private FroggerCollisionDetection frogCol2;
 	private Frogger frog;
+	private Frogger frog2;
 	private AudioEfx audiofx;
 	private FroggerUI ui;
 	private WindGust wind;
 	private HeatWave hwave;
 	private GoalManager goalmanager;
 	
-	public static AbstractBodyLayer<MovingEntity> movingObjectsLayer;
+	//private AbstractBodyLayer<MovingEntity> movingObjectsLayer;
 	private AbstractBodyLayer<MovingEntity> particleLayer;
 	
 	private MovingEntityFactory roadLine1;
@@ -99,9 +101,9 @@ public class Main extends StaticScreenGame {
 	 * Initialize game objects
 	 */
 	public Main () {
-		
+
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
-		
+
 		gameframe.setTitle("Frogger");
 		
 		ResourceFactory.getFactory().loadResources(RSC_PATH, "resources.xml");
@@ -117,8 +119,10 @@ public class Main extends StaticScreenGame {
 		PaintableCanvas.loadDefaultFrames("col", 30, 30, 2, JIGSHAPE.RECTANGLE, null);
 		PaintableCanvas.loadDefaultFrames("colSmall", 4, 4, 2, JIGSHAPE.RECTANGLE, null);
 			
-		frog = new Frogger(this);
+		frog = new Frogger(this,0);
+		frog2 = new Frogger(this,1);
 		frogCol = new FroggerCollisionDetection(frog);
+		frogCol2 = new FroggerCollisionDetection(frog2);
 		audiofx = new AudioEfx(frogCol,frog);
 		ui = new FroggerUI(this);
 		wind = new WindGust();
@@ -135,12 +139,12 @@ public class Main extends StaticScreenGame {
 	public void initializeLevel(int level) {
 
 		/* dV is the velocity multiplier for all moving objects at the current game level */
-		/*double dV = level*0.05 + 1;
+		double dV = level*0.05 + 1;
 		
 		movingObjectsLayer.clear();
 		
-		// River Traffic
-		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32),
+		/* River Traffic */
+		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32), 
 				new Vector2D(0.06*dV,0)); 
 		
 		riverLine2 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,3*32),  
@@ -155,7 +159,7 @@ public class Main extends StaticScreenGame {
 		riverLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,6*32), 
 				new Vector2D(-0.045*dV,0));
 		
-		// Road Traffic
+		/* Road Traffic */
 		roadLine1 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 8*32), 
 				new Vector2D(-0.1*dV, 0)); 
 		
@@ -169,7 +173,7 @@ public class Main extends StaticScreenGame {
 				new Vector2D(0.075*dV, 0));
 		
 		roadLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 12*32),
-				new Vector2D(-0.05*dV, 0));*/
+				new Vector2D(-0.05*dV, 0)); 
 		
 		goalmanager.init(level);
 		for (Goal g : goalmanager.get()) {
@@ -189,10 +193,8 @@ public class Main extends StaticScreenGame {
 	 */
 	public void cycleTraffic(long deltaMs) {
 		MovingEntity m;
-		movingObjectsLayer = State.getTraffic();
-		System.out.println("C " + movingObjectsLayer);
 		/* Road traffic updates */
-		/*roadLine1.update(deltaMs);
+		roadLine1.update(deltaMs);
 	    if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
 		
 		roadLine2.update(deltaMs);
@@ -205,11 +207,11 @@ public class Main extends StaticScreenGame {
 	    if ((m = roadLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
 
 		roadLine5.update(deltaMs);
-	    if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);*/
+	    if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
 	    
 		
 		/* River traffic updates */
-		/*riverLine1.update(deltaMs);
+		riverLine1.update(deltaMs);
 	    if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
 		
 		riverLine2.update(deltaMs);
@@ -222,7 +224,7 @@ public class Main extends StaticScreenGame {
 	    if ((m = riverLine4.buildLongLogWithCrocodile(20)) != null) movingObjectsLayer.add(m);
 
 		riverLine5.update(deltaMs);
-	    if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);*/
+	    if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
 	    
 	    // Do Wind
 	    if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
@@ -230,7 +232,7 @@ public class Main extends StaticScreenGame {
 	    // HeatWave
 	    if ((m = hwave.genParticles(frog.getCenterPosition())) != null) particleLayer.add(m);
 	        
-	    //movingObjectsLayer.update(deltaMs);
+	    movingObjectsLayer.update(deltaMs);
 	    particleLayer.update(deltaMs);
 	}
 	
@@ -268,10 +270,22 @@ public class Main extends StaticScreenGame {
 			keyReleased = true;
 		
 		if (listenInput) {
-		    if (downPressed) frog.moveDown();
-		    if (upPressed) frog.moveUp();
-		    if (leftPressed) frog.moveLeft();
-	 	    if (rightPressed) frog.moveRight();
+		    if (downPressed) {
+				frog.moveDown();
+				frog2.moveDown();
+			}
+		    if (upPressed) {
+				frog.moveUp();
+				frog2.moveUp();
+			}
+		    if (leftPressed) {
+				frog.moveLeft();
+				frog2.moveLeft();
+			}
+	 	    if (rightPressed) {
+				 frog.moveRight();
+				 frog2.moveRight();
+				 }
 	 	    
 	 	    if (keyPressed)
 	            listenInput = false;
@@ -312,7 +326,8 @@ public class Main extends StaticScreenGame {
 				GameScore = 0;
 				GameLevel = STARTING_LEVEL;
 				levelTimer = DEFAULT_LEVEL_TIME;
-				frog.setPosition(FROGGER_START);
+				frog.setPosition(FROGGER_START[0]);
+				frog2.setPosition(FROGGER_START[1]);
 				GameState = GAME_PLAY;
 				audiofx.playGameMusic();
 				initializeLevel(GameLevel);			
@@ -345,11 +360,13 @@ public class Main extends StaticScreenGame {
 			wind.update(deltaMs);
 			hwave.update(deltaMs);
 			frog.update(deltaMs);
+			frog2.update(deltaMs);
 			audiofx.update(deltaMs);
 			ui.update(deltaMs);
 
 			cycleTraffic(deltaMs);
 			frogCol.testCollision(movingObjectsLayer);
+			frogCol2.testCollision(movingObjectsLayer);
 			
 			// Wind gusts work only when Frogger is on the river
 			if (frogCol.isInRiver())
@@ -406,9 +423,11 @@ public class Main extends StaticScreenGame {
 			if (frog.isAlive) {
 				movingObjectsLayer.render(rc);
 				//frog.collisionObjects.get(0).render(rc);
-				frog.render(rc);		
+				frog.render(rc);
+				frog2.render(rc);
 			} else {
 				frog.render(rc);
+				frog2.render(rc);
 				movingObjectsLayer.render(rc);				
 			}
 			
@@ -424,5 +443,10 @@ public class Main extends StaticScreenGame {
 			ui.render(rc);
 			break;		
 		}
+	}
+	
+	public static void main (String[] args) {
+		Main f = new Main();
+		f.run();
 	}
 }

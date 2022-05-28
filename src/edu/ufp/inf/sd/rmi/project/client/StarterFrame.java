@@ -197,7 +197,8 @@ public class StarterFrame extends JFrame implements ActionListener {
                         //gameSession.criarJogo();
                         //Main f = new Main();
                         //f.run();
-                        fg.f = true;
+                        new Menu();
+                        //fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
                     }
@@ -223,11 +224,5 @@ public class StarterFrame extends JFrame implements ActionListener {
                 passwordField.setEchoChar('*');
             }
         }
-    }
-
-    public static void updateMoving() {
-        Main.movingObjectsLayer = State.traffic;
-        /*String msg="[" + this.observer.getLastObserverState().getId() + "] " + this.observer.getLastObserverState().getInfo();
-        this.jTextAreaChatHistory.append(msg + '\n');*/
     }
 }

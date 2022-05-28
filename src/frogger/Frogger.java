@@ -25,11 +25,7 @@
 
 package frogger;
 
-import froggerServer.CollisionObject;
-import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
-
-import static java.lang.Math.random;
 
 /**
  * Main sprite in the game that a player can control
@@ -67,14 +63,24 @@ public class Frogger extends MovingEntity {
     public boolean cheating = false;
     
     public boolean hw_hasMoved = false;
+
+	public int num = 0;
     
     private Main game;
     
     /**
      * Build frogger!
      */
+	public Frogger (Main g, int n) {
+		super(Main.SPRITE_SHEET + "#frog");
+		num = n;
+		game = g;
+		resetFrog();
+		collisionObjects.add(new CollisionObject(position));
+	}
+
 	public Frogger (Main g) {
-		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
+		super(Main.SPRITE_SHEET + "#frog");
 		game = g;
 		resetFrog();
 		collisionObjects.add(new CollisionObject(position));
@@ -88,7 +94,7 @@ public class Frogger extends MovingEntity {
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
-		position = Main.FROGGER_START;
+		position = Main.FROGGER_START[num];
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
 	
@@ -239,7 +245,7 @@ public class Frogger extends MovingEntity {
 	
 	/**
 	 * Effect of Heat Wave on Frogger
-	 * @param rDir
+	 * @param randDuration
 	 */
 	public void randomJump(final int rDir) {
 		switch(rDir) {

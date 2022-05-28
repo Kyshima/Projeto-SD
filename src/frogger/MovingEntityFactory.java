@@ -24,7 +24,6 @@
  */
 
 package frogger;
-import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
 
 import java.util.Random;
@@ -53,9 +52,9 @@ public class MovingEntityFactory {
 	/**
 	 * Moving Entity factory
 	 * 
-	 * pos
-	 * v
-	 * rate
+	 * @param pos
+	 * @param v
+	 * @param rate
 	 */
 	public MovingEntityFactory(Vector2D pos, Vector2D v) {
 		position = pos;
