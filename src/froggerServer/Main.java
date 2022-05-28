@@ -200,7 +200,6 @@ public class Main extends StaticScreenGame{
 
         movingObjectsLayer.update(deltaMs);
         State.setTraffic(movingObjectsLayer);
-        System.out.println("S " + movingObjectsLayer);
         //particleLayer.update(deltaMs);
     }
 

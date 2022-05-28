@@ -27,6 +27,7 @@ package frogger;
 
 import java.awt.event.KeyEvent;
 
+import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
 import froggerServer.MovingEntity;
 import jig.engine.ImageResource;

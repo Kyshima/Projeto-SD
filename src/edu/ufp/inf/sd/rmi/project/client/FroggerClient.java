@@ -36,8 +36,10 @@ public class FroggerClient {
     private SetupContextRMI contextRMI;
     //public static GameFactoryRI gameFactoryRI;
     public static FroggerGameRI froggerGameRI;
-    public static ObserverImpl observer;
     public boolean f = false;
+    public static Main g;
+    public static ObserverImpl observer;
+
 
     public static void main(String[] args) throws InterruptedException {
         if (args != null && args.length < 2) {
@@ -62,16 +64,6 @@ public class FroggerClient {
             //gameFactoryRI=(GameFactoryRI)lookupServiceGF();
             froggerGameRI=(FroggerGameRI)lookupServiceFG();
         } catch (RemoteException e) {
-            Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-    private static void initObserver(String args[]) {
-        try {
-            observer = new ObserverImpl();
-            /*String username=this.jTextFieldUsername.getText();
-            //observer = new ObserverImpl(username, this, args);
-            observer=new ObserverImpl(username, this, this.subjectRI);*/
-        } catch (Exception e) {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
     }
@@ -103,7 +95,15 @@ public class FroggerClient {
         while(!f){
             Thread.sleep(500);
         }
-        Main f = new Main();
-        f.run();
+        Main g = new Main();
+        g.run();
+    }
+
+    public static void initObserver(String args[]) {
+        try {
+            observer = new ObserverImpl("1", g, froggerGameRI);
+        } catch (Exception e) {
+            Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 }
