@@ -19,6 +19,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     private final DBMockup dbMockup = new DBMockup();
     private HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
     private final ArrayList<ObserverRI> observers = new ArrayList();
+    public ArrayList<Main> games = new ArrayList();
 
     public FroggerGameImpl() throws RemoteException {
         super();
@@ -53,7 +54,9 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public void startGame() throws RemoteException {
         Main s = new Main();
+        games.add(s);
         obRI = new ObserverImpl(this);
+        observers.add(obRI);
         s.run();
     }
 

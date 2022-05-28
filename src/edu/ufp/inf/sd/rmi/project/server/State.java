@@ -19,10 +19,10 @@ import java.io.Serializable;
  * @author rui
  */
 public class State implements Serializable {
-    public static AbstractBodyLayer<froggerServer.MovingEntity> traffic;
+    private static AbstractBodyLayer<MovingEntity> traffic;
 
     public State(AbstractBodyLayer<MovingEntity> traffic){
-        this.traffic = traffic;
+        State.traffic = traffic;
     }
 
     public static AbstractBodyLayer<MovingEntity> getTraffic() {

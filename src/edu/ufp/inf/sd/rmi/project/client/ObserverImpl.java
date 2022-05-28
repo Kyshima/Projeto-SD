@@ -1,5 +1,6 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
+import edu.ufp.inf.sd.rabbitmqservices.project.chatgui.Observer;
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
 import frogger.MovingEntityFactory;
@@ -11,7 +12,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
-    public static AbstractBodyLayer<MovingEntity> traffic;
+    protected AbstractBodyLayer<MovingEntity> traffic;
     private State lastObserverState;
 
     public State getLastObserverState() {
@@ -19,6 +20,7 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
     }
 
     protected FroggerGameRI frogger;
+    protected FroggerClient froggerClient;
 
     public ObserverImpl(AbstractBodyLayer<MovingEntity> traffic) throws RemoteException {
         super();
@@ -26,6 +28,13 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     public ObserverImpl() throws RemoteException {
         super();
+    }
+
+    public ObserverImpl(FroggerClient froggerClient, FroggerGameRI frogger) throws RemoteException{
+        super();
+        this.frogger = frogger;
+        this.froggerClient = froggerClient;
+        this.frogger.attach(this);
     }
 
     public ObserverImpl(FroggerGameRI froggerGameRI) throws RemoteException {
@@ -36,5 +45,6 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
     @Override
     public void update() throws RemoteException {
+        this.lastObserverState = frogger.getState();
     }
 }

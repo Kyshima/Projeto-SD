@@ -36,10 +36,11 @@ public class FroggerClient {
     private SetupContextRMI contextRMI;
     //public static GameFactoryRI gameFactoryRI;
     public static FroggerGameRI froggerGameRI;
-    public static ObserverImpl observer;
+    private ObserverImpl observer;
+
     public boolean f = false;
 
-    public static void main(String[] args) throws InterruptedException {
+    public void main(String[] args) throws InterruptedException {
         if (args != null && args.length < 2) {
             System.err.println("usage: java [options] edu.ufp.sd.inf.rmi._01_helloworld.server.HelloWorldClient <rmi_registry_ip> <rmi_registry_port> <service_name>");
             System.exit(-1);
@@ -65,9 +66,9 @@ public class FroggerClient {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-    private static void initObserver(String args[]) {
+    private void initObserver(String args[]) {
         try {
-            observer = new ObserverImpl();
+            observer = new ObserverImpl(this, this.froggerGameRI);
             /*String username=this.jTextFieldUsername.getText();
             //observer = new ObserverImpl(username, this, args);
             observer=new ObserverImpl(username, this, this.subjectRI);*/
@@ -96,6 +97,10 @@ public class FroggerClient {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
         return froggerGameRI;
+    }
+
+    protected void updateGame(){
+        this.observer.getLastObserverState().getTraffic();
     }
 
     private void playService() throws InterruptedException {
