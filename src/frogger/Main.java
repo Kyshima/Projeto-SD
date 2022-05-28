@@ -26,9 +26,6 @@
 package frogger;
 
 import java.awt.event.KeyEvent;
-
-import edu.ufp.inf.sd.rmi.project.server.State;
-import froggerServer.MovingEntity;
 import jig.engine.ImageResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -134,7 +131,7 @@ public class Main extends StaticScreenGame {
 	public void initializeLevel(int level) {
 
 		/* dV is the velocity multiplier for all moving objects at the current game level */
-		/*double dV = level*0.05 + 1;
+		double dV = level*0.05 + 1;
 		
 		movingObjectsLayer.clear();
 		
@@ -168,7 +165,7 @@ public class Main extends StaticScreenGame {
 				new Vector2D(0.075*dV, 0));
 		
 		roadLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 12*32),
-				new Vector2D(-0.05*dV, 0));*/
+				new Vector2D(-0.05*dV, 0));
 		
 		goalmanager.init(level);
 		for (Goal g : goalmanager.get()) {
@@ -188,10 +185,8 @@ public class Main extends StaticScreenGame {
 	 */
 	public void cycleTraffic(long deltaMs) {
 		MovingEntity m;
-		movingObjectsLayer = State.getTraffic();
-		System.out.println("C " + movingObjectsLayer);
 		/* Road traffic updates */
-		/*roadLine1.update(deltaMs);
+		roadLine1.update(deltaMs);
 	    if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
 		
 		roadLine2.update(deltaMs);
@@ -204,11 +199,11 @@ public class Main extends StaticScreenGame {
 	    if ((m = roadLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
 
 		roadLine5.update(deltaMs);
-	    if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);*/
+	    if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
 	    
 		
 		/* River traffic updates */
-		/*riverLine1.update(deltaMs);
+		riverLine1.update(deltaMs);
 	    if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
 		
 		riverLine2.update(deltaMs);
@@ -221,7 +216,7 @@ public class Main extends StaticScreenGame {
 	    if ((m = riverLine4.buildLongLogWithCrocodile(20)) != null) movingObjectsLayer.add(m);
 
 		riverLine5.update(deltaMs);
-	    if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);*/
+	    if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
 	    
 	    // Do Wind
 	    if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
@@ -229,7 +224,7 @@ public class Main extends StaticScreenGame {
 	    // HeatWave
 	    if ((m = hwave.genParticles(frog.getCenterPosition())) != null) particleLayer.add(m);
 	        
-	    //movingObjectsLayer.update(deltaMs);
+	    movingObjectsLayer.update(deltaMs);
 	    particleLayer.update(deltaMs);
 	}
 	

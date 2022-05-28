@@ -1,6 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi.project.server.State;
 import frogger.Main;
 
 import javax.swing.*;
@@ -10,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.rmi.UnmarshalException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StarterFrame extends JFrame implements ActionListener {
     protected static StarterFrame frame;
@@ -28,7 +31,7 @@ public class StarterFrame extends JFrame implements ActionListener {
     Container container = getContentPane();
     JLabel emailLabel = new JLabel("EMAIL");
     JLabel passwordLabel = new JLabel("PASSWORD");
-    JTextField emailTextField = new JTextField();
+    static JTextField emailTextField = new JTextField();
     JPasswordField passwordField = new JPasswordField();
     JButton registerButton = new JButton("REGISTER");
     JButton loginButton = new JButton("LOGIN");
@@ -194,7 +197,8 @@ public class StarterFrame extends JFrame implements ActionListener {
                         //gameSession.criarJogo();
                         //Main f = new Main();
                         //f.run();
-                        fg.f = true;
+                        Menu.main(fg);
+                        //fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
                     }

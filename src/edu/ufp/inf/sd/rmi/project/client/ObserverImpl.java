@@ -1,10 +1,10 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
-import edu.ufp.inf.sd.rabbitmqservices.project.chatgui.Observer;
+import edu.ufp.inf.sd.rmi.project.server.FroggerGameImpl;
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
+import frogger.Main;
 import frogger.MovingEntityFactory;
-import froggerServer.MovingEntity;
 import jig.engine.physics.AbstractBodyLayer;
 
 import java.rmi.RemoteException;
@@ -12,39 +12,33 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
 
-    protected AbstractBodyLayer<MovingEntity> traffic;
-    private State lastObserverState;
+    public String id;
+    public State lastObserverState;
+    public FroggerGameRI frogger;
+    public Main m;
 
-    public State getLastObserverState() {
-        return lastObserverState;
-    }
-
-    protected FroggerGameRI frogger;
-    protected FroggerClient froggerClient;
-
-    public ObserverImpl(AbstractBodyLayer<MovingEntity> traffic) throws RemoteException {
+    public ObserverImpl(String id, Main m, FroggerGameRI frogger) throws RemoteException {
         super();
-    }
-
-    public ObserverImpl() throws RemoteException {
-        super();
-    }
-
-    public ObserverImpl(FroggerClient froggerClient, FroggerGameRI frogger) throws RemoteException{
-        super();
+        this.id = id;
+        this.m = m;
         this.frogger = frogger;
-        this.froggerClient = froggerClient;
         this.frogger.attach(this);
     }
 
-    public ObserverImpl(FroggerGameRI froggerGameRI) throws RemoteException {
-        super();
-        this.frogger = froggerGameRI;
-        this.frogger.attach(this);
+    //public static AbstractBodyLayer<MovingEntity> traffic;
+
+
+    public String getId() throws RemoteException {
+        return id;
+    }
+
+    public State getLastObserverState() throws RemoteException {
+        return lastObserverState;
     }
 
     @Override
     public void update() throws RemoteException {
-        this.lastObserverState = frogger.getState();
+        lastObserverState = FroggerGameImpl.subjectState;
+        FroggerClient.updateMoving();
     }
 }

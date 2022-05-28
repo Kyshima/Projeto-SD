@@ -8,8 +8,8 @@
  */
 package edu.ufp.inf.sd.rmi.project.server;
 
+import frogger.MovingEntity;
 import frogger.MovingEntityFactory;
-import froggerServer.MovingEntity;
 import jig.engine.physics.AbstractBodyLayer;
 
 import java.io.Serializable;
@@ -19,10 +19,16 @@ import java.io.Serializable;
  * @author rui
  */
 public class State implements Serializable {
-    private static AbstractBodyLayer<MovingEntity> traffic;
+
+    public String id;
+    public static AbstractBodyLayer<MovingEntity> traffic;
 
     public State(AbstractBodyLayer<MovingEntity> traffic){
-        State.traffic = traffic;
+        traffic = traffic;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public static AbstractBodyLayer<MovingEntity> getTraffic() {

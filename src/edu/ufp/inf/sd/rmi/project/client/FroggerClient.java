@@ -1,8 +1,6 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
-import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionImpl;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi.project.server.*;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 import frogger.Goal;
 import frogger.Main;
@@ -36,11 +34,22 @@ public class FroggerClient {
     private SetupContextRMI contextRMI;
     //public static GameFactoryRI gameFactoryRI;
     public static FroggerGameRI froggerGameRI;
-    private ObserverImpl observer;
+
+    static {
+        try {
+            froggerGameRI = new FroggerGameImpl();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public boolean f = false;
+    public int create = -1;
+    public static Main g;
+    public static ObserverImpl observer;
 
-    public void main(String[] args) throws InterruptedException {
+
+    public static void main(String[] args) throws InterruptedException, RemoteException {
         if (args != null && args.length < 2) {
             System.err.println("usage: java [options] edu.ufp.sd.inf.rmi._01_helloworld.server.HelloWorldClient <rmi_registry_ip> <rmi_registry_port> <service_name>");
             System.exit(-1);
@@ -63,16 +72,6 @@ public class FroggerClient {
             //gameFactoryRI=(GameFactoryRI)lookupServiceGF();
             froggerGameRI=(FroggerGameRI)lookupServiceFG();
         } catch (RemoteException e) {
-            Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-    private void initObserver(String args[]) {
-        try {
-            observer = new ObserverImpl(this, this.froggerGameRI);
-            /*String username=this.jTextFieldUsername.getText();
-            //observer = new ObserverImpl(username, this, args);
-            observer=new ObserverImpl(username, this, this.subjectRI);*/
-        } catch (Exception e) {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
     }
@@ -99,16 +98,36 @@ public class FroggerClient {
         return froggerGameRI;
     }
 
-    protected void updateGame(){
-        this.observer.getLastObserverState().getTraffic();
-    }
-
-    private void playService() throws InterruptedException {
+    private void playService() throws InterruptedException, RemoteException {
         StarterFrame.main(this);
         while(!f){
             Thread.sleep(500);
         }
-        Main f = new Main();
-        f.run();
+        if(create != -1){
+            System.out.println("old");
+            Main m = new Main();
+            FroggerGameImpl.observers.get(create).update();
+            m.run();
+        }else{
+            System.out.println("novo");
+            FroggerGameRI r = new FroggerGameImpl();
+            Main m = new Main();
+            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, r);
+            m.run();
+        }
+        /*Main g = new Main();
+        g.run();*/
+    }
+
+    public static void initObserver(String args[]) {
+        try {
+            observer = new ObserverImpl("1", g, froggerGameRI);
+        } catch (Exception e) {
+            Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public static void updateMoving() {
+        Main.movingObjectsLayer = State.traffic;
     }
 }

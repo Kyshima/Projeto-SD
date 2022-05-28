@@ -27,7 +27,6 @@ package frogger;
 
 import java.util.Random;
 
-import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
 
 public class HeatWave {
@@ -72,8 +71,8 @@ public class HeatWave {
 	/**
 	 * Initiate the Heat Wave effect
 	 * 
-	 * f
-	 * temp - based on the GameTemp, this effects occurs more often
+	 * @param f
+	 * @param temp - based on the GameTemp, this effects occurs more often
 	 */
 	public void start (Frogger f, final int GameLevel) {
 		

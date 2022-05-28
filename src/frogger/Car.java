@@ -25,8 +25,6 @@
 
 package frogger;
 
-import froggerServer.CollisionObject;
-import froggerServer.MovingEntity;
 import jig.engine.util.Vector2D;
  
 public class Car extends MovingEntity {

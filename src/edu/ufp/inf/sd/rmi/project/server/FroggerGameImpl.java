@@ -1,8 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
-import edu.ufp.inf.sd.rmi.project.client.ObserverImpl;
 import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
-import froggerServer.Main;
+import frogger.Main;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -12,21 +11,17 @@ import java.util.HashMap;
 
 public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameRI {
 
-    private State subjectState;
-
-    public ObserverRI obRI;
-
-    private final DBMockup dbMockup = new DBMockup();
-    private HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
-    private final ArrayList<ObserverRI> observers = new ArrayList();
-    public ArrayList<Main> games = new ArrayList();
-
-    public FroggerGameImpl() throws RemoteException {
-        super();
-    }
+    public static State subjectState;
+    public final DBMockup dbMockup = new DBMockup();
+    public HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
+    public static final ArrayList<ObserverRI> observers = new ArrayList();
 
     public DBMockup getDbMockup() {
         return dbMockup;
+    }
+
+    public FroggerGameImpl() throws RemoteException {
+        super();
     }
 
     @Override
@@ -54,10 +49,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public void startGame() throws RemoteException {
         Main s = new Main();
-        games.add(s);
-        obRI = new ObserverImpl(this);
-        observers.add(obRI);
-        s.run();
+        /*s.run();*/
     }
 
 
