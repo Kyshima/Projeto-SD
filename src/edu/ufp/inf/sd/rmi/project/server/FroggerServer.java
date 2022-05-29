@@ -5,6 +5,7 @@ import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.Properties;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
  * @author Rui S. Moreira
  * @version 3.0
  */
-public class FroggerServer {
+public class FroggerServer implements Serializable {
 
     /**
      * Context for running a RMI Servant on a SMTP_HOST_ADDR

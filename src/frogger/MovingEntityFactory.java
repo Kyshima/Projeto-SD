@@ -26,6 +26,7 @@
 package frogger;
 import jig.engine.util.Vector2D;
 
+import java.io.Serializable;
 import java.util.Random;
 
 public class MovingEntityFactory {
@@ -68,6 +69,21 @@ public class MovingEntityFactory {
 		creationRate[SLOG]  = (int) Math.round(((ShortLog.LENGTH) + padding - 32) / 
 				Math.abs(velocity.getX()));
 		creationRate[LLOG]  = (int) Math.round(((LongLog.LENGTH) + padding - 32) / 
+				Math.abs(velocity.getX()));
+	}
+
+	public MovingEntityFactory(Vector2D pos, Vector2D v, Random rand) {
+		position = pos;
+		velocity = v;
+		r = rand;
+
+		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) /
+				Math.abs(velocity.getX()));
+		creationRate[TRUCK] = (int) Math.round(((Truck.LENGTH) + padding + 32) /
+				Math.abs(velocity.getX()));
+		creationRate[SLOG]  = (int) Math.round(((ShortLog.LENGTH) + padding - 32) /
+				Math.abs(velocity.getX()));
+		creationRate[LLOG]  = (int) Math.round(((LongLog.LENGTH) + padding - 32) /
 				Math.abs(velocity.getX()));
 	}
 	

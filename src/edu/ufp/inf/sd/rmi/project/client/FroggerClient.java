@@ -118,8 +118,6 @@ public class FroggerClient {
             /*State s = froggerGame.getState();
             m.setMovingObjectsLayer(s.getTraffic());*/
             m.run();
-            froggerGame.notifyAllObservers();
-            System.out.println(froggerGame.getState());
 
         }else{
             System.out.println("novo");
@@ -132,8 +130,6 @@ public class FroggerClient {
             /*State s = new State(m.getMovingObjectsLayer());
             froggerGame.setState(s);*/
             m.run();
-            froggerGame.setState(new State(m.getMovingObjectsLayer()));
-            System.out.println(froggerGame.getState());
         }
         /*Main g = new Main();
         g.run();*/
