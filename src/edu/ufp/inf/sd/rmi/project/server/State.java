@@ -19,24 +19,22 @@ import java.util.ArrayList;
  * @author rui
  */
 public class State implements Serializable {
-    public static AbstractBodyLayer<MovingEntity> traffic;
-    public ArrayList<String> Teste;
+    public ArrayList<String> traffic;
+    public ArrayList<String> update;
 
-    public State(AbstractBodyLayer<MovingEntity> t){
-        traffic = t;
-    }
     public State(ArrayList<String> t){
-        Teste = t;
-    }
-
-    public  AbstractBodyLayer<MovingEntity> getTraffic() {
-        return traffic;
-    }
-    public  void setTraffic(AbstractBodyLayer<MovingEntity> t) {
         traffic = t;
     }
 
-    public ArrayList<String> getTeste() { return Teste; }
-    public void setTeste(ArrayList<String> teste) { Teste = teste; }
-    public void addTeste(String teste) { Teste.add(teste); }
+   /* public State(ArrayList<String> t, ArrayList<String> u){
+        traffic = t;
+        update = u;
+    }*/
+
+    public ArrayList<String> getTraffic() { return traffic; }
+    public void setTraffic(ArrayList<String> t) { traffic = t; }
+
+    public ArrayList<String> getUpdate() { return update; }
+
+    public void setUpdate(ArrayList<String> update) { this.update = update; }
 }

@@ -142,8 +142,4 @@ public class FroggerClient {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-
-    public static void updateMoving() {
-        Main.movingObjectsLayer = State.traffic;
-    }
 }
