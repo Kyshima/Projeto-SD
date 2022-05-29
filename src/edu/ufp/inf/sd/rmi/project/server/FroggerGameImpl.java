@@ -14,7 +14,8 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     public static State subjectState;
     public final DBMockup dbMockup = new DBMockup();
     public HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
-    public static final ArrayList<ObserverRI> observers = new ArrayList();
+    public static ArrayList<ObserverRI> observers = new ArrayList();
+
     public DBMockup getDbMockup() {
         return dbMockup;
     }
@@ -60,8 +61,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     @Override
     public GameSessionRI login(String usr, String pwd) throws RemoteException {
-        if (dbMockup.exists(usr, pwd))
-        {
+        if (dbMockup.exists(usr, pwd)) {
             GameSessionImpl gameSession = new GameSessionImpl(this, usr);
             session.put(usr, gameSession);
             return gameSession;
@@ -71,23 +71,33 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     @Override
     public boolean register(String usr, String pwd) throws RemoteException {
-        if (!dbMockup.exists(usr, pwd)){
-            dbMockup.register(usr,pwd);
+        if (!dbMockup.exists(usr, pwd)) {
+            dbMockup.register(usr, pwd);
             return true;
         } else return false;
     }
 
-    public static int getAvailableGames() throws RemoteException{
+    public static int getAvailableGames() throws RemoteException {
         int p = 0;
-        if(!observers.isEmpty()) {
+        if (!observers.isEmpty()) {
             for (int i = 0; i < observers.size(); i++) {
                 p++;
             }
         }
         return p;
     }
+
     @Override
-    public void mainServer(String s) throws RemoteException{
-        System.out.println(s);
+    public void mainServer(ObserverRI observer) throws RemoteException {
+        this.attach(observer);
+    }
+
+    @Override
+    public ArrayList<ObserverRI> getObservers() throws RemoteException {
+        return observers;
+    }
+    @Override
+    public void setObservers(ArrayList<ObserverRI> observers) throws RemoteException {
+        FroggerGameImpl.observers = observers;
     }
 }

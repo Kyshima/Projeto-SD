@@ -75,7 +75,6 @@ public class FroggerClient {
             contextRMI = new SetupContextRMI(this.getClass(), registryIP, registryPort, new String[]{serviceName});
             //gameFactoryRI=(GameFactoryRI)lookupServiceGF();
             froggerGameRI=(FroggerGameRI)lookupServiceFG();
-            froggerGameRI.mainServer("TESTE");
         } catch (RemoteException e) {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -89,7 +88,6 @@ public class FroggerClient {
             if (registry != null) {
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);
-                String serviceUrl1 = contextRMI.getServicesUrl(1);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR lookup service @ {0}", serviceUrl);
 
                 //============ Get proxy MAIL_TO_ADDR HelloWorld service ============
@@ -105,23 +103,24 @@ public class FroggerClient {
     }
 
     private void playService() throws InterruptedException, RemoteException {
+        froggerGame = new FroggerGameImpl();
+        froggerGame.setObservers(froggerGameRI.getObservers());
         StarterFrame.main(this);
         while(!f){
             Thread.sleep(500);
         }
-        if(create != -1 || FroggerGameImpl.observers.size() != 0){
+        if(create != -1){
             System.out.println("old");
             Main m = new Main();
             FroggerGameImpl.observers.get(create).update();
             m.run();
         }else{
             System.out.println("novo");
-            froggerGameRI.mainServer("Tou ca a criar jogo");
             Main m = new Main();
-            froggerGame = new FroggerGameImpl();
             ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
             //FroggerGameImpl.observers.add(ob);
-
+            froggerGameRI.mainServer(ob);
+            froggerGame.setObservers(froggerGameRI.getObservers());
             System.out.println(FroggerGameImpl.observers.size());
             m.run();
         }
