@@ -56,7 +56,7 @@ public class Main extends StaticScreenGame {
 	private HeatWave hwave;
 	private GoalManager goalmanager;
 	
-	private AbstractBodyLayer<MovingEntity> movingObjectsLayer;
+	public static AbstractBodyLayer<MovingEntity> movingObjectsLayer;
 	private AbstractBodyLayer<MovingEntity> particleLayer;
 	
 	private MovingEntityFactory roadLine1;
@@ -90,7 +90,7 @@ public class Main extends StaticScreenGame {
     private boolean space_has_been_released = false;
 	private boolean keyPressed = false;
 	private boolean listenInput = true;
-	
+
     /**
 	 * Initialize game objects
 	 */
@@ -134,9 +134,9 @@ public class Main extends StaticScreenGame {
 		double dV = level*0.05 + 1;
 		
 		movingObjectsLayer.clear();
-		
-		/* River Traffic */
-		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32), 
+
+		// River Traffic
+		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32),
 				new Vector2D(0.06*dV,0)); 
 		
 		riverLine2 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,3*32),  
@@ -151,7 +151,7 @@ public class Main extends StaticScreenGame {
 		riverLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,6*32), 
 				new Vector2D(-0.045*dV,0));
 		
-		/* Road Traffic */
+		// Road Traffic
 		roadLine1 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 8*32), 
 				new Vector2D(-0.1*dV, 0)); 
 		
@@ -165,7 +165,7 @@ public class Main extends StaticScreenGame {
 				new Vector2D(0.075*dV, 0));
 		
 		roadLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 12*32),
-				new Vector2D(-0.05*dV, 0)); 
+				new Vector2D(-0.05*dV, 0));
 		
 		goalmanager.init(level);
 		for (Goal g : goalmanager.get()) {
@@ -396,32 +396,36 @@ public class Main extends StaticScreenGame {
 		case GAME_FINISH_LEVEL:
 		case GAME_PLAY:
 			backgroundLayer.render(rc);
-			
+
 			if (frog.isAlive) {
 				movingObjectsLayer.render(rc);
 				//frog.collisionObjects.get(0).render(rc);
-				frog.render(rc);		
+				frog.render(rc);
 			} else {
 				frog.render(rc);
-				movingObjectsLayer.render(rc);				
+				movingObjectsLayer.render(rc);
 			}
-			
+
 			particleLayer.render(rc);
 			ui.render(rc);
 			break;
-			
+
 		case GAME_OVER:
 		case GAME_INSTRUCTIONS:
 		case GAME_INTRO:
 			backgroundLayer.render(rc);
 			movingObjectsLayer.render(rc);
 			ui.render(rc);
-			break;		
+			break;
 		}
 	}
-	
-	public static void main (String[] args) {
-		Main f = new Main();
-		f.run();
+
+	public AbstractBodyLayer<MovingEntity> getMovingObjectsLayer() {
+		return movingObjectsLayer;
+	}
+
+	public void setMovingObjectsLayer(AbstractBodyLayer<MovingEntity> movingObjectsLayer) {
+		Main.movingObjectsLayer = movingObjectsLayer;
 	}
 }
+

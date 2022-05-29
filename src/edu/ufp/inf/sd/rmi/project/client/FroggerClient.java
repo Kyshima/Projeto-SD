@@ -1,14 +1,19 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
-import edu.ufp.inf.sd.rmi.project.server.GameFactoryRI;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionImpl;
-import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi.project.server.*;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
-import frogger.Main;
+import frogger.*;
+import jdk.nashorn.internal.runtime.Debug;
+import jig.engine.physics.AbstractBodyLayer;
+import jig.engine.util.Vector2D;
 
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.rmi.*;
 import java.rmi.registry.Registry;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Scanner;
@@ -28,25 +33,32 @@ import java.util.Scanner;
  */
 public class FroggerClient {
 
-    /**
-     * Context for connecting a RMI client MAIL_TO_ADDR a RMI Servant
-     */
     private SetupContextRMI contextRMI;
-    /**
-     * Remote interface that will hold the Servant proxy
-     */
-    public static GameFactoryRI gameFactoryRI;
+    //public static GameFactoryRI gameFactoryRI;
+    public static FroggerGameRI froggerGameRI;
+    public static FroggerGameImpl froggerGame;
 
-    public static void main(String[] args) {
+    static {
+        try {
+            froggerGameRI = new FroggerGameImpl();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean f = false;
+    public int create = -1;
+    public static Main g;
+    public static ObserverImpl observer;
+
+
+    public static void main(String[] args) throws InterruptedException, RemoteException {
         if (args != null && args.length < 2) {
             System.err.println("usage: java [options] edu.ufp.sd.inf.rmi._01_helloworld.server.HelloWorldClient <rmi_registry_ip> <rmi_registry_port> <service_name>");
             System.exit(-1);
         } else {
-            //1. ============ Setup client RMI context ============
-            FroggerClient hwc=new FroggerClient(args);
-            //2. ============ Lookup service ============
-            hwc.lookupService();
-            //3. ============ Play with service ============
+            FroggerClient hwc = new FroggerClient(args);
+            //initObserver(args);
             hwc.playService();
         }
     }
@@ -60,12 +72,14 @@ public class FroggerClient {
             String serviceName = args[2];
             //Create a context for RMI setup
             contextRMI = new SetupContextRMI(this.getClass(), registryIP, registryPort, new String[]{serviceName});
+            //gameFactoryRI=(GameFactoryRI)lookupServiceGF();
+            froggerGameRI=(FroggerGameRI)lookupServiceFG();
         } catch (RemoteException e) {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
-    private Remote lookupService() {
+    private Remote lookupServiceFG() {
         try {
             //Get proxy MAIL_TO_ADDR rmiregistry
             Registry registry = contextRMI.getRegistry();
@@ -74,9 +88,9 @@ public class FroggerClient {
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR lookup service @ {0}", serviceUrl);
-                
+
                 //============ Get proxy MAIL_TO_ADDR HelloWorld service ============
-                gameFactoryRI = (GameFactoryRI) registry.lookup(serviceUrl);
+                froggerGameRI = (FroggerGameRI) registry.lookup(serviceUrl);
             } else {
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "registry not bound (check IPs). :(");
                 //registry = LocateRegistry.createRegistry(1099);
@@ -84,30 +98,54 @@ public class FroggerClient {
         } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        return gameFactoryRI;
+        return froggerGameRI;
     }
-    
-    private void playService() {
-        StarterFrame.main();
 
+    private void playService() throws InterruptedException, RemoteException {
+        froggerGame = new FroggerGameImpl();
+        froggerGame.setObservers(froggerGameRI.getObservers());
+        StarterFrame.main(this);
+        while(!f){
+            Thread.sleep(500);
+        }
 
-        //============ Call HelloWorld remote service ============
-        //guest ufp
-        /*try {
-            GameSessionRI gameSession = this.gameFactoryRI.login(u, p);
-            if (gameSession != null)
-            {
-                System.out.println("Usuario " + u + " a entrar com sucesso!");
-                gameSession.criarJogo();
-            }
+        if(create != -1){
+            System.out.println("old");
+            Main m = new Main();
+            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
+            FroggerGameImpl.observers.get(create).update();
+            froggerGameRI.mainServer(ob);
+            m.run();
+            State s = froggerGame.getState();
+            m.setMovingObjectsLayer(s.getTraffic());
 
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR finish, bye. ;)");
-        } catch (Exception ex) {
-            if (ex instanceof ConnectException){
-                System.out.println("Username/Password Errado");
-            }else if(ex instanceof UnmarshalException){
-                System.out.println("Jogo Fechado com Sucesso");
-            }else Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }*/
+        }else{
+            System.out.println("novo");
+            Main m = new Main();
+
+            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
+
+            //FroggerGameImpl.observers.add(ob);
+            froggerGameRI.mainServer(ob);
+            froggerGame.setObservers(froggerGameRI.getObservers());
+            System.out.println(FroggerGameImpl.observers.size());
+            m.run();
+            State s = new State(m.getMovingObjectsLayer());
+            froggerGame.setState(s);
+        }
+        /*Main g = new Main();
+        g.run();*/
+    }
+
+    public static void initObserver(String args[]) {
+        try {
+            observer = new ObserverImpl("1", g, froggerGameRI);
+        } catch (Exception e) {
+            Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public static void updateMoving() {
+        Main.movingObjectsLayer = State.traffic;
     }
 }

@@ -1,6 +1,8 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
+import edu.ufp.inf.sd.rmi.project.server.State;
+import frogger.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,11 +11,15 @@ import java.awt.event.ActionListener;
 import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.rmi.UnmarshalException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class StarterFrame extends JFrame implements ActionListener {
     protected static StarterFrame frame;
+    public static FroggerClient fg;
 
-    public static void main() {
+    public static void main(FroggerClient froggerClient) {
+        fg = froggerClient;
         frame = new StarterFrame();
         frame.setTitle("Start");
         frame.setVisible(true);
@@ -25,7 +31,7 @@ public class StarterFrame extends JFrame implements ActionListener {
     Container container = getContentPane();
     JLabel emailLabel = new JLabel("EMAIL");
     JLabel passwordLabel = new JLabel("PASSWORD");
-    JTextField emailTextField = new JTextField();
+    static JTextField emailTextField = new JTextField();
     JPasswordField passwordField = new JPasswordField();
     JButton registerButton = new JButton("REGISTER");
     JButton loginButton = new JButton("LOGIN");
@@ -152,7 +158,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                 emailText = emailTextField.getText();
                 pwdText = String.valueOf(passwordField.getPassword());
                 try {
-                    boolean r = FroggerClient.gameFactoryRI.register(emailText, pwdText);
+                    boolean r = FroggerClient.froggerGameRI.register(emailText, pwdText);
                     if (r) {
                         container.remove(emailLabel);
                         container.remove(passwordLabel);
@@ -183,12 +189,16 @@ public class StarterFrame extends JFrame implements ActionListener {
                 pwdText = String.valueOf(passwordField.getPassword());
 
                 try {
-                    GameSessionRI gameSession = FroggerClient.gameFactoryRI.login(emailText, pwdText);
+                    GameSessionRI gameSession = FroggerClient.froggerGameRI.login(emailText, pwdText);
                     if (gameSession != null) {
                         setVisible(false);
                         dispose();
                         System.out.println("Usuario " + emailText + " a entrar com sucesso!");
-                        gameSession.criarJogo();
+                        //gameSession.criarJogo();
+                        //Main f = new Main();
+                        //f.run();
+                        Menu.main(fg);
+                        //fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");
                     }
