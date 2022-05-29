@@ -2,12 +2,15 @@ package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.*;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
+import frogger.Frogger;
 import frogger.Goal;
 import frogger.Main;
 import frogger.MovingEntityFactory;
+import jdk.nashorn.internal.runtime.Debug;
 import jig.engine.util.Vector2D;
 
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.rmi.*;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class FroggerClient {
     private SetupContextRMI contextRMI;
     //public static GameFactoryRI gameFactoryRI;
     public static FroggerGameRI froggerGameRI;
+    public static FroggerGameImpl froggerGame;
 
     static {
         try {
@@ -55,7 +59,7 @@ public class FroggerClient {
             System.exit(-1);
         } else {
             FroggerClient hwc = new FroggerClient(args);
-            initObserver(args);
+            //initObserver(args);
             hwc.playService();
         }
     }
@@ -71,6 +75,7 @@ public class FroggerClient {
             contextRMI = new SetupContextRMI(this.getClass(), registryIP, registryPort, new String[]{serviceName});
             //gameFactoryRI=(GameFactoryRI)lookupServiceGF();
             froggerGameRI=(FroggerGameRI)lookupServiceFG();
+            froggerGameRI.mainServer("TESTE");
         } catch (RemoteException e) {
             Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -84,6 +89,7 @@ public class FroggerClient {
             if (registry != null) {
                 //Get service url (including servicename)
                 String serviceUrl = contextRMI.getServicesUrl(0);
+                String serviceUrl1 = contextRMI.getServicesUrl(1);
                 Logger.getLogger(this.getClass().getName()).log(Level.INFO, "going MAIL_TO_ADDR lookup service @ {0}", serviceUrl);
 
                 //============ Get proxy MAIL_TO_ADDR HelloWorld service ============
@@ -103,16 +109,20 @@ public class FroggerClient {
         while(!f){
             Thread.sleep(500);
         }
-        if(create != -1){
+        if(create != -1 || FroggerGameImpl.observers.size() != 0){
             System.out.println("old");
             Main m = new Main();
             FroggerGameImpl.observers.get(create).update();
             m.run();
         }else{
             System.out.println("novo");
-            FroggerGameRI r = new FroggerGameImpl();
+            froggerGameRI.mainServer("Tou ca a criar jogo");
             Main m = new Main();
-            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, r);
+            froggerGame = new FroggerGameImpl();
+            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
+            //FroggerGameImpl.observers.add(ob);
+
+            System.out.println(FroggerGameImpl.observers.size());
             m.run();
         }
         /*Main g = new Main();

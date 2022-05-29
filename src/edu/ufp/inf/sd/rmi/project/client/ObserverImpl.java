@@ -22,6 +22,7 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
         this.id = id;
         this.m = m;
         this.frogger = frogger;
+        this.lastObserverState = getLastObserverState();
         this.frogger.attach(this);
     }
 

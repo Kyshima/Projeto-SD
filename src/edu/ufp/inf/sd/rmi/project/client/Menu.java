@@ -21,7 +21,7 @@ public class Menu extends JFrame implements ActionListener {
 
     public static void main(FroggerClient froggerClient) throws RemoteException {
         fg = froggerClient;
-        int games = FroggerGameImpl.observers.size();
+        int games = FroggerGameImpl.getAvailableGames();
         System.out.println(games);
         for (int i = 0; i < games; i++) {
             GamesText.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JLabel(String.valueOf(i)));

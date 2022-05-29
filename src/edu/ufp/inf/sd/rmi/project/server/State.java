@@ -38,4 +38,6 @@ public class State implements Serializable {
     public static void setTraffic(AbstractBodyLayer<MovingEntity> traffic) {
         State.traffic = traffic;
     }
+
+
 }

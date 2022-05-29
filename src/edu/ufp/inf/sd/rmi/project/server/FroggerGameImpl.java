@@ -15,7 +15,6 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     public final DBMockup dbMockup = new DBMockup();
     public HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
     public static final ArrayList<ObserverRI> observers = new ArrayList();
-
     public DBMockup getDbMockup() {
         return dbMockup;
     }
@@ -42,7 +41,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     @Override
     public void setState(State state) throws RemoteException {
-        this.subjectState = state;
+        subjectState = state;
         notifyAllObservers();
     }
 
@@ -76,5 +75,19 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
             dbMockup.register(usr,pwd);
             return true;
         } else return false;
+    }
+
+    public static int getAvailableGames() throws RemoteException{
+        int p = 0;
+        if(!observers.isEmpty()) {
+            for (int i = 0; i < observers.size(); i++) {
+                p++;
+            }
+        }
+        return p;
+    }
+    @Override
+    public void mainServer(String s) throws RemoteException{
+        System.out.println(s);
     }
 }
