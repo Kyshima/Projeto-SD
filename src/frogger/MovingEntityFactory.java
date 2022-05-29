@@ -38,11 +38,13 @@ public class MovingEntityFactory {
 	
 	public Vector2D position;
 	public Vector2D velocity;
+
+	public long time;
 	
 	public Random r;
 	
-	private long updateMs = 0;
-	private long copCarDelay = 0;
+	public long updateMs = 0;
+	public long copCarDelay = 0;
 	
 	private long rateMs = 1000;
 
@@ -60,7 +62,8 @@ public class MovingEntityFactory {
 	public MovingEntityFactory(Vector2D pos, Vector2D v) {
 		position = pos;
 		velocity = v;
-		r = new Random(System.currentTimeMillis());
+		time = System.currentTimeMillis();
+		r = new Random(time);
 
 		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) / 
 				Math.abs(velocity.getX()));
@@ -72,10 +75,10 @@ public class MovingEntityFactory {
 				Math.abs(velocity.getX()));
 	}
 
-	public MovingEntityFactory(Vector2D pos, Vector2D v, Random rand) {
+	public MovingEntityFactory(Vector2D pos, Vector2D v, long t) {
 		position = pos;
 		velocity = v;
-		r = rand;
+		r = new Random(t);
 
 		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) /
 				Math.abs(velocity.getX()));
@@ -165,5 +168,10 @@ public class MovingEntityFactory {
 	public void update(final long deltaMs) {
 		updateMs += deltaMs;
 		copCarDelay += deltaMs;
+	}
+
+	public void update(long up, long cop) {
+		updateMs = up;
+		copCarDelay = cop;
 	}
 }

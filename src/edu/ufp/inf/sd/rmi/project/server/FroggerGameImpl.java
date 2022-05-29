@@ -80,6 +80,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public void mainServer(ObserverRI observer) throws RemoteException {
         this.attach(observer);
+        System.out.println("attach");
     }
 
     @Override
