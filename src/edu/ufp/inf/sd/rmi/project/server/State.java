@@ -19,16 +19,10 @@ import java.io.Serializable;
  * @author rui
  */
 public class State implements Serializable {
-
-    public String id;
     public static AbstractBodyLayer<MovingEntity> traffic;
 
-    public State(AbstractBodyLayer<MovingEntity> traffic){
-        traffic = traffic;
-    }
-
-    public String getId() {
-        return id;
+    public State(AbstractBodyLayer<MovingEntity> t){
+        traffic = t;
     }
 
     public  AbstractBodyLayer<MovingEntity> getTraffic() {

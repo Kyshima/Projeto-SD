@@ -230,7 +230,10 @@ public class Main extends StaticScreenGame {
 			for(int i=0;i<size;i++){
 				if(FroggerGameImpl.observers.get(i)==null) size++;
 				else{
+					State s = new State(movingObjectsLayer);
+					//System.out.println(s);
 					FroggerClient.froggerGameRI.setState(new State(movingObjectsLayer));
+					//System.out.println(FroggerClient.froggerGameRI.getState());
 					FroggerClient.froggerGameRI.notifyAllObservers();
 					System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
 				}
