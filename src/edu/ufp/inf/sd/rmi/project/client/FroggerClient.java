@@ -104,7 +104,7 @@ public class FroggerClient {
     private void playService() throws InterruptedException, RemoteException {
         froggerGame = new FroggerGameImpl();
         froggerGame.setObservers(froggerGameRI.getObservers());
-        StarterFrame.main(this, froggerGame);
+        StarterFrame.main(this);
         while(!f){
             Thread.sleep(500);
         }
