@@ -1,5 +1,7 @@
 package edu.ufp.inf.sd.rmi.project.client;
 
+import edu.ufp.inf.sd.rmi.project.server.FroggerGameImpl;
+import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
 import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
 import frogger.Main;
@@ -18,8 +20,11 @@ public class StarterFrame extends JFrame implements ActionListener {
     protected static StarterFrame frame;
     public static FroggerClient fg;
 
-    public static void main(FroggerClient froggerClient) {
+    public static FroggerGameImpl fr;
+
+    public static void main(FroggerClient froggerClient, FroggerGameImpl froggerGame) {
         fg = froggerClient;
+        fr = froggerGame;
         frame = new StarterFrame();
         frame.setTitle("Start");
         frame.setVisible(true);
@@ -197,7 +202,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                         //gameSession.criarJogo();
                         //Main f = new Main();
                         //f.run();
-                        Menu.main(fg);
+                        Menu.main(fg, fr);
                         //fg.f = true;
                     } else {
                         JOptionPane.showMessageDialog(this, "Username/Password Errado!");

@@ -4,6 +4,7 @@ import edu.ufp.inf.sd.rmi.project.server.FroggerGameImpl;
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
 import edu.ufp.inf.sd.rmi.project.server.GameSessionRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
+import frogger.Frogger;
 import frogger.Main;
 
 import javax.swing.*;
@@ -18,14 +19,18 @@ import java.util.ArrayList;
 public class Menu extends JFrame implements ActionListener {
     protected static Menu frame;
     public static FroggerClient fg;
+    public static FroggerGameImpl fr;
 
-    public static void main(FroggerClient froggerClient) throws RemoteException {
+    public static void main(FroggerClient froggerClient, FroggerGameImpl froggerGame) throws RemoteException {
         fg = froggerClient;
-        int games = FroggerGameImpl.getAvailableGames();
+        fr = froggerGame;
+        int games = fr.getAvailableGames();
         System.out.println(games);
         for (int i = 0; i < games; i++) {
-            GamesText.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JLabel(String.valueOf(i)));
-            GamesButton.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JButton(String.valueOf(i)));
+            //GamesText.add(Integer.parseInt(fr.observers.get(i).getId()), new JLabel(String.valueOf(i)));
+            //GamesButton.add(Integer.parseInt(fr.observers.get(i).getId()), new JButton(String.valueOf(i)));
+            GamesText.add(i, new JLabel(String.valueOf(i)));
+            GamesButton.add(i, new JButton(String.valueOf(i)));
         }
         frame = new Menu();
         frame.setTitle("Menu");
