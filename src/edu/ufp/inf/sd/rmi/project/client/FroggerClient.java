@@ -2,17 +2,16 @@ package edu.ufp.inf.sd.rmi.project.client;
 
 import edu.ufp.inf.sd.rmi.project.server.*;
 import edu.ufp.inf.sd.rmi.util.rmisetup.SetupContextRMI;
-import frogger.Frogger;
-import frogger.Goal;
-import frogger.Main;
-import frogger.MovingEntityFactory;
+import frogger.*;
 import jdk.nashorn.internal.runtime.Debug;
+import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.util.Vector2D;
 
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.*;
 import java.rmi.registry.Registry;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -109,20 +108,30 @@ public class FroggerClient {
         while(!f){
             Thread.sleep(500);
         }
+
         if(create != -1){
             System.out.println("old");
             Main m = new Main();
+            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
             FroggerGameImpl.observers.get(create).update();
+            froggerGameRI.mainServer(ob);
             m.run();
+            State s = froggerGame.getState();
+            m.setMovingObjectsLayer(s.getTraffic());
+
         }else{
             System.out.println("novo");
             Main m = new Main();
+
             ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
+
             //FroggerGameImpl.observers.add(ob);
             froggerGameRI.mainServer(ob);
             froggerGame.setObservers(froggerGameRI.getObservers());
             System.out.println(FroggerGameImpl.observers.size());
             m.run();
+            State s = new State(m.getMovingObjectsLayer());
+            froggerGame.setState(s);
         }
         /*Main g = new Main();
         g.run();*/

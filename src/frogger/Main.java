@@ -90,7 +90,7 @@ public class Main extends StaticScreenGame {
     private boolean space_has_been_released = false;
 	private boolean keyPressed = false;
 	private boolean listenInput = true;
-	
+
     /**
 	 * Initialize game objects
 	 */
@@ -134,7 +134,7 @@ public class Main extends StaticScreenGame {
 		double dV = level*0.05 + 1;
 		
 		movingObjectsLayer.clear();
-		
+
 		// River Traffic
 		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32),
 				new Vector2D(0.06*dV,0)); 
@@ -396,27 +396,36 @@ public class Main extends StaticScreenGame {
 		case GAME_FINISH_LEVEL:
 		case GAME_PLAY:
 			backgroundLayer.render(rc);
-			
+
 			if (frog.isAlive) {
 				movingObjectsLayer.render(rc);
 				//frog.collisionObjects.get(0).render(rc);
-				frog.render(rc);		
+				frog.render(rc);
 			} else {
 				frog.render(rc);
-				movingObjectsLayer.render(rc);				
+				movingObjectsLayer.render(rc);
 			}
-			
+
 			particleLayer.render(rc);
 			ui.render(rc);
 			break;
-			
+
 		case GAME_OVER:
 		case GAME_INSTRUCTIONS:
 		case GAME_INTRO:
 			backgroundLayer.render(rc);
 			movingObjectsLayer.render(rc);
 			ui.render(rc);
-			break;		
+			break;
 		}
 	}
+
+	public AbstractBodyLayer<MovingEntity> getMovingObjectsLayer() {
+		return movingObjectsLayer;
+	}
+
+	public void setMovingObjectsLayer(AbstractBodyLayer<MovingEntity> movingObjectsLayer) {
+		Main.movingObjectsLayer = movingObjectsLayer;
+	}
 }
+

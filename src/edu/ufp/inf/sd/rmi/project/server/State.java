@@ -31,11 +31,11 @@ public class State implements Serializable {
         return id;
     }
 
-    public static AbstractBodyLayer<MovingEntity> getTraffic() {
+    public  AbstractBodyLayer<MovingEntity> getTraffic() {
         return traffic;
     }
 
-    public static void setTraffic(AbstractBodyLayer<MovingEntity> traffic) {
+    public  void setTraffic(AbstractBodyLayer<MovingEntity> traffic) {
         State.traffic = traffic;
     }
 

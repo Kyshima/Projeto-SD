@@ -83,20 +83,22 @@ public class Menu extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < GamesText.size(); i++) {
             if (e.getSource() == GamesButton.get(i)) {
-                for (int j = 0; j < FroggerGameImpl.observers.size(); j++) {
-                    try {
-                        if (FroggerGameImpl.observers.get(j).getId().equals(Integer.toString(i))) {
+                //for (int j = 0; j < FroggerGameImpl.observers.size(); j++) {
+                    //try {
+                       // if (fr.observers.get(j).getId().equals(Integer.toString(i))) {
+                            System.out.println("Cliquei num jogo");
                             fg.create = i;
                             fg.f = true;
-                        }
-                    } catch (RemoteException ex) {
+                       // }
+                    /*} catch (RemoteException ex) {
                         throw new RuntimeException(ex);
-                    }
-                }
+                    }*/
+                //}
             }
         }
 
             if (e.getSource() == plus) {
+
                 fg.create = -1;
                 fg.f = true;
             }
