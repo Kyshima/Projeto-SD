@@ -27,6 +27,7 @@ package frogger;
 
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameImpl;
@@ -192,10 +193,11 @@ public class Main extends StaticScreenGame {
 	public void cycleTraffic(long deltaMs) throws RemoteException, NullPointerException {
 		MovingEntity m;
 		if(FroggerClient.create == -1){
-			//System.out.println("-1");
+			ArrayList<String> lines = new ArrayList<>();
 			/* Road traffic updates */
 			roadLine1.update(deltaMs);
 			if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
+			//lines.add(1,roadLine1.position + "?");
 
 			roadLine2.update(deltaMs);
 			if ((m = roadLine2.buildVehicle()) != null) movingObjectsLayer.add(m);
@@ -231,20 +233,15 @@ public class Main extends StaticScreenGame {
 				if(FroggerGameImpl.observers.get(i)==null) size++;
 				else{
 					State s = new State(movingObjectsLayer);
-					//System.out.println(s);
-					FroggerClient.froggerGameRI.setState(new State(movingObjectsLayer));
-					//System.out.println(FroggerClient.froggerGameRI.getState());
+					FroggerClient.froggerGameRI.setState(s);
+
 					FroggerClient.froggerGameRI.notifyAllObservers();
 					System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
 				}
 			}
 		} else {
-				//System.out.println("ERRO: Se entrar aqui pode fazer sentido tar null");
-				/*FroggerClient.froggerGame.setState(FroggerClient.froggerGameRI.getState());
-				FroggerGameImpl.observers.get(0).update();
-				FroggerClient.froggerGameRI.notifyAllObservers();*/
 			System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
-			movingObjectsLayer = FroggerClient.froggerGameRI.getState().getTraffic();
+			//movingObjectsLayer = FroggerClient.froggerGameRI.getState().getTraffic();
 		}
 
 	    // Do Wind
@@ -255,6 +252,10 @@ public class Main extends StaticScreenGame {
 
 	    movingObjectsLayer.update(deltaMs);
 	    particleLayer.update(deltaMs);
+	}
+
+	public String MovEntToString(MovingEntityFactory mef){
+		return mef.position.getX() + "?" + mef.position.getY() + "?" + mef.velocity.getX() + "?" + mef.velocity.getY() + "?" + mef.r;
 	}
 	
 	/**
