@@ -40,6 +40,6 @@ public class ObserverImpl extends UnicastRemoteObject implements ObserverRI {
     @Override
     public void update() throws RemoteException {
         lastObserverState = FroggerGameImpl.subjectState;
-        FroggerClient.updateMoving();
+        //FroggerClient.updateMoving();
     }
 }

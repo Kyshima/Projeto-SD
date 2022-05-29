@@ -49,7 +49,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public void startGame() throws RemoteException {
         Main s = new Main();
-        /*s.run();*/
+        s.run();
     }
 
 
@@ -75,16 +75,6 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
             dbMockup.register(usr, pwd);
             return true;
         } else return false;
-    }
-
-    public static int getAvailableGames() throws RemoteException {
-        int p = 0;
-        if (!observers.isEmpty()) {
-            for (int i = 0; i < observers.size(); i++) {
-                p++;
-            }
-        }
-        return p;
     }
 
     @Override
