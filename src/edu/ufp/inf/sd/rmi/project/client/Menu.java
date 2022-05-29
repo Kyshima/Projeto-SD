@@ -21,11 +21,15 @@ public class Menu extends JFrame implements ActionListener {
 
     public static void main(FroggerClient froggerClient) throws RemoteException {
         fg = froggerClient;
-        int games = FroggerGameImpl.getAvailableGames();
+        int games = FroggerGameImpl.observers.size();
         System.out.println(games);
+        /*for(ObserverRI ob : FroggerGameImpl.observers) {
+            GamesText.add(Integer.parseInt(ob.getId()), new JLabel(ob.getId()));
+            GamesButton.add(Integer.parseInt(ob.getId()), new JButton(ob.getId()));
+        }*/
         for (int i = 0; i < games; i++) {
-            GamesText.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JLabel(String.valueOf(i)));
-            GamesButton.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JButton(String.valueOf(i)));
+            GamesText.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JLabel(FroggerGameImpl.observers.get(i).getId() + " Jogo"));
+            GamesButton.add(Integer.parseInt(FroggerGameImpl.observers.get(i).getId()), new JButton(FroggerGameImpl.observers.get(i).getId() + " Jogo"));
         }
         frame = new Menu();
         frame.setTitle("Menu");
@@ -78,22 +82,25 @@ public class Menu extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < GamesText.size(); i++) {
             if (e.getSource() == GamesButton.get(i)) {
-                //for (int j = 0; j < FroggerGameImpl.observers.size(); j++) {
-                    //try {
-                       // if (fr.observers.get(j).getId().equals(Integer.toString(i))) {
+                for (int j = 0; j < FroggerGameImpl.observers.size(); j++) {
+                    try {
+                        if (FroggerGameImpl.observers.get(j).getId().equals(Integer.toString(i))) {
+                            setVisible(false);
+                            dispose();
                             System.out.println("Cliquei num jogo");
                             fg.create = i;
                             fg.f = true;
-                       // }
-                    /*} catch (RemoteException ex) {
+                        }
+                    } catch (RemoteException ex) {
                         throw new RuntimeException(ex);
-                    }*/
-                //}
+                    }
+                }
             }
         }
 
             if (e.getSource() == plus) {
-
+                setVisible(false);
+                dispose();
                 fg.create = -1;
                 fg.f = true;
             }

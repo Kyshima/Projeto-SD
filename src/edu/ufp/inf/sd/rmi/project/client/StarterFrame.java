@@ -169,6 +169,17 @@ public class StarterFrame extends JFrame implements ActionListener {
                         container.remove(resetButton);
                         repaint();
                         LoginFrame();
+                    }else{
+                        container.remove(emailLabel);
+                        container.remove(passwordLabel);
+                        container.remove(emailTextField);
+                        container.remove(passwordField);
+                        container.remove(showPassword);
+                        container.remove(registerButton);
+                        container.remove(resetButton);
+                        repaint();
+                        LoginFrame();
+                        JOptionPane.showMessageDialog(this, "Usuario já registado!");
                     }
                 } catch (RemoteException ex) {
                     throw new RuntimeException(ex);
@@ -205,7 +216,7 @@ public class StarterFrame extends JFrame implements ActionListener {
                 } catch (Exception ex) {
                     if (ex instanceof ConnectException) {
                         //JOptionPane.showMessageDialog(this, "Username/Password Errado!");
-                        System.out.println("Username/Password Errado");
+                        System.out.println("Erro, tente de novo ");
                     } else if (ex instanceof UnmarshalException) {
                         System.out.println("Jogo Fechado com Sucesso");
                     }

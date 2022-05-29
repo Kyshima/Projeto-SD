@@ -18,6 +18,8 @@ public interface FroggerGameRI extends Remote {
 
     void setState(State state) throws RemoteException;
 
+    public void notifyAllObservers() throws RemoteException;
+
     void startGame() throws RemoteException;
 
     public GameSessionRI login(String usr, String pwd) throws RemoteException;

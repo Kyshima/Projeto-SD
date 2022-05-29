@@ -47,7 +47,7 @@ public class FroggerClient {
     }
 
     public boolean f = false;
-    public int create = -1;
+    public static int create = -1;
     public static Main g;
     public static ObserverImpl observer;
 
@@ -112,26 +112,28 @@ public class FroggerClient {
         if(create != -1){
             System.out.println("old");
             Main m = new Main();
-            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
-            FroggerGameImpl.observers.get(create).update();
-            froggerGameRI.mainServer(ob);
+            /*ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
+            FroggerGameImpl.observers.get(create).update();*/
+            froggerGame.setObservers(froggerGameRI.getObservers());
+            /*State s = froggerGame.getState();
+            m.setMovingObjectsLayer(s.getTraffic());*/
             m.run();
-            State s = froggerGame.getState();
-            m.setMovingObjectsLayer(s.getTraffic());
+            froggerGame.notifyAllObservers();
+            System.out.println(froggerGame.getState());
 
         }else{
             System.out.println("novo");
             Main m = new Main();
-
-            ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
-
-            //FroggerGameImpl.observers.add(ob);
+            String size = Integer.toString(FroggerGameImpl.observers.size());
+            ObserverImpl ob = new ObserverImpl(size, m, froggerGame);
             froggerGameRI.mainServer(ob);
             froggerGame.setObservers(froggerGameRI.getObservers());
-            System.out.println(FroggerGameImpl.observers.size());
+            //System.out.println(FroggerGameImpl.observers.size());
+            /*State s = new State(m.getMovingObjectsLayer());
+            froggerGame.setState(s);*/
             m.run();
-            State s = new State(m.getMovingObjectsLayer());
-            froggerGame.setState(s);
+            froggerGame.setState(new State(m.getMovingObjectsLayer()));
+            System.out.println(froggerGame.getState());
         }
         /*Main g = new Main();
         g.run();*/
