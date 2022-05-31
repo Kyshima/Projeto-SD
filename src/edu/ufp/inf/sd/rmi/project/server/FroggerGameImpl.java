@@ -62,6 +62,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public GameSessionRI login(String usr, String pwd) throws RemoteException {
         if (dbMockup.exists(usr, pwd)) {
+            if(session.containsKey(usr)) return session.get(usr);
             GameSessionImpl gameSession = new GameSessionImpl(this, usr);
             session.put(usr, gameSession);
             return gameSession;
