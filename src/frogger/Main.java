@@ -138,6 +138,7 @@ public class Main extends StaticScreenGame {
 	
 	public void initializeLevel(int level) throws RemoteException {
 		if(FroggerClient.create == -1) {
+			System.out.println("AQUI 1");
 			ArrayList<String> lines = new ArrayList<>();
 			/* dV is the velocity multiplier for all moving objects at the current game level */
 			double dV = level * 0.05 + 1;
@@ -187,6 +188,7 @@ public class Main extends StaticScreenGame {
 				/*}
 			}*/
 		} else {
+			System.out.println("AQUI 2");
 			System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
 			ArrayList<String> lines = new ArrayList<>(FroggerClient.froggerGameRI.getState().getTraffic());
 
@@ -232,6 +234,7 @@ public class Main extends StaticScreenGame {
 	public void cycleTraffic(long deltaMs) throws RemoteException, NullPointerException {
 		MovingEntity m;
 		if(FroggerClient.create == -1){
+			System.out.println("AQUI 3");
 			ArrayList<String> up = new ArrayList<>();
 			/* Road traffic updates */
 			roadLine1.update(deltaMs);
@@ -281,6 +284,7 @@ public class Main extends StaticScreenGame {
 			}*/
 		} else {
 			//System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
+			//System.out.println("AQUI 4");
 			/*ArrayList<String> up = new ArrayList<>(FroggerClient.froggerGameRI.getState().getUpdate());
 
 			StringToUpdate(roadLine1,up.get(0));
@@ -303,8 +307,8 @@ public class Main extends StaticScreenGame {
 			StringToUpdate(riverLine4,up.get(8));
 			if ((m = riverLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
 			StringToUpdate(riverLine5,up.get(9));
-			if ((m = riverLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
-		}*/
+			if ((m = riverLine5.buildVehicle()) != null) movingObjectsLayer.add(m);*/
+		}
 
 	    // Do Wind
 	    if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
@@ -315,7 +319,6 @@ public class Main extends StaticScreenGame {
 	    movingObjectsLayer.update(deltaMs);
 	    particleLayer.update(deltaMs);
 	}
-}
 
 	public String UpdateToString(MovingEntityFactory mef){
 		return mef.updateMs + ";" + mef.copCarDelay;
