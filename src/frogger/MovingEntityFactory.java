@@ -26,38 +26,37 @@
 package frogger;
 import jig.engine.util.Vector2D;
 
-import java.io.Serializable;
 import java.util.Random;
 
 public class MovingEntityFactory {
-	
+
 	public static int  CAR   = 0;
 	public static int  TRUCK = 1;
 	public static int  SLOG  = 2;
 	public static int  LLOG  = 3;
-	
+
 	public Vector2D position;
 	public Vector2D velocity;
 
 	public long time;
-	
+
 	public Random r;
-	
+
 	public long updateMs = 0;
 	public long copCarDelay = 0;
-	
+
 	private long rateMs = 1000;
 
 	private int padding = 64; // distance between 2 objects in a traffic/river line
-	
-	private int[] creationRate = new int[4];	
-	
+
+	private int[] creationRate = new int[4];
+
 	/**
 	 * Moving Entity factory
-	 * 
-	 * @param pos
-	 * @param v
-	 * @param rate
+	 *
+	 * pos
+	 * v
+	 * rate
 	 */
 	public MovingEntityFactory(Vector2D pos, Vector2D v) {
 		position = pos;
@@ -65,20 +64,21 @@ public class MovingEntityFactory {
 		time = System.currentTimeMillis();
 		r = new Random(time);
 
-		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) / 
+		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) /
 				Math.abs(velocity.getX()));
-		creationRate[TRUCK] = (int) Math.round(((Truck.LENGTH) + padding + 32) / 
+		creationRate[TRUCK] = (int) Math.round(((Truck.LENGTH) + padding + 32) /
 				Math.abs(velocity.getX()));
-		creationRate[SLOG]  = (int) Math.round(((ShortLog.LENGTH) + padding - 32) / 
+		creationRate[SLOG]  = (int) Math.round(((ShortLog.LENGTH) + padding - 32) /
 				Math.abs(velocity.getX()));
-		creationRate[LLOG]  = (int) Math.round(((LongLog.LENGTH) + padding - 32) / 
+		creationRate[LLOG]  = (int) Math.round(((LongLog.LENGTH) + padding - 32) /
 				Math.abs(velocity.getX()));
 	}
 
 	public MovingEntityFactory(Vector2D pos, Vector2D v, long t) {
 		position = pos;
 		velocity = v;
-		r = new Random(t);
+		time = t;
+		r = new Random(time);
 
 		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) /
 				Math.abs(velocity.getX()));
