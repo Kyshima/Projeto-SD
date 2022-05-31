@@ -40,7 +40,7 @@ import java.util.List;
  * @author vitaliy
  *
  */
-public abstract class MovingEntity extends Body {
+public abstract class MovingEntity extends Body implements Serializable {
 	
 	static final int STEP_SIZE = 32;
 	
