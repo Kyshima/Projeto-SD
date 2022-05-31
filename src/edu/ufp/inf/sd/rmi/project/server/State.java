@@ -25,6 +25,10 @@ public class State implements Serializable {
     public State(ArrayList<String> t){
         traffic = t;
     }
+    public State(ArrayList<String> t, ArrayList<String> u){
+        traffic = t;
+        update = u;
+    }
 
     public ArrayList<String> getTraffic() { return traffic; }
     public void setTraffic(ArrayList<String> t) { traffic = t; }
