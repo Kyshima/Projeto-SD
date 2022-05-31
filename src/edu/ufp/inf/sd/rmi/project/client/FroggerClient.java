@@ -48,7 +48,7 @@ public class FroggerClient {
 
     public boolean f = false;
     public static int create = -1;
-    public static Main g;
+    public static Main m;
     public static ObserverImpl observer;
 
 
@@ -108,38 +108,7 @@ public class FroggerClient {
         while(!f){
             Thread.sleep(500);
         }
-
-        if(create != -1){
-            System.out.println("old");
-            Main m = new Main();
-            /*ObserverImpl ob = new ObserverImpl(Integer.toString(FroggerGameImpl.observers.size() + 1), m, froggerGame);
-            FroggerGameImpl.observers.get(create).update();*/
-            froggerGame.setObservers(froggerGameRI.getObservers());
-            /*State s = froggerGame.getState();
-            m.setMovingObjectsLayer(s.getTraffic());*/
-            m.run();
-
-        }else{
-            System.out.println("novo");
-            Main m = new Main();
-            String size = Integer.toString(FroggerGameImpl.observers.size());
-            ObserverImpl ob = new ObserverImpl(size, m, froggerGame);
-            froggerGameRI.mainServer(ob);
-            froggerGame.setObservers(froggerGameRI.getObservers());
-            //System.out.println(FroggerGameImpl.observers.size());
-            /*State s = new State(m.getMovingObjectsLayer());
-            froggerGame.setState(s);*/
-            m.run();
-        }
-        /*Main g = new Main();
-        g.run();*/
-    }
-
-    public static void initObserver(String args[]) {
-        try {
-            observer = new ObserverImpl("1", g, froggerGameRI);
-        } catch (Exception e) {
-            Logger.getLogger(FroggerClient.class.getName()).log(Level.SEVERE, null, e);
-        }
+        m = new Main();
+        m.run();
     }
 }

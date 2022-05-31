@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
+import edu.ufp.inf.sd.rmi.project.client.ObserverImpl;
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameImpl;
 import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
@@ -105,6 +106,9 @@ public class Main extends StaticScreenGame {
 	public Main () throws RemoteException {
 		
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
+
+		String size = Integer.toString(FroggerGameImpl.observers.size());
+		FroggerClient.froggerGameRI.mainServer(new ObserverImpl(size, FroggerClient.m, FroggerClient.froggerGame));
 		
 		gameframe.setTitle("Frogger");
 		
@@ -143,6 +147,8 @@ public class Main extends StaticScreenGame {
 			double dV = level * 0.05 + 1;
 
 			movingObjectsLayer.clear();
+			ArrayList<Integer> rd = genRand();
+			MovingEntityFactory.rands = rd;
 
 			// Road Traffic
 			roadLine1 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 8 * 32), new Vector2D(-0.1 * dV, 0));
@@ -174,25 +180,27 @@ public class Main extends StaticScreenGame {
 			}
 
 			State s = new State(lines);
-			FroggerClient.froggerGameRI.setState(s);
+			int size = FroggerClient.froggerGame.getObservers().size();
+			System.out.println("Ini 1 Size: " + size);
+			for(int i=0;i<size;i++){
+				if(FroggerGameImpl.observers.get(i)==null) size++;
+				else{
+					FroggerClient.froggerGameRI.setState(s);
+					FroggerClient.froggerGameRI.getState().rand = rd;
+					//System.out.println("traffic " + FroggerClient.froggerGameRI.getState().getTraffic());
+				}
+			}
 
 			/* Build some traffic before game starts buy running MovingEntityFactories for fews cycles */
 			for (int i = 0; i < 500; i++)
 				cycleTraffic(10);
 
-			/*int size = FroggerClient.froggerGame.getObservers().size();
-			//System.out.println(size);
-			for(int i=0;i<size;i++){
-				if(FroggerGameImpl.observers.get(i)==null) size++;
-				else{*/
-			FroggerClient.froggerGameRI.setState(s);
-			System.out.println("traffic " + FroggerClient.froggerGameRI.getState().getTraffic());
-				/*}
-			}*/
 		} else {
 			State s = FroggerClient.froggerGameRI.getState();
 			//System.out.println(FroggerClient.froggerGameRI.getState());
-			System.out.println(s.getTraffic());
+			//System.out.println(s.getTraffic());
+
+			MovingEntityFactory.rands = FroggerClient.froggerGameRI.getState().rand;
 			ArrayList<String> lines = new ArrayList<>(s.getTraffic());
 
 			roadLine1 = StringToMovEnt(lines.get(0));
@@ -226,6 +234,18 @@ public class Main extends StaticScreenGame {
 		time = Long.parseLong(novo[4]);
 
 		return new MovingEntityFactory(new Vector2D(xpos,ypos), new Vector2D(xvel, yvel), time);
+	}
+
+	public ArrayList<Integer> genRand(){
+		Random r = new Random();
+		ArrayList<Integer> genRand = new ArrayList<>();
+		genRand.add(0,r.nextInt(100));
+		genRand.add(0,r.nextInt(3));
+		genRand.add(0,r.nextInt(100));
+		genRand.add(0,r.nextInt(2));
+		genRand.add(0,r.nextInt(100));
+		genRand.add(0,r.nextInt(100));
+		return genRand;
 	}
 	
 	
@@ -272,24 +292,20 @@ public class Main extends StaticScreenGame {
 			if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
 			up.add(9,UpdateToString(riverLine5));
 
-			State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(), up);
-			FroggerClient.froggerGameRI.setState(s);
-			/*int size = FroggerClient.froggerGame.getObservers().size();
-			//System.out.println(size);
+			int size = FroggerClient.froggerGame.getObservers().size();
 			for(int i=0;i<size;i++){
 				if(FroggerGameImpl.observers.get(i)==null) size++;
-				else{*/
-
-					//State s = /*new State(FroggerClient.froggerGameRI.getState().getTraffic(),up);*/FroggerClient.froggerGameRI.getState().setUpdate(up);
-//					FroggerClient.froggerGameRI.getState().setUpdate(up);
-//					FroggerClient.froggerGameRI.notifyAllObservers();
-//					System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
-				/*}
-			}*/
+				else{
+					State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(), up);
+					FroggerClient.froggerGameRI.setState(s);
+					FroggerClient.froggerGameRI.notifyAllObservers();
+					//System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
+				}
+			}
 		} else {
 			//System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
 			State s = FroggerClient.froggerGameRI.getState();
-			//System.out.println(FroggerClient.froggerGameRI.getState());
+			//System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
 			//System.out.println(s.getTraffic());
 			ArrayList<String> up = new ArrayList<>(s.getUpdate());
 
