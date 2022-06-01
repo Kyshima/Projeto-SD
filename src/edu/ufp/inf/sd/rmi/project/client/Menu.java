@@ -86,7 +86,6 @@ public class Menu extends JFrame implements ActionListener {
                         if (FroggerGameImpl.observers.get(j).getId().equals(Integer.toString(i))) {
                             setVisible(false);
                             dispose();
-                            System.out.println("Cliquei num jogo");
                             fg.create = i;
                             fg.f = true;
                         }
