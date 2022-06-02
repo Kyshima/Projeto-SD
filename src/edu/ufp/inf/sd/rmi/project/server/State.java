@@ -21,15 +21,15 @@ import java.util.ArrayList;
 public class State implements Serializable {
     public ArrayList<String> traffic;
     public ArrayList<String> update;
+    public ArrayList<Integer> rand;
 
     public State(ArrayList<String> t){
         traffic = t;
     }
-
-   /* public State(ArrayList<String> t, ArrayList<String> u){
+    public State(ArrayList<String> t, ArrayList<String> u){
         traffic = t;
         update = u;
-    }*/
+    }
 
     public ArrayList<String> getTraffic() { return traffic; }
     public void setTraffic(ArrayList<String> t) { traffic = t; }
@@ -37,4 +37,8 @@ public class State implements Serializable {
     public ArrayList<String> getUpdate() { return update; }
 
     public void setUpdate(ArrayList<String> update) { this.update = update; }
+
+    public ArrayList<Integer> getRandom() { return rand; }
+
+    public void setRandom(ArrayList<Integer> random) { this.rand = random; }
 }

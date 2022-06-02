@@ -16,6 +16,8 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     public HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
     public static ArrayList<ObserverRI> observers = new ArrayList();
 
+    int numero = 0;
+
     public DBMockup getDbMockup() {
         return dbMockup;
     }
@@ -62,6 +64,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public GameSessionRI login(String usr, String pwd) throws RemoteException {
         if (dbMockup.exists(usr, pwd)) {
+            if(session.containsKey(usr)) return session.get(usr);
             GameSessionImpl gameSession = new GameSessionImpl(this, usr);
             session.put(usr, gameSession);
             return gameSession;
@@ -78,9 +81,10 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     }
 
     @Override
-    public void mainServer(ObserverRI observer) throws RemoteException {
+    public int mainServer(ObserverRI observer) throws RemoteException {
         this.attach(observer);
         System.out.println("attach");
+        return numero++;
     }
 
     @Override
