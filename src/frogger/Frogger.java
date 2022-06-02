@@ -68,7 +68,7 @@ public class Frogger extends MovingEntity {
     
     private Main game;
 
-	public int num = 0;
+	public Vector2D pos;
     
     /**
      * Build frogger!
@@ -80,11 +80,11 @@ public class Frogger extends MovingEntity {
 		collisionObjects.add(new CollisionObject(position));
 	}
 
-	public Frogger (Main g, int i) {
+	public Frogger (Main g, Vector2D v) {
 		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
 		game = g;
+		pos = v;
 		resetFrog();
-		num = i;
 		collisionObjects.add(new CollisionObject(position));
 	}
 
@@ -96,7 +96,7 @@ public class Frogger extends MovingEntity {
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
-		position = Main.FROGGER_START_ARRAY.get(num);
+		position = pos;
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
 	
