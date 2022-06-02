@@ -69,6 +69,8 @@ public class Frogger extends MovingEntity {
     private Main game;
 
 	public Vector2D pos;
+
+	public int frognum;
     
     /**
      * Build frogger!
@@ -86,6 +88,7 @@ public class Frogger extends MovingEntity {
 		pos = v;
 		resetFrog();
 		collisionObjects.add(new CollisionObject(position));
+		frognum = Main.froggerNum;
 	}
 
 	/**

@@ -102,7 +102,7 @@ public class Main extends StaticScreenGame {
 	private boolean keyPressed = false;
 	private boolean listenInput = true;
 
-	private int froggerNum = 0;
+	public static int froggerNum = 0;
 
 	private boolean enable = false;
 
@@ -139,6 +139,7 @@ public class Main extends StaticScreenGame {
 		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<>();
 		particleLayer = new AbstractBodyLayer.IterativeUpdate<>();
 
+		System.out.println(froggerNum);
 		//initializeLevel(1);
 	}
 
@@ -184,7 +185,7 @@ public class Main extends StaticScreenGame {
 
 			State s = new State(lines);
 			int size = FroggerClient.froggerGame.getObservers().size();
-			System.out.println("Ini 1 Size: " + size);
+			//System.out.println("Ini 1 Size: " + size);
 			for(int i=0;i<size;i++){
 				if(FroggerGameImpl.observers.get(i)==null) size++;
 				else{
@@ -311,7 +312,7 @@ public class Main extends StaticScreenGame {
 			//System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
 			//System.out.println(s.getTraffic());
 			ArrayList<String> up = new ArrayList<>(s.getUpdate());
-			System.out.println(s.getUpdate());
+			//System.out.println(s.getUpdate());
 			StringToUpdate(roadLine1,up.get(0));
 			if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
 			StringToUpdate(roadLine2,up.get(1));
@@ -374,9 +375,9 @@ public class Main extends StaticScreenGame {
 
 		// Enable/Disable cheating
 		if (keyboard.isPressed(KeyEvent.VK_C))
-			FROGGERS.get(0).cheating = true;
+			FROGGERS.get(froggerNum).cheating = true;
 		if (keyboard.isPressed(KeyEvent.VK_V))
-			FROGGERS.get(0).cheating = false;
+			FROGGERS.get(froggerNum).cheating = false;
 		if (keyboard.isPressed(KeyEvent.VK_0)) {
 			GameLevel = 10;
 			initializeLevel(GameLevel);
@@ -394,10 +395,10 @@ public class Main extends StaticScreenGame {
 			keyReleased = true;
 
 		if (listenInput) {
-		    if (downPressed) FROGGERS.get(0).moveDown();
-		    if (upPressed) FROGGERS.get(0).moveUp();
-		    if (leftPressed) FROGGERS.get(0).moveLeft();
-	 	    if (rightPressed) FROGGERS.get(0).moveRight();
+		    if (downPressed) FROGGERS.get(froggerNum).moveDown();
+		    if (upPressed) FROGGERS.get(froggerNum).moveUp();
+		    if (leftPressed) FROGGERS.get(froggerNum).moveLeft();
+	 	    if (rightPressed) FROGGERS.get(froggerNum).moveRight();
 
 	 	    if (keyPressed)
 	            listenInput = false;
@@ -427,11 +428,11 @@ public class Main extends StaticScreenGame {
 			return;
 
 		if (keyboard.isPressed(KeyEvent.VK_SPACE)) {
-			System.out.println("AQUI");
+			//System.out.println("AQUI");
 			if(FroggerClient.froggerGameRI.getObservers().size() > 1){
-				System.out.println("Aqui 1");
+				//System.out.println("Aqui 1");
 				addFroggers();
-				System.out.println("Aqui 2");
+				//System.out.println("Aqui 2");
 				enable = true;
 				switch (GameState) {
 					case GAME_INSTRUCTIONS:
@@ -444,12 +445,12 @@ public class Main extends StaticScreenGame {
 						GameScore = 0;
 						GameLevel = STARTING_LEVEL;
 						levelTimer = DEFAULT_LEVEL_TIME;
-						System.out.println("Aqui 3");
+						//System.out.println("Aqui 3");
 						for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++) {
 							System.out.println(FROGGER_START_ARRAY.get(i).toString());
-							FROGGERS.get(i).setPosition(FROGGER_START_ARRAY.get(i+1));
+							FROGGERS.get(froggerNum).setPosition(FROGGER_START_ARRAY.get(i));
 						}
-						System.out.println("Aqui 4");
+						//System.out.println("Aqui 4");
 						GameState = GAME_PLAY;
 						audiofx.playGameMusic();
 						initializeLevel(GameLevel);
@@ -608,15 +609,17 @@ public class Main extends StaticScreenGame {
 	public void addFroggers() throws RemoteException {
 		System.out.println("Tamanho Array Pos: (4) " + FroggerClient.froggerGameRI.getObservers().size() + 2);
 		for(int i = 0; i< FroggerClient.froggerGameRI.getObservers().size() + 2; i++){
-			FROGGER_START_ARRAY.add(i, new Vector2D((float)(WORLD_WIDTH * (i / (FroggerClient.froggerGameRI.getObservers().size()+1))),WORLD_HEIGHT-32));
+			System.out.println(WORLD_WIDTH * (i / (FroggerClient.froggerGameRI.getObservers().size()+1)));
+			FROGGER_START_ARRAY.add(i, new Vector2D((WORLD_WIDTH * (i / (double)(FroggerClient.froggerGameRI.getObservers().size()+1))),WORLD_HEIGHT-32));
 			//System.out.println(FROGGER_START_ARRAY.get(i).toString());
 		}
 
 		for(int x = 0; x < FroggerClient.froggerGameRI.getObservers().size(); x++){
 			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x+1)));
 		}
+
 		frogCol = new FroggerCollisionDetection(FROGGERS.get(froggerNum));
-		audiofx = new AudioEfx(frogCol,FROGGERS.get(0));
+		audiofx = new AudioEfx(frogCol,FROGGERS.get(froggerNum));
 		//initializeLevel(1);
 	}
 }
