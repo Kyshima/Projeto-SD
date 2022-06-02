@@ -131,7 +131,6 @@ public class Main extends StaticScreenGame {
 		PaintableCanvas.loadDefaultFrames("col", 30, 30, 2, JIGSHAPE.RECTANGLE, null);
 		PaintableCanvas.loadDefaultFrames("colSmall", 4, 4, 2, JIGSHAPE.RECTANGLE, null);
 
-		audiofx = new AudioEfx(frogCol,frog);
 		ui = new FroggerUI(this);
 		wind = new WindGust();
 		hwave = new HeatWave();
@@ -340,7 +339,9 @@ public class Main extends StaticScreenGame {
 	    if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
 
 	    // HeatWave
-	    if ((m = hwave.genParticles(frog.getCenterPosition())) != null) particleLayer.add(m);
+		for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++){
+			if ((m = hwave.genParticles(FROGGERS.get(i).getCenterPosition())) != null) particleLayer.add(m);
+		}
 
 	    movingObjectsLayer.update(deltaMs);
 	    particleLayer.update(deltaMs);
@@ -373,9 +374,9 @@ public class Main extends StaticScreenGame {
 
 		// Enable/Disable cheating
 		if (keyboard.isPressed(KeyEvent.VK_C))
-			frog.cheating = true;
+			FROGGERS.get(0).cheating = true;
 		if (keyboard.isPressed(KeyEvent.VK_V))
-			frog.cheating = false;
+			FROGGERS.get(0).cheating = false;
 		if (keyboard.isPressed(KeyEvent.VK_0)) {
 			GameLevel = 10;
 			initializeLevel(GameLevel);
@@ -393,10 +394,10 @@ public class Main extends StaticScreenGame {
 			keyReleased = true;
 
 		if (listenInput) {
-		    if (downPressed) frog.moveDown();
-		    if (upPressed) frog.moveUp();
-		    if (leftPressed) frog.moveLeft();
-	 	    if (rightPressed) frog.moveRight();
+		    if (downPressed) FROGGERS.get(0).moveDown();
+		    if (upPressed) FROGGERS.get(0).moveUp();
+		    if (leftPressed) FROGGERS.get(0).moveLeft();
+	 	    if (rightPressed) FROGGERS.get(0).moveRight();
 
 	 	    if (keyPressed)
 	            listenInput = false;
@@ -446,7 +447,7 @@ public class Main extends StaticScreenGame {
 						System.out.println("Aqui 3");
 						for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++) {
 							System.out.println(FROGGER_START_ARRAY.get(i).toString());
-							frog.setPosition(FROGGER_START_ARRAY.get(i));
+							FROGGERS.get(i).setPosition(FROGGER_START_ARRAY.get(i+1));
 						}
 						System.out.println("Aqui 4");
 						GameState = GAME_PLAY;
@@ -487,7 +488,11 @@ public class Main extends StaticScreenGame {
 						}
 						wind.update(deltaMs);
 						hwave.update(deltaMs);
-						frog.update(deltaMs);
+						try{
+							for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++) {
+								FROGGERS.get(i).update(deltaMs);
+							}
+						}catch(RemoteException ignored){}
 						audiofx.update(deltaMs);
 						ui.update(deltaMs);
 
@@ -501,16 +506,21 @@ public class Main extends StaticScreenGame {
 						// Wind gusts work only when Frogger is on the river
 						if (frogCol.isInRiver())
 							wind.start(GameLevel);
-						wind.perform(frog, GameLevel, deltaMs);
 
-						// Do the heat wave only when Frogger is on hot pavement
-						if (frogCol.isOnRoad())
-							hwave.start(frog, GameLevel);
-						hwave.perform(frog, deltaMs, GameLevel);
+						try{
+							for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++) {
+								wind.perform(FROGGERS.get(i), GameLevel, deltaMs);
+
+								// Do the heat wave only when Frogger is on hot pavement
+								if (frogCol.isOnRoad())
+									hwave.start(FROGGERS.get(i), GameLevel);
+								hwave.perform(FROGGERS.get(i), deltaMs, GameLevel);
 
 
-						if (!frog.isAlive)
-							particleLayer.clear();
+								if (!FROGGERS.get(i).isAlive)
+									particleLayer.clear();
+							}
+						}catch(RemoteException ignored){}
 
 						goalmanager.update(deltaMs);
 
@@ -560,14 +570,18 @@ public class Main extends StaticScreenGame {
 		case GAME_PLAY:
 			backgroundLayer.render(rc);
 
-			if (frog.isAlive) {
-				movingObjectsLayer.render(rc);
-				//frog.collisionObjects.get(0).render(rc);
-				frog.render(rc);
-			} else {
-				frog.render(rc);
-				movingObjectsLayer.render(rc);
-			}
+			try {
+				for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++) {
+					if (FROGGERS.get(i).isAlive) {
+						movingObjectsLayer.render(rc);
+						//frog.collisionObjects.get(0).render(rc);
+						FROGGERS.get(i).render(rc);
+					} else {
+						FROGGERS.get(i).render(rc);
+						movingObjectsLayer.render(rc);
+					}
+				}
+			} catch (RemoteException ignored){}
 
 			particleLayer.render(rc);
 			ui.render(rc);
@@ -592,14 +606,17 @@ public class Main extends StaticScreenGame {
 	}
 
 	public void addFroggers() throws RemoteException {
+		System.out.println("Tamanho Array Pos: (4) " + FroggerClient.froggerGameRI.getObservers().size() + 2);
 		for(int i = 0; i< FroggerClient.froggerGameRI.getObservers().size() + 2; i++){
 			FROGGER_START_ARRAY.add(i, new Vector2D((float)(WORLD_WIDTH * (i / (FroggerClient.froggerGameRI.getObservers().size()+1))),WORLD_HEIGHT-32));
-			System.out.println(FROGGER_START_ARRAY.get(i).toString());
+			//System.out.println(FROGGER_START_ARRAY.get(i).toString());
 		}
+
 		for(int x = 0; x < FroggerClient.froggerGameRI.getObservers().size(); x++){
-			FROGGERS.add(x, new Frogger(this));
+			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x+1)));
 		}
 		frogCol = new FroggerCollisionDetection(FROGGERS.get(froggerNum));
+		audiofx = new AudioEfx(frogCol,FROGGERS.get(0));
 		//initializeLevel(1);
 	}
 }
