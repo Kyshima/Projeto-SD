@@ -103,6 +103,7 @@ public class Main extends StaticScreenGame {
 	private boolean listenInput = true;
 
 	public static int froggerNum = 0;
+	public static int gameNum;
 
 	private boolean enable = false;
 
@@ -114,7 +115,7 @@ public class Main extends StaticScreenGame {
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
 		String size = Integer.toString(FroggerGameImpl.observers.size());
-		froggerNum = FroggerClient.froggerGameRI.mainServer(new ObserverImpl(size, FroggerClient.m, FroggerClient.froggerGame));
+		froggerNum = FroggerClient.froggerGameRI.mainServer(new ObserverImpl(size, FroggerClient.m, FroggerClient.froggerGame, gameNum));
 
 		gameframe.setTitle("Frogger");
 
