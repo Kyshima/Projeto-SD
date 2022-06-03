@@ -22,23 +22,33 @@ public class State implements Serializable {
     public ArrayList<String> traffic;
     public ArrayList<String> update;
     public ArrayList<Integer> rand;
+    public ArrayList<Movement> mov;
 
     public State(ArrayList<String> t){
         traffic = t;
+        mov = new ArrayList<>();
     }
     public State(ArrayList<String> t, ArrayList<String> u){
         traffic = t;
         update = u;
+        mov = new ArrayList<>();
+    }
+
+    public State(ArrayList<String> traffic, ArrayList<String> update, ArrayList<Movement> mov) {
+        this.traffic = traffic;
+        this.update = update;
+        this.mov = mov;
     }
 
     public ArrayList<String> getTraffic() { return traffic; }
     public void setTraffic(ArrayList<String> t) { traffic = t; }
 
     public ArrayList<String> getUpdate() { return update; }
-
     public void setUpdate(ArrayList<String> update) { this.update = update; }
 
     public ArrayList<Integer> getRandom() { return rand; }
-
     public void setRandom(ArrayList<Integer> random) { this.rand = random; }
+
+    public ArrayList<Movement> getMov() { return mov; }
+    public void setMov(ArrayList<Movement> mov) { this.mov = mov; }
 }

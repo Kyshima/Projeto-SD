@@ -16,4 +16,8 @@ public interface ObserverRI extends Remote {
     public String getId() throws RemoteException;
 
     public State getLastObserverState() throws RemoteException;
+
+    public int getGame() throws RemoteException;
+
+    public void setGame(int game) throws RemoteException;
 }

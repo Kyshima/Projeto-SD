@@ -38,18 +38,15 @@ public class FroggerClient {
     public static FroggerGameRI froggerGameRI;
     public static FroggerGameImpl froggerGame;
 
-    static {
-        try {
+    static { try {
             froggerGameRI = new FroggerGameImpl();
         } catch (RemoteException e) {
             throw new RuntimeException(e);
-        }
-    }
+        } }
 
     public boolean f = false;
     public static int create = -1;
     public static Main m;
-    public static ObserverImpl observer;
 
 
     public static void main(String[] args) throws InterruptedException, RemoteException {

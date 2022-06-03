@@ -20,12 +20,14 @@ public interface FroggerGameRI extends Remote {
 
     public void notifyAllObservers() throws RemoteException;
 
-    void startGame() throws RemoteException;
-
     public GameSessionRI login(String usr, String pwd) throws RemoteException;
     public boolean register (String usr,String pwd) throws RemoteException;
 
     public int mainServer(ObserverRI observer) throws RemoteException;
 
     public ArrayList<ObserverRI> getObservers() throws RemoteException;
+
+    public void addGames() throws RemoteException;
+    public void removeGames() throws RemoteException;
+    public int listGames() throws RemoteException;
 }
