@@ -29,4 +29,5 @@ public interface FroggerGameRI extends Remote {
 
     public void addGames() throws RemoteException;
     public void removeGames() throws RemoteException;
+    public int listGames() throws RemoteException;
 }
