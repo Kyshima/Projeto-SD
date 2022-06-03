@@ -103,6 +103,7 @@ public class Main extends StaticScreenGame {
 	private boolean listenInput = true;
 
 	public static int froggerNum = 0;
+	public static int gameNum;
 
 	private boolean enable = false;
 
@@ -114,7 +115,7 @@ public class Main extends StaticScreenGame {
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
 
 		String size = Integer.toString(FroggerGameImpl.observers.size());
-		froggerNum = FroggerClient.froggerGameRI.mainServer(new ObserverImpl(size, FroggerClient.m, FroggerClient.froggerGame));
+		froggerNum = FroggerClient.froggerGameRI.mainServer(new ObserverImpl(size, FroggerClient.m, FroggerClient.froggerGame, gameNum));
 
 		gameframe.setTitle("Frogger");
 
@@ -406,7 +407,8 @@ public class Main extends StaticScreenGame {
 		if (listenInput) {
 			int froggers = FroggerClient.froggerGameRI.getObservers().size();
 		    if (downPressed) {
-				Movement m = new Movement(froggerNum,0);
+				//FroggerClient.froggerGameRI.getState().mov.add(FroggerClient.froggerGameRI.getState().mov.size(),new Movement(froggerNum,3));
+				Movement m = new Movement(froggerNum,0,0);
 				ArrayList<Movement> arr;
 				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
 					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
@@ -417,10 +419,9 @@ public class Main extends StaticScreenGame {
 				}
 				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
 				FroggerClient.froggerGameRI.setState(s);
-				System.out.println(FroggerClient.froggerGameRI.getState().mov.toString());
 			}
 		    if (upPressed) {
-				Movement m = new Movement(froggerNum,1);
+				Movement m = new Movement(froggerNum,1,0);
 				ArrayList<Movement> arr;
 				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
 					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
@@ -431,10 +432,9 @@ public class Main extends StaticScreenGame {
 				}
 				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
 				FroggerClient.froggerGameRI.setState(s);
-				System.out.println(FroggerClient.froggerGameRI.getState().mov.toString());
 			}
 		    if (leftPressed) {
-				Movement m = new Movement(froggerNum,2);
+				Movement m = new Movement(froggerNum,2,0);
 				ArrayList<Movement> arr;
 				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
 					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
@@ -445,10 +445,9 @@ public class Main extends StaticScreenGame {
 				}
 				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
 				FroggerClient.froggerGameRI.setState(s);
-				System.out.println(FroggerClient.froggerGameRI.getState().mov.toString());
 			}
 	 	    if (rightPressed) {
-				Movement m = new Movement(froggerNum,3);
+				Movement m = new Movement(froggerNum,3,0);
 				ArrayList<Movement> arr;
 				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
 					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
@@ -459,7 +458,6 @@ public class Main extends StaticScreenGame {
 				}
 				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
 				FroggerClient.froggerGameRI.setState(s);
-				System.out.println(FroggerClient.froggerGameRI.getState().mov.toString());
 			}
 
 	 	    if (keyPressed)
@@ -543,10 +541,9 @@ public class Main extends StaticScreenGame {
 
 		if(enable) {
 			try {
-				if (!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
-					System.out.print("cheio");
+				if (FroggerClient.froggerGameRI.getState().mov.size()>0) {
 					moveFroggers();
-				} else System.out.print("vrazio");
+				}
 			} catch (RemoteException e) {
 				throw new RuntimeException(e);
 			}
@@ -634,9 +631,11 @@ public class Main extends StaticScreenGame {
 	}
 
 	private void moveFroggers() throws RemoteException {
-		System.out.println("Tou no andanco");
-		int frogNum = FroggerClient.froggerGameRI.getState().mov.get(0).FroggerNum;
-		int dir = FroggerClient.froggerGameRI.getState().mov.get(0).Direction;
+		Movement m = FroggerClient.froggerGameRI.getState().mov.get(0);
+		int frogNum = m.FroggerNum;
+		int dir = m.Direction;
+		int total = m.TotalDone+1;
+		System.out.println("FN: "+frogNum+" D: "+dir+" T: "+total);
 
 		switch(dir){
 			case 0: FROGGERS.get(frogNum).moveDown(); break;
@@ -645,8 +644,10 @@ public class Main extends StaticScreenGame {
 			case 3: FROGGERS.get(frogNum).moveRight(); break;
 		}
 
-		FroggerClient.froggerGameRI.getState().mov.get(0).TotalDone++;
+		FroggerClient.froggerGameRI.getState().mov.get(0).setTotalDone(total);
+		System.out.println("S:"+FroggerClient.froggerGameRI.getState().mov.get(0).TotalDone+" C:"+total);
 		if(FroggerClient.froggerGameRI.getState().mov.get(0).TotalDone == FroggerClient.froggerGameRI.getObservers().size()){
+			System.out.println("eliminou");
 			FroggerClient.froggerGameRI.getState().mov.remove(0);
 		}
 	}
