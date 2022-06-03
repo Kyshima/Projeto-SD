@@ -139,7 +139,7 @@ public class Main extends StaticScreenGame {
 		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<>();
 		particleLayer = new AbstractBodyLayer.IterativeUpdate<>();
 
-		System.out.println(froggerNum);
+		System.out.println("FroggerNUM: "+froggerNum);
 		//initializeLevel(1);
 	}
 
@@ -457,8 +457,8 @@ public class Main extends StaticScreenGame {
 						levelTimer = DEFAULT_LEVEL_TIME;
 						//System.out.println("Aqui 3");
 						for (int i = 0; i < FroggerClient.froggerGameRI.getObservers().size(); i++) {
-							System.out.println(FROGGER_START_ARRAY.get(i).toString());
-							FROGGERS.get(froggerNum).setPosition(FROGGER_START_ARRAY.get(i));
+							//System.out.println(FROGGER_START_ARRAY.get(i).toString());
+							FROGGERS.get(froggerNum).setPosition(FROGGER_START_ARRAY.get(froggerNum+1));
 						}
 						//System.out.println("Aqui 4");
 						GameState = GAME_PLAY;
@@ -617,15 +617,14 @@ public class Main extends StaticScreenGame {
 	}
 
 	public void addFroggers() throws RemoteException {
-		System.out.println("Tamanho Array Pos: (4) " + FroggerClient.froggerGameRI.getObservers().size() + 2);
 		for(int i = 0; i< FroggerClient.froggerGameRI.getObservers().size() + 2; i++){
-			System.out.println(WORLD_WIDTH * (i / (FroggerClient.froggerGameRI.getObservers().size()+1)));
 			FROGGER_START_ARRAY.add(i, new Vector2D((WORLD_WIDTH * (i / (double)(FroggerClient.froggerGameRI.getObservers().size()+1))),WORLD_HEIGHT-32));
-			//System.out.println(FROGGER_START_ARRAY.get(i).toString());
+			System.out.println("Array pos " + i + ": " + FROGGER_START_ARRAY.get(i));
 		}
 
 		for(int x = 0; x < FroggerClient.froggerGameRI.getObservers().size(); x++){
 			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x+1)));
+			System.out.println("Frogger "+x+": "+FROGGERS.get(x).pos.getX());
 		}
 
 		frogCol = new FroggerCollisionDetection(FROGGERS.get(froggerNum));
