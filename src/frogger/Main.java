@@ -314,25 +314,35 @@ public class Main extends StaticScreenGame {
 			ArrayList<String> up = new ArrayList<>(s.getUpdate());
 			//System.out.println(s.getUpdate());
 			StringToUpdate(roadLine1,up.get(0));
+			roadLine1.update(deltaMs);
 			if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
 			StringToUpdate(roadLine2,up.get(1));
+			roadLine2.update(deltaMs);
 			if ((m = roadLine2.buildVehicle()) != null) movingObjectsLayer.add(m);
 			StringToUpdate(roadLine3,up.get(2));
+			roadLine3.update(deltaMs);
 			if ((m = roadLine3.buildVehicle()) != null) movingObjectsLayer.add(m);
 			StringToUpdate(roadLine4,up.get(3));
+			roadLine4.update(deltaMs);
 			if ((m = roadLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
 			StringToUpdate(roadLine5,up.get(4));
+			roadLine5.update(deltaMs);
 			if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
 
 			StringToUpdate(riverLine1,up.get(5));
+			riverLine1.update(deltaMs);
 			if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
 			StringToUpdate(riverLine2,up.get(6));
+			riverLine2.update(deltaMs);
 			if ((m = riverLine2.buildLongLogWithCrocodile(30)) != null) movingObjectsLayer.add(m);
 			StringToUpdate(riverLine3,up.get(7));
+			riverLine3.update(deltaMs);
 			if ((m = riverLine3.buildShortLogWithTurtles(50)) != null) movingObjectsLayer.add(m);
 			StringToUpdate(riverLine4,up.get(8));
+			riverLine4.update(deltaMs);
 			if ((m = riverLine4.buildLongLogWithCrocodile(20)) != null) movingObjectsLayer.add(m);
 			StringToUpdate(riverLine5,up.get(9));
+			riverLine5.update(deltaMs);
 			if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
 		}
 
