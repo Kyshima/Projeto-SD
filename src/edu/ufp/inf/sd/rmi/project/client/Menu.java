@@ -88,6 +88,8 @@ public class Menu extends JFrame implements ActionListener {
                             dispose();
                             fg.create = i;
                             fg.f = true;
+                            FroggerClient.froggerGameRI.getObservers().get(j).setGame(j);
+                            //FroggerClient.m.gameNum = j;
                         }
                     } catch (RemoteException ex) {
                         throw new RuntimeException(ex);
@@ -101,6 +103,11 @@ public class Menu extends JFrame implements ActionListener {
                 dispose();
                 fg.create = -1;
                 fg.f = true;
+                try {
+                    FroggerClient.froggerGameRI.addGames();
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
 }

@@ -47,7 +47,6 @@ public class FroggerClient {
     public boolean f = false;
     public static int create = -1;
     public static Main m;
-    public static ObserverImpl observer;
 
 
     public static void main(String[] args) throws InterruptedException, RemoteException {

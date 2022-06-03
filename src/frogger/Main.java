@@ -103,7 +103,7 @@ public class Main extends StaticScreenGame {
 	private boolean listenInput = true;
 
 	public static int froggerNum = 0;
-	public static int gameNum;
+	public int gameNum;
 
 	private boolean enable = false;
 
@@ -113,6 +113,9 @@ public class Main extends StaticScreenGame {
 	public Main () throws RemoteException {
 
 		super(WORLD_WIDTH, WORLD_HEIGHT, false);
+
+		gameNum = FroggerClient.froggerGameRI.listGames();
+		System.out.println("Games: "+gameNum);
 
 		String size = Integer.toString(FroggerGameImpl.observers.size());
 		froggerNum = FroggerClient.froggerGameRI.mainServer(new ObserverImpl(size, FroggerClient.m, FroggerClient.froggerGame, gameNum));
@@ -631,7 +634,8 @@ public class Main extends StaticScreenGame {
 	}
 
 	private void moveFroggers() throws RemoteException {
-		Movement m = FroggerClient.froggerGameRI.getState().mov.get(0);
+		State s = FroggerClient.froggerGameRI.getState();
+		Movement m = s.mov.get(0);
 		int frogNum = m.FroggerNum;
 		int dir = m.Direction;
 		int total = m.TotalDone+1;
@@ -644,12 +648,14 @@ public class Main extends StaticScreenGame {
 			case 3: FROGGERS.get(frogNum).moveRight(); break;
 		}
 
-		FroggerClient.froggerGameRI.getState().mov.get(0).setTotalDone(total);
-		System.out.println("S:"+FroggerClient.froggerGameRI.getState().mov.get(0).TotalDone+" C:"+total);
-		if(FroggerClient.froggerGameRI.getState().mov.get(0).TotalDone == FroggerClient.froggerGameRI.getObservers().size()){
+		s.mov.get(0).setTotalDone(total);
+		System.out.println("S:"+ s.mov.get(0).TotalDone+" C:"+total);
+		if(s.mov.get(0).TotalDone == FroggerClient.froggerGameRI.getObservers().size()){
 			System.out.println("eliminou");
-			FroggerClient.froggerGameRI.getState().mov.remove(0);
+			s.mov.remove(0);
 		}
+
+		FroggerClient.froggerGameRI.setState(s);
 	}
 
 

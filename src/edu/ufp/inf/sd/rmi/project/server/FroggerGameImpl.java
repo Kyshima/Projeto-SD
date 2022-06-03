@@ -1,7 +1,6 @@
 package edu.ufp.inf.sd.rmi.project.server;
 
 import edu.ufp.inf.sd.rmi.project.client.ObserverRI;
-import frogger.Main;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,7 +15,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     public HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
     public static ArrayList<ObserverRI> observers = new ArrayList();
 
-    public int games=0;
+    public int games;
     int numero = 0;
 
 
@@ -100,5 +99,9 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
     @Override
     public void removeGames() throws RemoteException{
         games--;
+    }
+
+    public int listGames() throws RemoteException{
+        return games;
     }
 }
