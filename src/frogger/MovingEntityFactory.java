@@ -26,6 +26,7 @@
 package frogger;
 import jig.engine.util.Vector2D;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MovingEntityFactory {
@@ -50,6 +51,8 @@ public class MovingEntityFactory {
 	private int padding = 64; // distance between 2 objects in a traffic/river line
 
 	private int[] creationRate = new int[4];
+
+	public static ArrayList<Integer> rands;
 
 	/**
 	 * Moving Entity factory
