@@ -11,7 +11,7 @@ public interface ObserverRI extends Remote {
 
     //public ObserverImpl(String id, Main m, FroggerGameRI frogger) throws RemoteException;
 
-    void update() throws RemoteException;
+    void update(State s) throws RemoteException;
 
     public String getId() throws RemoteException;
 

@@ -14,11 +14,14 @@ public interface FroggerGameRI extends Remote {
 
     void detach(ObserverRI observerRI) throws RemoteException;
 
-    State getState() throws RemoteException;
-
+    /*State getState() throws RemoteException;
     void setState(State state) throws RemoteException;
+    public void notifyAllObservers() throws RemoteException;*/
 
-    public void notifyAllObservers() throws RemoteException;
+    public void update(int game, State s) throws RemoteException;
+    public State getUpdate(int game) throws RemoteException;
+
+    public ArrayList<State> getAllUpdates(int game) throws RemoteException;
 
     public GameSessionRI login(String usr, String pwd) throws RemoteException;
     public boolean register (String usr,String pwd) throws RemoteException;

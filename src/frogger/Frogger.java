@@ -320,7 +320,7 @@ public class Frogger extends MovingEntity {
 		updateFollow(deltaMs);
 		setFrame(currentFrame);
 		
-		// Level timer stuff
+		/*// Level timer stuff
 		deltaTime += deltaMs;
 		if (deltaTime > 1000) {
 			deltaTime = 0;
@@ -328,6 +328,6 @@ public class Frogger extends MovingEntity {
 		}
 		
 		if (game.levelTimer <= 0)
-			die();
+			die();*/
 	}
 }
