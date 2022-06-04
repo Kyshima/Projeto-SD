@@ -6,7 +6,6 @@
 package edu.ufp.inf.sd.rabbitmqservices.project.producer;
 
 import com.rabbitmq.client.*;
-import edu.ufp.inf.sd.rabbitmqservices.project.consumer.FroggerServer;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 import froggermq.*;
 
@@ -69,7 +68,8 @@ public class FroggerClient {
 
             //String message = "Hello...";
             //Receive message to send via argv[3]
-            String message= "Criar jogo, 1, 1";
+            String message= RabbitUtils.getMessage(args, 3);
+            System.out.println(message);
 
             /* To avoid loosing queues when rabbitmq crashes, mark messages as persistent by setting
              MessageProperties (which implements BasicProperties) to value PERSISTENT_TEXT_PLAIN. */
@@ -81,8 +81,8 @@ public class FroggerClient {
 
         }
 
-
-        String exchangeName = "Exchange";
+        String[] a = args[3].split("!");
+        String exchangeName = "Exchange " + Integer.parseInt(a[1]);
         Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
         Channel channel=RabbitUtils.createChannel2Server(connection);
         // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
@@ -96,9 +96,9 @@ public class FroggerClient {
         /*Create a non-durable, exclusive, autodelete queue with a generated name.
          The string queueName will contains a random queue name (e.g. amq.gen-JZTY20BRgKO-HjmUJj0wLg) */
 
-        //String queue = channel.queueDeclare().getQueue();
-        String queue = "To client " + FroggerServer.num++;
-        channel.queueDeclare(queue, true, false, false, null);
+        String queue = channel.queueDeclare().getQueue();
+        /*String queue = "To client";
+        channel.queueDeclare(queue, true, false, false, null);*/
 
 
         /*Create binding: tell exchange to send messages to a queue;
@@ -122,7 +122,7 @@ public class FroggerClient {
         };
         channel.basicConsume(queue, true, deliverCallback, cancelCallback);
 
-        //DO NOT close connection either channel otherwise it will terminate consumer
+            //DO NOT close connection either channel otherwise it will terminate consumer
 
         /* Lastly, we close the channel and the connection... not anymore since try-with-resources closes resources! */
         //channel.close();
@@ -132,6 +132,9 @@ public class FroggerClient {
     private static void doWork(String task) {
         System.out.println(task);
         if (task.equals("Jogo criado")) {
+            Main f = new Main();
+            f.run();
+        } else if (task.equals("Game joined")) {
             Main f = new Main();
             f.run();
         }
