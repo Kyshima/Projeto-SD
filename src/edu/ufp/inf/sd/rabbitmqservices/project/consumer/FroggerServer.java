@@ -5,13 +5,17 @@
  */
 package edu.ufp.inf.sd.rabbitmqservices.project.consumer;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
+import froggermq.Main;
 
-import java.io.FileOutputStream;
-
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -87,15 +91,21 @@ import java.io.FileOutputStream;
  * 
  * @author rui
  */
-public class Worker {
+public class FroggerServer {
+    public static String host;
+    public static int port;
+
+    public static int num = -1;
+
 
     public static void main(String[] argv) throws Exception {
+
         try {
             RabbitUtils.printArgs(argv);
 
             //Read args passed via shell command
-            String host=argv[0];
-            int port=Integer.parseInt(argv[1]);
+            host=argv[0];
+            port=Integer.parseInt(argv[1]);
             String queueName=argv[2];
 
             /* Open a connection and a channel, and declare the queue from which to consume.
@@ -179,5 +189,37 @@ public class Worker {
     /** Fake a second of work for every dot in the message body */
     private static void doWork(String task) throws InterruptedException {
         System.out.println(task);
+        String[] a = task.split(",", 0);
+        if(a[0].equals("Criar jogo"))
+        {
+            /*Main f = new Main();
+            f.run();*/
+            String exchangeName = "Exchange";
+            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+
+                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                //channel.queueDeclare(queueName, false, false, false, null);
+                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                //Gets the message
+                String message = "Jogo criado";
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                String routingKey="";
+                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                System.out.println(" [x] Sent '" + message + "'");
+
+            } catch (IOException | TimeoutException ignored) {
+
+            }
+        }
     }
 }

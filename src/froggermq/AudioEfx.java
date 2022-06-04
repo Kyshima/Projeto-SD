@@ -25,14 +25,15 @@
 
 package froggermq;
 
+import java.util.List;
+import java.util.Random;
+import java.util.LinkedList;
+
+
 import jig.engine.ResourceFactory;
 import jig.engine.audio.AudioState;
 import jig.engine.audio.jsound.AudioClip;
 import jig.engine.audio.jsound.AudioStream;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Controls the audio effects
@@ -57,7 +58,7 @@ public class AudioEfx {
 			Main.RSC_PATH + "jump.wav");
 	
 	public static AudioClip frogDie = ResourceFactory.getFactory().getAudioClip(
-			Main.RSC_PATH + "frog_die.ogg");
+			Main.RSC_PATH + "frog_die.ogg");	
 
 	public static AudioClip frogGoal = ResourceFactory.getFactory().getAudioClip(
 			Main.RSC_PATH + "goal.ogg");
@@ -72,7 +73,7 @@ public class AudioEfx {
 			Main.RSC_PATH + "match.ogg");
 	
 	public static AudioClip bonus = ResourceFactory.getFactory().getAudioClip(
-			Main.RSC_PATH + "bonus.ogg");
+			Main.RSC_PATH + "bonus.ogg");	
 	
 	public static AudioClip siren = ResourceFactory.getFactory().getAudioClip(
 			A_FX_PATH + "siren.ogg");

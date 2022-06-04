@@ -2,5 +2,4 @@ out/
 src/edu/ufp/inf/sd/rmi/project/runscripts/
 src/edu/ufp/inf/sd/rabbitmqservices/project/runscripts/
 .idea/
-src/edu/ufp/inf/sd/rabbitmqservices/project/runscripts/setenv.bat
 

@@ -24,6 +24,7 @@
  */
 
 package froggermq;
+
 import jig.engine.util.Vector2D;
   
 public class Crocodile extends MovingEntity {
