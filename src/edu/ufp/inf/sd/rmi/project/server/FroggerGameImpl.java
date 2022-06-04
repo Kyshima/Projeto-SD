@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameRI {
 
-    public static State subjectState;
+    //public static State subjectState;
     public final DBMockup dbMockup = new DBMockup();
     public HashMap<String, GameSessionImpl> session = new HashMap<String, GameSessionImpl>();
     public static ArrayList<ObserverRI> observers = new ArrayList();
@@ -39,7 +39,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
         observers.remove(observerRI);
     }
 
-    @Override
+    /*@Override
     public State getState() throws RemoteException {
         return subjectState;
     }
@@ -54,7 +54,7 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
         for (ObserverRI o : observers) {
             o.update();
         }
-    }
+    }*/
 
     @Override
     public GameSessionRI login(String usr, String pwd) throws RemoteException {
@@ -103,5 +103,26 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     public int listGames() throws RemoteException{
         return games;
+    }
+
+    @Override
+    public void update(int game, State s) throws RemoteException {
+        for (ObserverRI o : observers) {
+            if(o.getGame() == game)
+            {
+                o.update(s);
+            }
+        }
+    }
+
+    public State getUpdate(int game) throws RemoteException
+    {
+        for(ObserverRI o : observers) {
+            if(o.getGame() == game)
+            {
+                return o.getLastObserverState();
+            }
+        }
+        return null;
     }
 }

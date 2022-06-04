@@ -321,13 +321,6 @@ public class Frogger extends MovingEntity {
 		setFrame(currentFrame);
 		
 		// Level timer stuff
-		deltaTime += deltaMs;
-		if (deltaTime > 1000) {
-			deltaTime = 0;
-			game.levelTimer--;
-		}
-		
-		if (game.levelTimer <= 0)
-			die();
+
 	}
 }

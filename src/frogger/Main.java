@@ -192,8 +192,8 @@ public class Main extends StaticScreenGame {
 			for(int i=0;i<size;i++){
 				if(FroggerGameImpl.observers.get(i)==null) size++;
 				else{
-					FroggerClient.froggerGameRI.setState(s);
-					FroggerClient.froggerGameRI.getState().rand = rd;
+					FroggerClient.froggerGameRI.update(gameNum, s);
+					//FroggerClient.froggerGameRI.getState().rand = rd;
 					//System.out.println("traffic " + FroggerClient.froggerGameRI.getState().getTraffic());
 				}
 			}
@@ -203,11 +203,11 @@ public class Main extends StaticScreenGame {
 				cycleTraffic(10);
 
 		} else {
-			State s = FroggerClient.froggerGameRI.getState();
+			State s = FroggerClient.froggerGameRI.getUpdate(gameNum);
 			//System.out.println(FroggerClient.froggerGameRI.getState());
 			//System.out.println(s.getTraffic());
 
-			MovingEntityFactory.rands = FroggerClient.froggerGameRI.getState().rand;
+			//MovingEntityFactory.rands = FroggerClient.froggerGameRI.getState().rand;
 			ArrayList<String> lines = new ArrayList<>(s.getTraffic());
 
 			roadLine1 = StringToMovEnt(lines.get(0));
@@ -303,15 +303,14 @@ public class Main extends StaticScreenGame {
 			for(int i=0;i<size;i++){
 				if(FroggerGameImpl.observers.get(i)==null) size++;
 				else{
-					State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(), up);
-					FroggerClient.froggerGameRI.setState(s);
-					FroggerClient.froggerGameRI.notifyAllObservers();
+					State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(), up);
+					FroggerClient.froggerGameRI.update(gameNum,s);
 					//System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
 				}
 			}
 		} else {
 			//System.out.println(FroggerClient.froggerGameRI.getState().getTraffic());
-			State s = FroggerClient.froggerGameRI.getState();
+			State s = FroggerClient.froggerGameRI.getUpdate(gameNum);
 			//System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
 			//System.out.println(s.getTraffic());
 			ArrayList<String> up = new ArrayList<>(s.getUpdate());
@@ -413,54 +412,54 @@ public class Main extends StaticScreenGame {
 				//FroggerClient.froggerGameRI.getState().mov.add(FroggerClient.froggerGameRI.getState().mov.size(),new Movement(froggerNum,3));
 				Movement m = new Movement(froggerNum,0,0);
 				ArrayList<Movement> arr;
-				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
-					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
+				if(!FroggerClient.froggerGameRI.getUpdate(gameNum).mov.isEmpty()) {
+					arr = new ArrayList<>(FroggerClient.froggerGameRI.getUpdate(gameNum).mov);
 					arr.add(m);
 				} else {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
-				FroggerClient.froggerGameRI.setState(s);
+				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (upPressed) {
 				Movement m = new Movement(froggerNum,1,0);
 				ArrayList<Movement> arr;
-				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
-					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
+				if(!FroggerClient.froggerGameRI.getUpdate(gameNum).mov.isEmpty()) {
+					arr = new ArrayList<>(FroggerClient.froggerGameRI.getUpdate(gameNum).mov);
 					arr.add(m);
 				} else {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
-				FroggerClient.froggerGameRI.setState(s);
+				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (leftPressed) {
 				Movement m = new Movement(froggerNum,2,0);
 				ArrayList<Movement> arr;
-				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
-					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
+				if(!FroggerClient.froggerGameRI.getUpdate(gameNum).mov.isEmpty()) {
+					arr = new ArrayList<>(FroggerClient.froggerGameRI.getUpdate(gameNum).mov);
 					arr.add(m);
 				} else {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
-				FroggerClient.froggerGameRI.setState(s);
+				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 	 	    if (rightPressed) {
 				Movement m = new Movement(froggerNum,3,0);
 				ArrayList<Movement> arr;
-				if(!FroggerClient.froggerGameRI.getState().mov.isEmpty()) {
-					arr = new ArrayList<>(FroggerClient.froggerGameRI.getState().mov);
+				if(!FroggerClient.froggerGameRI.getUpdate(gameNum).mov.isEmpty()) {
+					arr = new ArrayList<>(FroggerClient.froggerGameRI.getUpdate(gameNum).mov);
 					arr.add(m);
 				} else {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getState().getTraffic(),FroggerClient.froggerGameRI.getState().getUpdate(),arr);
-				FroggerClient.froggerGameRI.setState(s);
+				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 
 	 	    if (keyPressed)
@@ -544,7 +543,8 @@ public class Main extends StaticScreenGame {
 
 		if(enable) {
 			try {
-				if (FroggerClient.froggerGameRI.getState().mov.size()>0) {
+				if (FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size()>0) {
+					System.out.println(FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size());
 					moveFroggers();
 				}
 			} catch (RemoteException e) {
@@ -604,6 +604,15 @@ public class Main extends StaticScreenGame {
 							particleLayer.clear();
 						}
 
+						FROGGERS.get(froggerNum).deltaTime += deltaMs;
+						if (FROGGERS.get(froggerNum).deltaTime > 1000) {
+							FROGGERS.get(froggerNum).deltaTime = 0;
+							levelTimer--;
+						}
+
+						if (levelTimer <= 0)
+							FROGGERS.get(froggerNum).die();
+
 						if (GameLives < 1) {
 							GameState = GAME_OVER;
 						}
@@ -634,8 +643,9 @@ public class Main extends StaticScreenGame {
 	}
 
 	private void moveFroggers() throws RemoteException {
-		State s = FroggerClient.froggerGameRI.getState();
-		Movement m = s.mov.get(0);
+		State s = FroggerClient.froggerGameRI.getUpdate(gameNum);
+		int temp = s.mov.size()-1;
+		Movement m = s.mov.get(temp);
 		int frogNum = m.FroggerNum;
 		int dir = m.Direction;
 		int total = m.TotalDone+1;
@@ -648,14 +658,14 @@ public class Main extends StaticScreenGame {
 			case 3: FROGGERS.get(frogNum).moveRight(); break;
 		}
 
-		s.mov.get(0).setTotalDone(total);
-		System.out.println("S:"+ s.mov.get(0).TotalDone+" C:"+total);
-		if(s.mov.get(0).TotalDone == FroggerClient.froggerGameRI.getObservers().size()){
+		s.mov.get(temp).setTotalDone(total);
+		//System.out.println("S:"+ s.mov.get(0).TotalDone+" C:"+total);
+		if(s.mov.get(temp).TotalDone == FroggerClient.froggerGameRI.getObservers().size()){
 			System.out.println("eliminou");
-			s.mov.remove(0);
+			s.mov.remove(temp);
 		}
 
-		FroggerClient.froggerGameRI.setState(s);
+		FroggerClient.froggerGameRI.update(gameNum, s);
 	}
 
 
@@ -716,6 +726,7 @@ public class Main extends StaticScreenGame {
 
 		frogCol = new FroggerCollisionDetection(FROGGERS.get(froggerNum));
 		audiofx = new AudioEfx(frogCol,FROGGERS.get(froggerNum));
+
 		//initializeLevel(1);
 	}
 }

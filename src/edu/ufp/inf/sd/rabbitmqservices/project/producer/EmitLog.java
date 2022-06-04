@@ -4,6 +4,7 @@ import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
+import frogger.Main;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -69,6 +70,8 @@ public class EmitLog {
 
             //Gets the message
             String message = RabbitUtils.getMessage(args, 3);
+            /*Main f = new Main();
+            f.run();*/
 
 
             /* Publish a message to the logs_exchange instead of the nameless one

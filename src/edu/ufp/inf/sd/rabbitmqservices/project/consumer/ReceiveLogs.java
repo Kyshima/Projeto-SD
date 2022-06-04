@@ -21,6 +21,7 @@ package edu.ufp.inf.sd.rabbitmqservices.project.consumer;
 
 import com.rabbitmq.client.*;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
+import frogger.Main;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -74,6 +75,8 @@ public class ReceiveLogs {
             DeliverCallback deliverCallback=(consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), "UTF-8");
                 System.out.println(" [X] Consumer tag [" + consumerTag + "] - Received '" + message + "'");
+                Main f = new Main();
+                f.run();
             };
             CancelCallback cancelCallback = (consumerTag) -> {
                 System.out.println(" [X] Consumer tag [" + consumerTag + "] - Cancel Callback invoked!");
