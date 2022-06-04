@@ -26,62 +26,40 @@
 package froggermq;
 import jig.engine.util.Vector2D;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class MovingEntityFactory {
-
+	
 	public static int  CAR   = 0;
 	public static int  TRUCK = 1;
 	public static int  SLOG  = 2;
 	public static int  LLOG  = 3;
-
+	
 	public Vector2D position;
 	public Vector2D velocity;
-
-	public long time;
-
+	
 	public Random r;
-
-	public long updateMs = 0;
-	public long copCarDelay = 0;
-
+	
+	private long updateMs = 0;
+	private long copCarDelay = 0;
+	
 	private long rateMs = 1000;
 
 	private int padding = 64; // distance between 2 objects in a traffic/river line
-
-	private int[] creationRate = new int[4];
-
-	public static ArrayList<Integer> rands;
-
+	
+	private int[] creationRate = new int[4];	
+	
 	/**
 	 * Moving Entity factory
-	 *
-	 * pos
-	 * v
-	 * rate
+	 * 
+	 * @param pos
+	 * @param v
+	 * @param rate
 	 */
 	public MovingEntityFactory(Vector2D pos, Vector2D v) {
 		position = pos;
 		velocity = v;
-		time = System.currentTimeMillis();
-		r = new Random(time);
-
-		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) /
-				Math.abs(velocity.getX()));
-		creationRate[TRUCK] = (int) Math.round(((Truck.LENGTH) + padding + 32) /
-				Math.abs(velocity.getX()));
-		creationRate[SLOG]  = (int) Math.round(((ShortLog.LENGTH) + padding - 32) /
-				Math.abs(velocity.getX()));
-		creationRate[LLOG]  = (int) Math.round(((LongLog.LENGTH) + padding - 32) /
-				Math.abs(velocity.getX()));
-	}
-
-	public MovingEntityFactory(Vector2D pos, Vector2D v, long t) {
-		position = pos;
-		velocity = v;
-		time = t;
-		r = new Random(time);
+		r = new Random(System.currentTimeMillis());
 
 		creationRate[CAR]   = (int) Math.round(((Car.LENGTH) + padding + 32) /
 				Math.abs(velocity.getX()));
@@ -171,10 +149,5 @@ public class MovingEntityFactory {
 	public void update(final long deltaMs) {
 		updateMs += deltaMs;
 		copCarDelay += deltaMs;
-	}
-
-	public void update(long up, long cop) {
-		updateMs = up;
-		copCarDelay = cop;
 	}
 }

@@ -67,10 +67,6 @@ public class Frogger extends MovingEntity {
     public boolean hw_hasMoved = false;
     
     private Main game;
-
-	public Vector2D pos;
-
-	public int frognum;
     
     /**
      * Build frogger!
@@ -81,16 +77,7 @@ public class Frogger extends MovingEntity {
 		resetFrog();
 		collisionObjects.add(new CollisionObject(position));
 	}
-
-	public Frogger (Main g, Vector2D v) {
-		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
-		game = g;
-		pos = v;
-		resetFrog();
-		collisionObjects.add(new CollisionObject(position));
-		frognum = Main.froggerNum;
-	}
-
+	
 	/**
 	 * Reset the Frogger to default state and position
 	 */
@@ -99,7 +86,7 @@ public class Frogger extends MovingEntity {
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
-		position = pos;
+		position = Main.FROGGER_START;
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
 	
@@ -250,7 +237,7 @@ public class Frogger extends MovingEntity {
 	
 	/**
 	 * Effect of Heat Wave on Frogger
-	 * @param rDir
+	 * @param randDuration
 	 */
 	public void randomJump(final int rDir) {
 		switch(rDir) {
@@ -321,6 +308,13 @@ public class Frogger extends MovingEntity {
 		setFrame(currentFrame);
 		
 		// Level timer stuff
-
+		deltaTime += deltaMs;
+		if (deltaTime > 1000) {
+			deltaTime = 0;
+			game.levelTimer--;
+		}
+		
+		if (game.levelTimer <= 0)
+			die();
 	}
 }

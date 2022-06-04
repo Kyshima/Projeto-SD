@@ -25,11 +25,17 @@
 
 package froggermq;
 
-import jig.engine.*;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.AffineTransform;
 import java.util.List;
+
+
+import jig.engine.FontResource;
+import jig.engine.ImageResource;
+import jig.engine.RenderingContext;
+import jig.engine.ResourceFactory;
+import jig.engine.ViewableLayer;
 
 public class FroggerUI implements ViewableLayer {
 	List<ImageResource> heart = ResourceFactory.getFactory().getFrames(
@@ -108,7 +114,7 @@ public class FroggerUI implements ViewableLayer {
 		if (game.GameState == Main.GAME_FINISH_LEVEL) {
 			 levelFinish.get(0).render(rc, 
 						AffineTransform.getTranslateInstance(
-								(Main.WORLD_WIDTH - levelFinish.get(0).getWidth())/2, 150));
+								(Main.WORLD_WIDTH - levelFinish.get(0).getWidth())/2, 150));		 
 		}
 	}
 

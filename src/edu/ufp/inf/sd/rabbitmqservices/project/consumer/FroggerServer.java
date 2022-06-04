@@ -5,13 +5,16 @@
  */
 package edu.ufp.inf.sd.rabbitmqservices.project.consumer;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
 import edu.ufp.inf.sd.rabbitmqservices.util.RabbitUtils;
 
-import java.io.FileOutputStream;
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -19,14 +22,14 @@ import java.io.FileOutputStream;
  *  One of the advantages of using a Task Queue is the ability to easily
  *  parallelise work. If we are building up a backlog of work, we can just add
  *  workers and scale easily.
- * 
+ *
  *  Run 2 worker instances at the same time (one on each shell).
  *  They will both get messages from the queue, since, by default, RabbitMQ will
  *  send each message to the next client (in sequence).
  *  On average, every client will get the same number of messages. This way of
  *  distributing messages is called round-robin (try this out with 3+ workers).
- * 
- * 
+ *
+ *
  * Message acknowledgment:
  *  With current channel queue, once RabbitMQ delivers a message to the customer it
  *  immediately marks it for deletion. In this case, if you kill a worker we
@@ -48,14 +51,14 @@ import java.io.FileOutputStream;
  *  the client dies. It is fine even if processing a message takes a long time.
  *  "Manual message acknowledgments" are turned on by default (we may explicitly
  *  turned them off via the autoAck=true flag).
- * 
+ *
  * Forgotten acknowledgment:
  *  To debug lack of ack use rabbitmqctl to print the messages_unacknowledged field:
  *    - Linux/Mac:
  *     sudo rabbitmqctl list_queues name messages_ready messages_unacknowledged
  *    - Win:
  *     rabbitmqctl.bat list_queues name messages_ready messages_unacknowledged
- * 
+ *
  * Message durability:
  *  Messages/Tasks will be lost if RabbitMQ server stops, because when RabbitMQ
  *  quits or crashes it will forget the queues and messages unless you tell it not to.
@@ -67,7 +70,7 @@ import java.io.FileOutputStream;
  *
  *  NB: persistence guarantees ARE NOT strong, i.e., may be cached and
  *  not immediately saved/persisted.
- * 
+ *
  * Fair dispatch:
  *  RabbitMQ dispatches a message when the message enters the queue. It does not
  *  look at the number of unacknowledged messages for a client. It just blindly
@@ -84,18 +87,24 @@ import java.io.FileOutputStream;
  *  1. Create a LogWorker for appending the message to a log file;
  *  2. Create a MailWorker for sending an email (use javamail API
  *  <https://javaee.github.io/javamail/>)
- * 
+ *
  * @author rui
  */
-public class Worker {
+public class FroggerServer {
+    public static String host;
+    public static int port;
+
+    public static ArrayList <String> exchange = new ArrayList<>();
+
 
     public static void main(String[] argv) throws Exception {
+
         try {
             RabbitUtils.printArgs(argv);
 
             //Read args passed via shell command
-            String host=argv[0];
-            int port=Integer.parseInt(argv[1]);
+            host=argv[0];
+            port=Integer.parseInt(argv[1]);
             String queueName=argv[2];
 
             /* Open a connection and a channel, and declare the queue from which to consume.
@@ -179,5 +188,67 @@ public class Worker {
     /** Fake a second of work for every dot in the message body */
     private static void doWork(String task) throws InterruptedException {
         System.out.println(task);
+        String[] a = task.split("!", 0);
+        if(a[0].equals("criar"))
+        {
+            /*Main f = new Main();
+            f.run();*/
+            String exchangeName = "Exchange " + Integer.parseInt(a[1]);
+            exchange.add(exchangeName);
+            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+
+                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                //channel.queueDeclare(queueName, false, false, false, null);
+                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                //Gets the message
+                String message = "Jogo criado";
+                TimeUnit.SECONDS.sleep(2);
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                String routingKey="";
+                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                System.out.println(" [x] Sent '" + message + "'");
+
+            } catch (IOException | TimeoutException ignored) {
+
+            }
+        } else if (a[0].equals("juntar")) {
+            String exchangeName = exchange.get(Integer.parseInt(a[1])-1);
+            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+
+                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                //channel.queueDeclare(queueName, false, false, false, null);
+                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                //Gets the message
+                String message = "Game joined";
+                TimeUnit.SECONDS.sleep(2);
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                String routingKey="";
+                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                System.out.println(" [x] Sent '" + message + "'");
+
+            } catch (IOException | TimeoutException ignored) {
+
+            }
+        }
     }
 }
