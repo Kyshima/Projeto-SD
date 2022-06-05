@@ -24,9 +24,12 @@
  */
 
 package froggermq;
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 
+import edu.ufp.inf.sd.rabbitmqservices.project.producer.FroggerClient;
 import jig.engine.physics.AbstractBodyLayer;
 import jig.engine.util.Vector2D;
 
@@ -34,7 +37,9 @@ public class FroggerCollisionDetection  {
 
 	public Frogger frog;
 	public CollisionObject frogSphere;
-	
+
+	public static int n;
+
 	// River and Road bounds, all we care about is Y axis in this game
     public int river_y0 = 1*32;
     public int river_y1 = river_y0 + 6* 32;
@@ -43,10 +48,11 @@ public class FroggerCollisionDetection  {
 	
 	public FroggerCollisionDetection (Frogger f) {
 		frog = f;
+		n=frog.frognum;
 		frogSphere = frog.getCollisionObjects().get(0);
 	}
 	
-	public void testCollision(AbstractBodyLayer<MovingEntity> l) {
+	public void testCollision(AbstractBodyLayer<MovingEntity> l) throws IOException, TimeoutException {
 
 		if (!frog.isAlive)
 			return;
@@ -55,7 +61,7 @@ public class FroggerCollisionDetection  {
 		double dist2;
 		
 		if (isOutOfBounds()) {
-			frog.die();
+			FroggerClient.kill_frogger(n);
 			return;
 		}
 		
@@ -77,7 +83,7 @@ public class FroggerCollisionDetection  {
 		}
 		
 		if (isInRiver()) {
-			frog.die();
+			FroggerClient.kill_frogger(n);
 			return;
 		}
 		
@@ -92,9 +98,7 @@ public class FroggerCollisionDetection  {
 		Vector2D frogPos = frogSphere.getCenterPosition();
 		if (frogPos.getY() < 32 || frogPos.getY() > Main.WORLD_HEIGHT)
 			return true;
-		if (frogPos.getX() < 0 || frogPos.getX() > Main.WORLD_WIDTH)
-			return true;
-		return false;
+		return frogPos.getX() < 0 || frogPos.getX() > Main.WORLD_WIDTH;
 	}
 	
 	/**
@@ -104,10 +108,7 @@ public class FroggerCollisionDetection  {
 	public boolean isInRiver() {
 		Vector2D frogPos = frogSphere.getCenterPosition();
 
-		if (frogPos.getY() > river_y0 && frogPos.getY() < river_y1)
-			return true;
-
-		return false;
+		return frogPos.getY() > river_y0 && frogPos.getY() < river_y1;
 	}
 	
 	/**
@@ -117,21 +118,18 @@ public class FroggerCollisionDetection  {
 	public boolean isOnRoad() {
 		Vector2D frogPos = frogSphere.getCenterPosition();
 
-		if (frogPos.getY() > road_y0 && frogPos.getY() < road_y1)
-			return true;
-
-		return false;
+		return frogPos.getY() > road_y0 && frogPos.getY() < road_y1;
 	}
 	
-	public void collide(MovingEntity m, CollisionObject s) {
+	public void collide(MovingEntity m, CollisionObject s) throws IOException, TimeoutException {
 
 		if (m instanceof Truck || m instanceof Car || m instanceof CopCar) {
-			frog.die();
+			FroggerClient.kill_frogger(n);
 		}
 		
 		if (m instanceof Crocodile) {
 			if (s == ((Crocodile) m).head)
-				frog.die();
+				FroggerClient.kill_frogger(n);
 			else
 				frog.follow(m);
 		}
@@ -142,8 +140,8 @@ public class FroggerCollisionDetection  {
 		}
 		
 		if (m instanceof Turtles) {
-			if(((Turtles) m).isUnderwater == true)
-				frog.die();
+			if(((Turtles) m).isUnderwater)
+				FroggerClient.kill_frogger(n);
 			frog.follow(m);
 		}
 		

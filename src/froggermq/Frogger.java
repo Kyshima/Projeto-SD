@@ -25,7 +25,11 @@
 
 package froggermq;
 
+import edu.ufp.inf.sd.rabbitmqservices.project.producer.FroggerClient;
 import jig.engine.util.Vector2D;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import static java.lang.Math.random;
 
@@ -75,12 +79,6 @@ public class Frogger extends MovingEntity {
     /**
      * Build frogger!
      */
-	public Frogger (Main g) {
-		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
-		game = g;
-		resetFrog();
-		collisionObjects.add(new CollisionObject(position));
-	}
 
 	public Frogger (Main g, Vector2D v, int num) {
 		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
@@ -250,7 +248,7 @@ public class Frogger extends MovingEntity {
 	
 	/**
 	 * Effect of Heat Wave on Frogger
-	 * @param randDuration
+	 * //@param randDuration
 	 */
 	public void randomJump(final int rDir) {
 		switch(rDir) {
@@ -287,11 +285,33 @@ public class Frogger extends MovingEntity {
 		timeOfDeath = getTime();
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
+
+	public void die(int n) {
+
+		if (isAnimating)
+			return;
+
+		if (!cheating) {
+			//AudioEfx.frogDie.play(0.2);
+			followObject = null;
+			isAlive = false;
+			currentFrame = 4;	// dead sprite
+			if (frognum == n) {
+				AudioEfx.frogDie.play(0.2);
+				//game.GameLives--;
+			}
+			hw_hasMoved = true;
+		}
+
+		timeOfDeath = getTime();
+		//resetFrog();
+		//game.levelTimer = Main.DEFAULT_LEVEL_TIME;
+	}
 	
 	/**
 	 * Frogger reaches a goal
 	 */
-	public void reach(final Goal g) {
+	public void reach(final Goal g) throws IOException, TimeoutException {
 		if (g.isReached == false) {
 			AudioEfx.frogGoal.play(0.4);
 			game.GameScore += 100;
@@ -301,7 +321,7 @@ public class Frogger extends MovingEntity {
 				game.GameLives++;
 			}
 			g.reached();
-			resetFrog();
+			FroggerClient.reset_frogger(frognum);
 		}
 		else {
 			setPosition(g.getPosition());
@@ -313,8 +333,13 @@ public class Frogger extends MovingEntity {
 			return;
 		
 		// if dead, stay dead for 2 seconds.
-		if (!isAlive && timeOfDeath + 2000 < System.currentTimeMillis())
-				resetFrog();
+		if (!isAlive && timeOfDeath + 2000 < System.currentTimeMillis()) {
+			try {
+				FroggerClient.reset_frogger(frognum);
+			} catch (IOException | TimeoutException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		
 		updateAnimation();	
 		updateFollow(deltaMs);

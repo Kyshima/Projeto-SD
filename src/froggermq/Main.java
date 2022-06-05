@@ -404,8 +404,12 @@ public class Main extends StaticScreenGame {
 			ui.update(deltaMs);
 
 			cycleTraffic(deltaMs);
-			frogCol.testCollision(movingObjectsLayer);
-			
+			try {
+				frogCol.testCollision(movingObjectsLayer);
+			} catch (IOException | TimeoutException e) {
+				throw new RuntimeException(e);
+			}
+
 			// Wind gusts work only when Frogger is on the river
 			if (frogCol.isInRiver())
 				wind.start(GameLevel);
@@ -437,8 +441,14 @@ public class Main extends StaticScreenGame {
 				levelTimer--;
 			}
 
-			if (levelTimer <= 0)
-				FROGGERS.get(id).die();
+			if (levelTimer <= 0) {
+				try {
+					fc.kill_frogger(id);
+				} catch (IOException | TimeoutException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
 			
 			if (GameLives < 1) {
 				GameState = GAME_OVER;
@@ -522,6 +532,17 @@ public class Main extends StaticScreenGame {
 			case 2: FROGGERS.get(frogger).moveLeft(); break;
 			case 3: FROGGERS.get(frogger).moveRight(); break;
 		}
+	}
+
+	public void die(int frogger) throws RemoteException
+	{
+		FROGGERS.get(frogger).isAlive = false;
+		FROGGERS.get(frogger).die(frogger);
+	}
+
+	public void reset(int frogger) throws RemoteException
+	{
+		FROGGERS.get(frogger).resetFrog();
 	}
 
 }
