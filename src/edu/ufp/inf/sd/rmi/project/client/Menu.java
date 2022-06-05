@@ -19,10 +19,13 @@ public class Menu extends JFrame implements ActionListener {
     protected static Menu frame;
     public static FroggerClient fg;
 
+    public static int butoes;
+
     public static void main(FroggerClient froggerClient) throws RemoteException {
         fg = froggerClient;
+        butoes = FroggerClient.froggerGameRI.listGames()-1;
 
-        for (int i = 0; i < FroggerClient.froggerGameRI.listGames(); i++) {
+        for (int i = 0; i < butoes; i++) {
             GamesText.add(i, new JLabel(FroggerClient.froggerGameRI.getObservers().get(i).getGame() + " Jogo"));
             GamesButton.add(i, new JButton(FroggerClient.froggerGameRI.getObservers().get(i).getGame() + " Jogo"));
         }

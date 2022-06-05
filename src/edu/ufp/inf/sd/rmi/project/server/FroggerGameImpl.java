@@ -33,18 +33,14 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
         if(observers.isEmpty()){
             observers.add(0,observerRI);
             observers.add(1,observerRI);
-            observers.set(0,observers.get(1));
-            observers.remove(1);
         } else if (!observers.contains(observerRI)){
-
-
             observers.add(observerRI);
         }
-        System.out.print("atachou com games nr: "+observerRI.getGame() + "\t");
+        /*System.out.print("atachou com games nr: "+observerRI.getGame() + "\t");
             for (ObserverRI o: observers) {
                 System.out.print(o.getId()+" "+o.getGame()+"\t");
             }
-            System.out.println();
+            System.out.println();*/
     }
 
     @Override
@@ -136,14 +132,14 @@ public class FroggerGameImpl extends UnicastRemoteObject implements FroggerGameR
 
     @Override
     public ArrayList<State> getAllUpdates(int game) throws RemoteException{
-        System.out.println("Numero do jogo: " + game);
+        //System.out.println("Numero do jogo: " + game);
         ArrayList<State> g= new ArrayList<>();
         for(ObserverRI o : observers) {
             if(o.getGame() == game)
             {
-                System.out.println("igualzinho "+o.getGame());
+                //System.out.println("igualzinho "+o.getGame());
                 g.add(o.getLastObserverState());
-            } else System.out.println("diferentinho"+o.getGame());
+            } //else System.out.println("diferentinho"+o.getGame());
         }
         return g;
     }

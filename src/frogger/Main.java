@@ -181,11 +181,6 @@ public class Main extends StaticScreenGame {
 			riverLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 6 * 32), new Vector2D(-0.045 * dV, 0));
 			lines.add(9,MovEntToString(riverLine5));
 
-			goalmanager.init(level);
-			for (Goal g : goalmanager.get()) {
-				movingObjectsLayer.add(g);
-			}
-
 			State s = new State(lines);
 			int size = FroggerClient.froggerGame.getObservers().size();
 			//System.out.println("Ini 1 Size: " + size);
@@ -220,6 +215,11 @@ public class Main extends StaticScreenGame {
 			riverLine5 = StringToMovEnt(lines.get(9));
 
 			cycleTraffic(10);
+		}
+
+		goalmanager.init(level);
+		for (Goal g : goalmanager.get()) {
+			movingObjectsLayer.add(g);
 		}
 	}
 
