@@ -493,19 +493,20 @@ public class Main extends StaticScreenGame {
 	}
 
 	public void addFroggers() throws RemoteException {
-		for(int i = 0; i < 4; i++){
-			FROGGER_START_ARRAY.add(i, new Vector2D((WORLD_WIDTH * (i / (double)4) + 1),WORLD_HEIGHT-32));
+		for(int i = 0; i < 6; i++){
+			FROGGER_START_ARRAY.add(i, new Vector2D((WORLD_WIDTH * (i / (double)5)),WORLD_HEIGHT-32));
+			System.out.println("Array pos " + i + ": " + FROGGER_START_ARRAY.get(i));
 		}
 
 		for(int x = 0; x < 4; x++){
-			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x), froggerNum));
-			frogCol = new FroggerCollisionDetection(FROGGERS.get(froggerNum));
-			audiofx = new AudioEfx(frogCol,FROGGERS.get(froggerNum));
+			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x+1), froggerNum));
+			System.out.println("Frogger "+x+": "+FROGGERS.get(x).pos.getX());
+
 			froggerNum++;
 		}
 
-		/*frogCol = new FroggerCollisionDetection(FROGGERS.get(froggerNum));
-		audiofx = new AudioEfx(frogCol,FROGGERS.get(froggerNum));*/
+		frogCol = new FroggerCollisionDetection(FROGGERS.get(id));
+		audiofx = new AudioEfx(frogCol,FROGGERS.get(id));
 
 		//initializeLevel(1);
 	}
