@@ -131,12 +131,17 @@ public class FroggerClient {
 
     private static void doWork(String task) {
         System.out.println(task);
-        if (task.equals("Jogo criado")) {
-            Main f = new Main();
+        String[] a = task.split("!");
+        if (a[0].equals("Jogo criado")) {
+            Main f = new Main(Integer.parseInt(a[1]));
             f.run();
-        } else if (task.equals("Game joined")) {
-            Main f = new Main();
+        } else if (a[0].equals("Game joined")) {
+            Main f = new Main(Integer.parseInt(a[1]));
             f.run();
+        }
+        else if (a[0].equals("Erro")) {
+            System.out.println("Jogo cheio");
+            System.exit(-1);
         }
     }
 }

@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static edu.ufp.inf.sd.rabbitmqservices.project.consumer.Info.games;
+
 
 /**
  * Round-robin dispatching:
@@ -98,7 +100,7 @@ public class FroggerServer {
 
 
     public static void main(String[] argv) throws Exception {
-
+        Info.main();
         try {
             RabbitUtils.printArgs(argv);
 
@@ -207,7 +209,8 @@ public class FroggerServer {
                 channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
 
                 //Gets the message
-                String message = "Jogo criado";
+                games[Integer.parseInt(a[1])][0] = 1;
+                String message = "Jogo criado!0";
                 TimeUnit.SECONDS.sleep(2);
 
 
@@ -235,7 +238,23 @@ public class FroggerServer {
                 channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
 
                 //Gets the message
-                String message = "Game joined";
+                int p = 0;
+                String message = "";
+                for (int i = 0; i < 4; i++)
+                {
+                    if (games[Integer.parseInt(a[1])][i] == 0)
+                    {
+                        p = i;
+                        games[Integer.parseInt(a[1])][i] = 1;
+                        message = "Game joined!"+p;
+                        break;
+                    }
+                    else if(i==3) {
+                        message = "Erro";
+                    }
+
+                }
+                //String message = "Game joined!"+p;
                 TimeUnit.SECONDS.sleep(2);
 
 
