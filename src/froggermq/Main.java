@@ -26,10 +26,12 @@
 package froggermq;
 
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeoutException;
 
-import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
+import edu.ufp.inf.sd.rabbitmqservices.project.producer.FroggerClient;
 import jig.engine.ImageResource;
 import jig.engine.PaintableCanvas;
 import jig.engine.RenderingContext;
@@ -43,6 +45,7 @@ import jig.engine.util.Vector2D;
 public class Main extends StaticScreenGame {
 	static final int WORLD_WIDTH = (13*32);
 	static final int WORLD_HEIGHT = (14*32);
+
 	static final Vector2D FROGGER_START = new Vector2D(6*32,WORLD_HEIGHT-32);
 
 	static final ArrayList<Vector2D> FROGGER_START_ARRAY = new ArrayList<>();
@@ -99,6 +102,8 @@ public class Main extends StaticScreenGame {
 	private boolean listenInput = true;
 
 	public static int id;
+
+	public FroggerClient fc;
 	
     /**
 	 * Initialize game objects
@@ -273,7 +278,7 @@ public class Main extends StaticScreenGame {
 	/**
 	 * Handling Frogger movement from keyboard input
 	 */
-	public void froggerKeyboardHandler() {
+	public void froggerKeyboardHandler() throws IOException, TimeoutException {
  		keyboard.poll();
 		
  		boolean keyReleased = false;
@@ -304,10 +309,10 @@ public class Main extends StaticScreenGame {
 			keyReleased = true;
 		
 		if (listenInput) {
-		    if (downPressed) FROGGERS.get(id).moveDown();
-		    if (upPressed) FROGGERS.get(id).moveUp();
-		    if (leftPressed) FROGGERS.get(id).moveLeft();
-	 	    if (rightPressed) FROGGERS.get(id).moveRight();
+		    if (downPressed) fc.movement_frogger(id, 0);
+		    if (upPressed) fc.movement_frogger(id, 1);
+		    if (leftPressed) fc.movement_frogger(id, 2);
+	 	    if (rightPressed) fc.movement_frogger(id, 3);
 	 	    
 	 	    if (keyPressed)
 	            listenInput = false;
@@ -381,7 +386,13 @@ public class Main extends StaticScreenGame {
 	public void update(long deltaMs) {
 		switch(GameState) {
 		case GAME_PLAY:
-			froggerKeyboardHandler();
+			try {
+				froggerKeyboardHandler();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			} catch (TimeoutException e) {
+				throw new RuntimeException(e);
+			}
 			wind.update(deltaMs);
 			hwave.update(deltaMs);
 
@@ -503,4 +514,14 @@ public class Main extends StaticScreenGame {
 
 		//initializeLevel(1);
 	}
+
+	public void moveFroggers(int frogger, int dir) throws RemoteException {
+		switch(dir){
+			case 0: FROGGERS.get(frogger).moveDown(); break;
+			case 1: FROGGERS.get(frogger).moveUp(); break;
+			case 2: FROGGERS.get(frogger).moveLeft(); break;
+			case 3: FROGGERS.get(frogger).moveRight(); break;
+		}
+	}
+
 }

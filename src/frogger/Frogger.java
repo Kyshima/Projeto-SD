@@ -25,6 +25,7 @@
 
 package frogger;
 
+import edu.ufp.inf.sd.rabbitmqservices.project.producer.FroggerClient;
 import jig.engine.util.Vector2D;
 
 import static java.lang.Math.random;
@@ -71,7 +72,8 @@ public class Frogger extends MovingEntity {
 	public Vector2D pos;
 
 	public int frognum;
-    
+
+
     /**
      * Build frogger!
      */
