@@ -104,6 +104,8 @@ public class Main extends StaticScreenGame {
 	public static int id;
 
 	public FroggerClient fc;
+
+	public boolean enabled = false;
 	
     /**
 	 * Initialize game objects
@@ -249,19 +251,19 @@ public class Main extends StaticScreenGame {
 		
 		/* River traffic updates */
 		riverLine1.update(deltaMs);
-	    if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
+	    if ((m = riverLine1.buildShortLogWithTurtles()) != null) movingObjectsLayer.add(m);
 		
 		riverLine2.update(deltaMs);
-	    if ((m = riverLine2.buildLongLogWithCrocodile(30)) != null) movingObjectsLayer.add(m);
+	    if ((m = riverLine2.buildLongLogWithCrocodile()) != null) movingObjectsLayer.add(m);
 		
 		riverLine3.update(deltaMs);
-	    if ((m = riverLine3.buildShortLogWithTurtles(50)) != null) movingObjectsLayer.add(m);
+	    if ((m = riverLine3.buildShortLogWithTurtles()) != null) movingObjectsLayer.add(m);
 		
 		riverLine4.update(deltaMs);
-	    if ((m = riverLine4.buildLongLogWithCrocodile(20)) != null) movingObjectsLayer.add(m);
+	    if ((m = riverLine4.buildLongLogWithCrocodile()) != null) movingObjectsLayer.add(m);
 
 		riverLine5.update(deltaMs);
-	    if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
+	    if ((m = riverLine5.buildShortLogWithTurtles()) != null) movingObjectsLayer.add(m);
 	    
 	    // Do Wind
 	    if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
@@ -289,7 +291,7 @@ public class Main extends StaticScreenGame {
 		
 		// Enable/Disable cheating
 		if (keyboard.isPressed(KeyEvent.VK_C))
-			FROGGERS.get(id).cheating = true;
+			FroggerClient.godMode(id);
 		if (keyboard.isPressed(KeyEvent.VK_V))
 			FROGGERS.get(id).cheating = false;
 		if (keyboard.isPressed(KeyEvent.VK_0)) {
@@ -309,11 +311,14 @@ public class Main extends StaticScreenGame {
 			keyReleased = true;
 		
 		if (listenInput) {
-		    if (downPressed) fc.movement_frogger(id, 0);
-		    if (upPressed) fc.movement_frogger(id, 1);
-		    if (leftPressed) fc.movement_frogger(id, 2);
-	 	    if (rightPressed) fc.movement_frogger(id, 3);
-	 	    
+		    if (downPressed)
+				fc.movement_frogger(id, 0);
+		    if (upPressed)
+				fc.movement_frogger(id, 1);
+		    if (leftPressed)
+				fc.movement_frogger(id, 2);
+	 	    if (rightPressed)
+				 fc.movement_frogger(id, 3);
 	 	    if (keyPressed)
 	            listenInput = false;
 		}
@@ -330,7 +335,7 @@ public class Main extends StaticScreenGame {
 	/**
 	 * Handle keyboard events while at the game intro menu
 	 */
-	public void menuKeyboardHandler() throws RemoteException {
+	public void menuKeyboardHandler() throws IOException, TimeoutException {
 		keyboard.poll();
 		
 		// Following 2 if statements allow capture space bar key strokes
@@ -340,27 +345,30 @@ public class Main extends StaticScreenGame {
 		
 		if (!space_has_been_released)
 			return;
-		
+
 		if (keyboard.isPressed(KeyEvent.VK_SPACE)) {
-			addFroggers();
-			switch (GameState) {
-			case GAME_INSTRUCTIONS:
-			case GAME_OVER:
-				GameState = GAME_INTRO;
-				space_has_been_released = false;
-				break;
-			default:
-				GameLives = FROGGER_LIVES;
-				GameScore = 0;
-				GameLevel = STARTING_LEVEL;
-				levelTimer = DEFAULT_LEVEL_TIME;
-				for (int i = 0; i < 4; i++) {
-					//System.out.println(FROGGER_START_ARRAY.get(i).toString());
-					FROGGERS.get(id).setPosition(FROGGER_START_ARRAY.get(id+1));
+			FroggerClient.start_frogger();
+			if(enabled) {
+				addFroggers();
+				switch (GameState) {
+					case GAME_INSTRUCTIONS:
+					case GAME_OVER:
+						GameState = GAME_INTRO;
+						space_has_been_released = false;
+						break;
+					default:
+						GameLives = FROGGER_LIVES;
+						GameScore = 0;
+						GameLevel = STARTING_LEVEL;
+						levelTimer = DEFAULT_LEVEL_TIME;
+						for (int i = 0; i < 4; i++) {
+							//System.out.println(FROGGER_START_ARRAY.get(i).toString());
+							FROGGERS.get(id).setPosition(FROGGER_START_ARRAY.get(id + 1));
+						}
+						GameState = GAME_PLAY;
+						audiofx.playGameMusic();
+						initializeLevel(GameLevel);
 				}
-				GameState = GAME_PLAY;
-				audiofx.playGameMusic();
-				initializeLevel(GameLevel);			
 			}
 		}
 		if (keyboard.isPressed(KeyEvent.VK_H))
@@ -386,75 +394,79 @@ public class Main extends StaticScreenGame {
 	public void update(long deltaMs) {
 		switch(GameState) {
 		case GAME_PLAY:
-			try {
-				froggerKeyboardHandler();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			} catch (TimeoutException e) {
-				throw new RuntimeException(e);
-			}
-			wind.update(deltaMs);
-			hwave.update(deltaMs);
-
-			for (int i = 0; i < 4; i++) {
-				FROGGERS.get(i).update(deltaMs);
-			}
-
-			audiofx.update(deltaMs);
-			ui.update(deltaMs);
-
-			cycleTraffic(deltaMs);
-			try {
-				frogCol.testCollision(movingObjectsLayer);
-			} catch (IOException | TimeoutException e) {
-				throw new RuntimeException(e);
-			}
-
-			// Wind gusts work only when Frogger is on the river
-			if (frogCol.isInRiver())
-				wind.start(GameLevel);
-
-			for (int i = 0; i < 4; i++) {
-				wind.perform(FROGGERS.get(i), GameLevel, deltaMs);
-
-				// Do the heat wave only when Frogger is on hot pavement
-				if (frogCol.isOnRoad())
-					hwave.start(FROGGERS.get(i), GameLevel);
-				hwave.perform(FROGGERS.get(i), deltaMs, GameLevel);
-
-
-				if (!FROGGERS.get(i).isAlive)
-					particleLayer.clear();
-			}
-			
-			goalmanager.update(deltaMs);
-			
-			if (goalmanager.getUnreached().size() == 0) {
-				GameState = GAME_FINISH_LEVEL;
-				audiofx.playCompleteLevel();
-				particleLayer.clear();
-			}
-
-			FROGGERS.get(id).deltaTime += deltaMs;
-			if (FROGGERS.get(id).deltaTime > 1000) {
-				FROGGERS.get(id).deltaTime = 0;
-				levelTimer--;
-			}
-
-			if (levelTimer <= 0) {
+			if(enabled) {
 				try {
-					fc.kill_frogger(id);
+					froggerKeyboardHandler();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				} catch (TimeoutException e) {
+					throw new RuntimeException(e);
+				}
+				wind.update(deltaMs);
+				hwave.update(deltaMs);
+
+				for (int i = 0; i < 4; i++) {
+					FROGGERS.get(i).update(deltaMs);
+				}
+
+				audiofx.update(deltaMs);
+				ui.update(deltaMs);
+
+				cycleTraffic(deltaMs);
+				try {
+					frogCol.testCollision(movingObjectsLayer);
 				} catch (IOException | TimeoutException e) {
 					throw new RuntimeException(e);
 				}
-			}
 
-			
-			if (GameLives < 1) {
-				GameState = GAME_OVER;
+				// Wind gusts work only when Frogger is on the river
+				if (frogCol.isInRiver())
+					wind.start(GameLevel);
+
+				for (int i = 0; i < 4; i++) {
+					wind.perform(FROGGERS.get(i), GameLevel, deltaMs);
+
+					// Do the heat wave only when Frogger is on hot pavement
+					if (frogCol.isOnRoad())
+						hwave.start(FROGGERS.get(i), GameLevel);
+					hwave.perform(FROGGERS.get(i), deltaMs, GameLevel);
+
+
+					if (!FROGGERS.get(i).isAlive)
+						particleLayer.clear();
+				}
+
+				goalmanager.update(deltaMs);
+
+				if (goalmanager.getUnreached().size() == 0) {
+					GameState = GAME_FINISH_LEVEL;
+					audiofx.playCompleteLevel();
+					particleLayer.clear();
+				}
+
+				FROGGERS.get(id).deltaTime += deltaMs;
+				if (FROGGERS.get(id).deltaTime > 1000) {
+					FROGGERS.get(id).deltaTime = 0;
+					levelTimer--;
+				}
+
+				if (levelTimer <= 0) {
+					if(!FROGGERS.get(id).cheating) {
+						try {
+							fc.kill_frogger(id);
+						} catch (IOException | TimeoutException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}
+
+
+				if (GameLives < 1) {
+					GameState = GAME_OVER;
+				}
+
+				break;
 			}
-			
-			break;
 		
 		case GAME_OVER:		
 		case GAME_INSTRUCTIONS:
@@ -463,7 +475,7 @@ public class Main extends StaticScreenGame {
 			try {
 				menuKeyboardHandler();
 				//cycleTraffic(deltaMs);
-			} catch (RemoteException e) {
+			} catch (IOException | TimeoutException e) {
 				throw new RuntimeException(e);
 			}
 			break;
@@ -536,13 +548,23 @@ public class Main extends StaticScreenGame {
 
 	public void die(int frogger) throws RemoteException
 	{
-		FROGGERS.get(frogger).isAlive = false;
-		FROGGERS.get(frogger).die(frogger);
+		if(!FROGGERS.get(frogger).cheating) {
+			FROGGERS.get(frogger).isAlive = false;
+			FROGGERS.get(frogger).die(frogger);
+		}
 	}
 
 	public void reset(int frogger) throws RemoteException
 	{
 		FROGGERS.get(frogger).resetFrog();
+	}
+
+	public void start() throws RemoteException{
+		enabled = true;
+	}
+
+	public void godMode(int id) throws RemoteException{
+		FROGGERS.get(id).cheating = true;
 	}
 
 }
