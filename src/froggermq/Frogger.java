@@ -99,7 +99,7 @@ public class Frogger extends MovingEntity {
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
-		position = Main.FROGGER_START;
+		position = pos;
 		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
 	}
 	

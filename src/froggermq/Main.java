@@ -98,8 +98,6 @@ public class Main extends StaticScreenGame {
 	private boolean keyPressed = false;
 	private boolean listenInput = true;
 
-	public int froggerNum = 0;
-
 	public static int id;
 	
     /**
@@ -351,11 +349,9 @@ public class Main extends StaticScreenGame {
 				GameScore = 0;
 				GameLevel = STARTING_LEVEL;
 				levelTimer = DEFAULT_LEVEL_TIME;
-				froggerNum = 0;
 				for (int i = 0; i < 4; i++) {
 					//System.out.println(FROGGER_START_ARRAY.get(i).toString());
-					FROGGERS.get(froggerNum).setPosition(FROGGER_START_ARRAY.get(froggerNum));
-					froggerNum++;
+					FROGGERS.get(id).setPosition(FROGGER_START_ARRAY.get(id+1));
 				}
 				GameState = GAME_PLAY;
 				audiofx.playGameMusic();
@@ -469,12 +465,11 @@ public class Main extends StaticScreenGame {
 
 			for (int i = 0; i < 4; i++) {
 				if (FROGGERS.get(i).isAlive) {
-					movingObjectsLayer.render(rc);
-					//FROGGERS.get(i).collisionObjects.get(id).render(rc);
 					FROGGERS.get(i).render(rc);
+					movingObjectsLayer.render(rc);
 				} else {
-					FROGGERS.get(i).render(rc);
 					movingObjectsLayer.render(rc);
+					FROGGERS.get(i).render(rc);
 				}
 			}
 
@@ -499,10 +494,8 @@ public class Main extends StaticScreenGame {
 		}
 
 		for(int x = 0; x < 4; x++){
-			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x+1), froggerNum));
+			FROGGERS.add(x, new Frogger(this,FROGGER_START_ARRAY.get(x+1), id));
 			System.out.println("Frogger "+x+": "+FROGGERS.get(x).pos.getX());
-
-			froggerNum++;
 		}
 
 		frogCol = new FroggerCollisionDetection(FROGGERS.get(id));
