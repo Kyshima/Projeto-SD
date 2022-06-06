@@ -50,7 +50,5 @@ public class CollisionObject extends VanillaSphere {
 		position = new Vector2D(pos.getX()+dX, pos.getY()+dY);
 	}
 	
-	public void update(long deltaMs) {
-		;
-	}
+	public void update(long deltaMs) {}
 }

@@ -16,7 +16,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * NON INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
@@ -42,7 +42,7 @@ public class FroggerCollisionDetection {
     public static int n;
 
     // River and Road bounds, all we care about is Y axis in this game
-    public int river_y0 = 1 * 32;
+    public int river_y0 = 32;
     public int river_y1 = river_y0 + 6 * 32;
     public int road_y0 = 8 * 32;
     public int road_y1 = road_y0 + 5 * 32;
@@ -88,7 +88,6 @@ public class FroggerCollisionDetection {
         if (isInRiver()) {
             if (!frog.cheating) {
                 FroggerClient.kill_frogger(n);
-                return;
             }
         }
 

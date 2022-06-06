@@ -30,10 +30,9 @@ import jig.engine.util.Vector2D;
 public class Crocodile extends MovingEntity {
 
 	public static int LENGTH = 32*3;
-	
-	private long animationDelay = 300;
+
 	private long animationTime = 0;
-	private int startFrame = 0;
+	private final int startFrame;
 	private int nextFrame = 0;
 	
 	protected CollisionObject head;
@@ -42,7 +41,7 @@ public class Crocodile extends MovingEntity {
 		super(Main.SPRITE_SHEET + "#crocodile");
 		position = pos;
 		Vector2D posSphere1 = position;
-		Vector2D posSphere2 = new Vector2D(position.getX()+32*1, position.getY());
+		Vector2D posSphere2 = new Vector2D(position.getX()+ 32, position.getY());
 		Vector2D posSphere3 = new Vector2D(position.getX()+32*2, position.getY());
 		Vector2D posSphere4 = new Vector2D(position.getX()+32*3, position.getY());
 		collisionObjects.add(new CollisionObject("colSmall",posSphere1));
@@ -65,6 +64,7 @@ public class Crocodile extends MovingEntity {
 	
 	public void animate(long deltaMs) {
 		animationTime += deltaMs;
+		long animationDelay = 300;
 		if (animationTime > animationDelay) {
 			animationTime = 0;
 			nextFrame = (nextFrame+1)%2;

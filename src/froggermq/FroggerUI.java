@@ -52,9 +52,6 @@ public class FroggerUI implements ViewableLayer {
 	FontResource font = ResourceFactory.getFactory().getFontResource(
 			new Font("Sans Serif", Font.BOLD, 14), Color.white, null );
 
-	FontResource fontBlack = ResourceFactory.getFactory().getFontResource(
-			new Font("Sans Serif", Font.BOLD, 14), Color.black, null );
-	
 	Main game;
 	
 	public FroggerUI(final Main g) {
@@ -77,9 +74,7 @@ public class FroggerUI implements ViewableLayer {
 			int maxHearts = game.GameLives;
 			if (maxHearts > 10)
 				maxHearts = 10;
-			else 
-				maxHearts = game.GameLives;
-			
+
 			for (int i = 0; i < maxHearts; i++ ) {
 				heart.get(0).render(rc, 
 						AffineTransform.getTranslateInstance(dx+8, 8));

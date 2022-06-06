@@ -46,7 +46,6 @@ public class Main extends StaticScreenGame {
 	static final int WORLD_WIDTH = (13*32);
 	static final int WORLD_HEIGHT = (14*32);
 
-	static final Vector2D FROGGER_START = new Vector2D(6*32,WORLD_HEIGHT-32);
 
 	static final ArrayList<Vector2D> FROGGER_START_ARRAY = new ArrayList<>();
 
@@ -59,7 +58,6 @@ public class Main extends StaticScreenGame {
 	static final int DEFAULT_LEVEL_TIME = 60;
 	
 	private FroggerCollisionDetection frogCol;
-	private Frogger frog;
 	private AudioEfx audiofx;
 	private FroggerUI ui;
 	private WindGust wind;
@@ -109,7 +107,7 @@ public class Main extends StaticScreenGame {
 
 	public boolean enabled = false;
 
-	public boolean building = false;
+	//public boolean building = false;
 	
     /**
 	 * Initialize game objects
@@ -139,8 +137,8 @@ public class Main extends StaticScreenGame {
 		hwave = new HeatWave();
 		goalmanager = new GoalManager();
 		
-		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<MovingEntity>();
-		particleLayer = new AbstractBodyLayer.IterativeUpdate<MovingEntity>();
+		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<>();
+		particleLayer = new AbstractBodyLayer.IterativeUpdate<>();
 		
 		//initializeLevel(1);
 	}
@@ -386,7 +384,7 @@ public class Main extends StaticScreenGame {
 		keyboard.poll();
 		if (keyboard.isPressed(KeyEvent.VK_SPACE)) {
 			GameState = GAME_BREAK;
-			building = true;
+			//building = true;
 			Thread.sleep(1000);
 			FroggerClient.nextLevel();
 		}
@@ -402,9 +400,7 @@ public class Main extends StaticScreenGame {
 			if(enabled) {
 				try {
 					froggerKeyboardHandler();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				} catch (TimeoutException e) {
+				} catch (IOException | TimeoutException e) {
 					throw new RuntimeException(e);
 				}
 				wind.update(deltaMs);
@@ -533,7 +529,7 @@ public class Main extends StaticScreenGame {
 		}
 	}
 
-	public void addFroggers() throws RemoteException {
+	public void addFroggers() {
 		for(int i = 0; i < 6; i++){
 			FROGGER_START_ARRAY.add(i, new Vector2D((WORLD_WIDTH * (i / (double)5)),WORLD_HEIGHT-32));
 			System.out.println("Array pos " + i + ": " + FROGGER_START_ARRAY.get(i));
@@ -550,7 +546,7 @@ public class Main extends StaticScreenGame {
 		//initializeLevel(1);
 	}
 
-	public void moveFroggers(int frogger, int dir) throws RemoteException {
+	public void moveFroggers(int frogger, int dir) {
 		switch(dir){
 			case 0: FROGGERS.get(frogger).moveDown(); break;
 			case 1: FROGGERS.get(frogger).moveUp(); break;
@@ -559,16 +555,14 @@ public class Main extends StaticScreenGame {
 		}
 	}
 
-	public void die(int frogger) throws RemoteException
-	{
+	public void die(int frogger) {
 		if(!FROGGERS.get(frogger).cheating) {
 			FROGGERS.get(frogger).isAlive = false;
 			FROGGERS.get(frogger).die(frogger);
 		}
 	}
 
-	public void reset(int frogger) throws RemoteException
-	{
+	public void reset(int frogger) {
 		FROGGERS.get(frogger).resetFrog();
 	}
 
@@ -576,23 +570,23 @@ public class Main extends StaticScreenGame {
 		enabled = true;
 	}
 
-	public void godMode(int id) throws RemoteException{
+	public void godMode(int id) {
 		FROGGERS.get(id).cheating = true;
 	}
 
-	public void finished() throws RemoteException {
+	public void finished() {
 		GameState = GAME_FINISH_LEVEL;
 		audiofx.playCompleteLevel();
 		particleLayer.clear();
 	}
 
-	public void nextLevel() throws RemoteException {
-		if(building) {
-			building = false;
+	public void nextLevel() {
+		//if(building) {
+			//building = false;
 			GameState = GAME_PLAY;
 			audiofx.playGameMusic();
 			initializeLevel(++GameLevel);
-		}
+		//}
 	}
 
 }

@@ -48,7 +48,6 @@ public class Frogger extends MovingEntity {
 	
 	private int curAnimationFrame = 0;
 	private int finalAnimationFrame = 0;
-	private long animationDelay = 10; // milliseconds
 	private long animationBeginTime = 0;
 	private boolean isAnimating = false;
 	private Vector2D dirAnimation = new Vector2D(0,0);
@@ -191,6 +190,8 @@ public class Frogger extends MovingEntity {
 		}
 		
 		// Cycle animation
+		// milliseconds
+		long animationDelay = 10;
 		if (animationBeginTime + animationDelay < getTime()) {
 			animationBeginTime = getTime();
 			position = new Vector2D(
@@ -198,7 +199,6 @@ public class Frogger extends MovingEntity {
 					position.getY() + dirAnimation.getY()*ANIMATION_STEP
 					);
 			curAnimationFrame++;
-			return;
 		}
 	}
 	
@@ -215,7 +215,7 @@ public class Frogger extends MovingEntity {
 	}
 	
 	/**
-	 * Following a Tree Log on a river by getting it's velocity vector
+	 * Following a Tree Log on a river by getting its velocity vector
 	 * @param deltaMs
 	 */
 	public void updateFollow(long deltaMs) {
@@ -269,23 +269,6 @@ public class Frogger extends MovingEntity {
     /**
      * Frogger dies
      */
-	public void die() {
-		if (isAnimating)
-			return;
-		
-		if (!cheating) {
-		    AudioEfx.frogDie.play(0.2);
-		    followObject = null;
-		    isAlive = false;
-		    currentFrame = 4;	// dead sprite   
-		    game.GameLives--;
-		    hw_hasMoved = true;
-		}
-		
-		timeOfDeath = getTime();
-		game.levelTimer = Main.DEFAULT_LEVEL_TIME;
-	}
-
 	public void die(int n) {
 
 		if (isAnimating)

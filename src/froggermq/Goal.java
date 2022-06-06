@@ -31,14 +31,6 @@ public class Goal extends MovingEntity {
 	
 	public boolean isReached = false;
 	public boolean isBonus = false;
-	
-	public Goal(int loc) {
-		super(Main.SPRITE_SHEET + "#goal");
-		position = new Vector2D(32*(1+2*loc), 32);
-		collisionObjects.add(new CollisionObject("colSmall", position));
-		sync(position);
-		setFrame(0);
-	}
 
 	public Goal(Vector2D pos) {
 		super(Main.SPRITE_SHEET + "#goal");
@@ -64,6 +56,5 @@ public class Goal extends MovingEntity {
 	}
 	
 	public void update(long deltaMs) {
-		;
 	}
 }

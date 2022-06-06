@@ -74,15 +74,12 @@ public class AudioEfx {
 	
 	public static AudioClip bonus = ResourceFactory.getFactory().getAudioClip(
 			Main.RSC_PATH + "bonus.ogg");	
-	
-	public static AudioClip siren = ResourceFactory.getFactory().getAudioClip(
-			A_FX_PATH + "siren.ogg");
+
 	
 	// one effect is randomly picked from road_effects or water_effects every couple of seconds
-	private List<AudioClip> road_effects = new LinkedList<AudioClip>();
-	private List<AudioClip> water_effects = new LinkedList<AudioClip>();
-	
-	private int effectsDelay = 3000;
+	private final List<AudioClip> road_effects = new LinkedList<>();
+	private final List<AudioClip> water_effects = new LinkedList<>();
+
 	private int deltaT = 0;
 	
 	/**
@@ -117,7 +114,8 @@ public class AudioEfx {
 	
 	public void playRandomAmbientSound(final long deltaMs) {
 		deltaT += deltaMs;
-		
+
+		int effectsDelay = 3000;
 		if (deltaT > effectsDelay && fc.isOnRoad()) {
 			deltaT = 0;
 			road_effects.get(rand.nextInt(road_effects.size())).play(0.2);
