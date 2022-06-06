@@ -137,17 +137,16 @@ public class Main extends StaticScreenGame {
 		ui = new FroggerUI(this);
 		wind = new WindGust();
 		hwave = new HeatWave();
-		goalmanager = new GoalManager();
-
-		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<>();
-		particleLayer = new AbstractBodyLayer.IterativeUpdate<>();
 
 		FroggerClient.froggerGameRI.update(gameNum, new State());
 		System.out.println("FroggerNUM: "+froggerNum);
+		goalmanager = new GoalManager(this);
+		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<>();
+		particleLayer = new AbstractBodyLayer.IterativeUpdate<>();
 		//initializeLevel(1);
 	}
 
-	public void initializeLevel(int level) {
+	public void initializeLevel(int level) throws RemoteException {
 
 		/* dV is the velocity multiplier for all moving objects at the current game level */
 		double dV = level*0.05 + 1;
@@ -195,35 +194,6 @@ public class Main extends StaticScreenGame {
         /*for (int i=0; i<500; i++)
             cycleTraffic(10);*/
 	}
-
-	/*public String MovEntToString(MovingEntityFactory mef){
-		return mef.position.getX() + ";" + mef.position.getY() + ";" + mef.velocity.getX() + ";" + mef.velocity.getY() + ";" + mef.time;
-	}
-
-	public MovingEntityFactory StringToMovEnt(String string){
-		double xpos, ypos, xvel, yvel;
-		long time;
-		String[] novo = string.split(";");
-		xpos = Double.parseDouble(novo[0]);
-		ypos = Double.parseDouble(novo[1]);
-		xvel = Double.parseDouble(novo[2]);
-		yvel = Double.parseDouble(novo[3]);
-		time = Long.parseLong(novo[4]);
-
-		return new MovingEntityFactory(new Vector2D(xpos,ypos), new Vector2D(xvel, yvel), time);
-	}
-
-	public ArrayList<Integer> genRand(){
-		Random r = new Random();
-		ArrayList<Integer> genRand = new ArrayList<>();
-		genRand.add(0,r.nextInt(100));
-		genRand.add(0,r.nextInt(3));
-		genRand.add(0,r.nextInt(100));
-		genRand.add(0,r.nextInt(2));
-		genRand.add(0,r.nextInt(100));
-		genRand.add(0,r.nextInt(100));
-		return genRand;
-	}*/
 
 
 	/**
@@ -337,7 +307,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive, FroggerClient.froggerGameRI.getUpdate(gameNum).unreached);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (upPressed) {
@@ -350,7 +320,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive, FroggerClient.froggerGameRI.getUpdate(gameNum).unreached);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (leftPressed) {
@@ -363,7 +333,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive, FroggerClient.froggerGameRI.getUpdate(gameNum).unreached);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 	 	    if (rightPressed) {
@@ -376,7 +346,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive, FroggerClient.froggerGameRI.getUpdate(gameNum).unreached);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 
@@ -409,7 +379,6 @@ public class Main extends StaticScreenGame {
 
 		if (keyboard.isPressed(KeyEvent.VK_SPACE)) {
 			if(FroggerClient.froggerGameRI.getAllUpdates(gameNum).size() > 1){
-				System.out.println("O numbaro ta ciertus: "+FroggerClient.froggerGameRI.getAllUpdates(gameNum).size());
 				addFroggers();
 				enable = true;
 				switch (GameState) {
@@ -423,19 +392,14 @@ public class Main extends StaticScreenGame {
 						GameScore = 0;
 						GameLevel = STARTING_LEVEL;
 						levelTimer = DEFAULT_LEVEL_TIME;
-						//System.out.println("Aqui 3");
 						for (int i = 0; i < FroggerClient.froggerGameRI.getAllUpdates(gameNum).size(); i++) {
-							//System.out.println(FROGGER_START_ARRAY.get(i).toString());
 							FROGGERS.get(froggerNum).setPosition(FROGGER_START_ARRAY.get(froggerNum+1));
 						}
-						//System.out.println("Aqui 4");
 						GameState = GAME_PLAY;
 						audiofx.playGameMusic();
 						initializeLevel(GameLevel);
 			}
-		} else {
-				System.out.println("UPSIE o numbaro e: " + FroggerClient.froggerGameRI.getAllUpdates(gameNum).size());
-			}
+		}
 	}
 		if (keyboard.isPressed(KeyEvent.VK_H))
 			GameState = GAME_INSTRUCTIONS;
@@ -464,7 +428,6 @@ public class Main extends StaticScreenGame {
 							froggerKeyboardHandler();
 							if (FroggerClient.froggerGameRI.getUpdate(gameNum) != null) {
 								if (FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size() > 0) {
-									System.out.println(FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size());
 									moveFroggers();
 								}
 							}
@@ -522,13 +485,22 @@ public class Main extends StaticScreenGame {
 
 						goalmanager.update(deltaMs);
 
-						if (goalmanager.getUnreached().size() == 0) {
+						/*if (goalmanager.getUnreached().size() == 0) {
 							GameState = GAME_FINISH_LEVEL;
 							audiofx.playCompleteLevel();
 							particleLayer.clear();
-						}
+						}*/
+							try {
+								if(FroggerClient.froggerGameRI.getUpdate(gameNum).unreached == 0){
+									GameState = GAME_FINISH_LEVEL;
+									audiofx.playCompleteLevel();
+									particleLayer.clear();
+								}
+							} catch (RemoteException e) {
+								throw new RuntimeException(e);
+							}
 
-						if (GameLives < 1) {
+							if (GameLives < 1) {
 							GameState = GAME_OVER;
 						}
 
@@ -566,7 +538,6 @@ public class Main extends StaticScreenGame {
 			int frogNum = m.FroggerNum;
 			int dir = m.Direction;
 			int total = m.TotalDone + 1;
-			System.out.println("FN: " + frogNum + " D: " + dir + " T: " + total);
 
 			switch (dir) {
 				case 0:
@@ -585,7 +556,6 @@ public class Main extends StaticScreenGame {
 
 			s.mov.get(temp).setTotalDone(total);
 			if (s.mov.get(temp).TotalDone == FroggerClient.froggerGameRI.getAllUpdates(gameNum).size()) {
-				System.out.println("eliminou");
 				s.mov.remove(temp);
 			}
 

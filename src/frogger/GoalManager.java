@@ -25,10 +25,13 @@
 
 package frogger;
 
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
+import edu.ufp.inf.sd.rmi.project.server.State;
 import jig.engine.util.Vector2D;
 
 
@@ -45,8 +48,11 @@ public class GoalManager {
 	private int bonusShowMs = 5000;
 	private int dRMs = 0;
 	private int dSMs = 0;
+
+	public Main g;
 	
-	public GoalManager() {
+	public GoalManager(Main game) throws RemoteException {
+		g = game;
 		goals = new LinkedList<Goal>();
 		r = new Random(System.currentTimeMillis());
 		init(1);
@@ -59,7 +65,7 @@ public class GoalManager {
 	 * All others have standard 6 goals
 	 * @param level
 	 */
-	public void init(final int level) {
+	public void init(final int level) throws RemoteException {
 		
 		goals.clear();
 		
@@ -68,6 +74,9 @@ public class GoalManager {
 				case 1:
 					goals.add(new Goal(new Vector2D(5*32,32)));
 					goals.add(new Goal(new Vector2D(7*32,32)));
+					List<Boolean> b = FroggerClient.froggerGameRI.getUpdate(g.gameNum).alive;
+					State s = new State(FroggerClient.froggerGameRI.getUpdate(g.gameNum).mov,b,2);
+					FroggerClient.froggerGameRI.update(g.gameNum,s);
 					break;
 				case 2:
 				default:
@@ -75,9 +84,11 @@ public class GoalManager {
 					goals.add(new Goal(new Vector2D(7*32,32)));
 					goals.add(new Goal(new Vector2D(3*32,32)));
 					goals.add(new Goal(new Vector2D(9*32,32)));
+					List<Boolean> a = FroggerClient.froggerGameRI.getUpdate(g.gameNum).alive;
+					State r = new State(FroggerClient.froggerGameRI.getUpdate(g.gameNum).mov,a,4);
+					FroggerClient.froggerGameRI.update(g.gameNum,r);
 					break;
 			}
-			return;
 		//}
 		
 		//for (int i=0; i<MAX_NUM_OF_GOALS; i++)

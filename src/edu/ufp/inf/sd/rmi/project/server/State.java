@@ -24,17 +24,17 @@ import java.util.List;
 public class State implements Serializable {
     public ArrayList<Movement> mov;
     public List<Boolean> alive = new ArrayList<Boolean>(Arrays.asList(new Boolean[10]));
+    public int unreached;
 
     public State(){
         mov = new ArrayList<>();
         Collections.fill(alive, Boolean.TRUE);
+        unreached = 0;
     }
 
-    public State(ArrayList<Movement> mov, List<Boolean> alive) {
+    public State(ArrayList<Movement> mov, List<Boolean> alive, int u) {
         this.mov = mov;
         this.alive = alive;
+        this.unreached = u;
     }
-
-    public ArrayList<Movement> getMov() { return mov; }
-    public void setMov(ArrayList<Movement> mov) { this.mov = mov; }
 }

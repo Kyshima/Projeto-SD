@@ -102,8 +102,9 @@ public class Frogger extends MovingEntity {
 	 */
 	public void resetFrog() throws RemoteException {
 		List<Boolean> b = FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive;
+		int u = FroggerClient.froggerGameRI.getUpdate(game.gameNum).unreached;
 		b.set(frognum,true);
-		State s = new State(FroggerClient.froggerGameRI.getUpdate(game.gameNum).mov,b);
+		State s = new State(FroggerClient.froggerGameRI.getUpdate(game.gameNum).mov,b,u);
 		FroggerClient.froggerGameRI.update(game.gameNum,s);
 		isAlive = true;
 
@@ -290,8 +291,9 @@ public class Frogger extends MovingEntity {
 
 		if (!cheating) {
 			List<Boolean> b = FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive;
+			int u = FroggerClient.froggerGameRI.getUpdate(game.gameNum).unreached;
 			b.set(frognum,false);
-			State s = new State(FroggerClient.froggerGameRI.getUpdate(game.gameNum).mov,b);
+			State s = new State(FroggerClient.froggerGameRI.getUpdate(game.gameNum).mov,b,u);
 			FroggerClient.froggerGameRI.update(game.gameNum,s);
 
 		    AudioEfx.frogDie.play(0.2);
