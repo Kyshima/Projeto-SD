@@ -7,6 +7,7 @@ import froggermq.Main;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.sql.Time;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,8 @@ public class FroggerClient {
     public static String[] arguments;
 
     public static Main m;
+
+    public static long time;
     public static String exchangeName;
     public static void main(String[] args) throws Exception {
         RabbitUtils.printArgs(args);
@@ -30,7 +33,7 @@ public class FroggerClient {
         client2Exchange(arguments);
     }
 
-    private static void doWork(String task) throws RemoteException {
+    private static void doWork(String task) throws IOException, TimeoutException {
         System.out.println(task);
         String[] a = task.split("!");
         switch (a[0]) {
@@ -139,43 +142,46 @@ public class FroggerClient {
     }
 
     public static void reset_frogger(int frogid) throws IOException, TimeoutException {
-        String host=arguments[0];
-        int port=Integer.parseInt(arguments[1]);
-        String queueName=arguments[2];
-        //try-with-resources
-        try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-             Channel channel=RabbitUtils.createChannel2Server(connection)) {
+        long newTime = System.currentTimeMillis();
+        if(newTime - time > 50) {
+            String host = arguments[0];
+            int port = Integer.parseInt(arguments[1]);
+            String queueName = arguments[2];
+            //try-with-resources
+            try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                 Channel channel = RabbitUtils.createChannel2Server(connection)) {
             /* We must declare a queue to send to (this is idempotent, i.e. it will only be created if it doesn't exist;
                then we can publish a message to the queue;
                The message content is a byte array (can encode whatever we need).
                The previous queue was not Durable... persistent */
-            //channel.queueDeclare(TASK_QUEUE_NAME, false, false, false, null);
+                //channel.queueDeclare(TASK_QUEUE_NAME, false, false, false, null);
 
             /* Declare a queue as Durable (queue won't be lost even if RabbitMQ restarts);
                RabbitMQ does not allow redefine an existing queue with different parameters (hence create a new one) */
-            boolean durable=true;
-            channel.queueDeclare(queueName, durable, false, false, null);
+                boolean durable = true;
+                channel.queueDeclare(queueName, durable, false, false, null);
 
-            //String message = "Hello...";
-            //Receive message to send via argv[3]
-            String message= "reset!"+frogid+"!"+exchangeName;
-            System.out.println(message);
-            //TimeUnit.SECONDS.sleep(2);
+                //String message = "Hello...";
+                //Receive message to send via argv[3]
+                String message = "reset!" + frogid + "!" + exchangeName;
+                System.out.println(message);
+                //TimeUnit.SECONDS.sleep(2);
 
             /* To avoid loosing queues when rabbitmq crashes, mark messages as persistent by setting
              MessageProperties (which implements BasicProperties) to value PERSISTENT_TEXT_PLAIN. */
-            //channel.basicPublish("", TASK_QUEUE_NAME, null, message.getBytes("UTF-8"));
-            channel.basicPublish("", queueName,
-                    MessageProperties.PERSISTENT_TEXT_PLAIN,
-                    message.getBytes());
-            System.out.println(" [x] Sent '" + message + "'");
+                //channel.basicPublish("", TASK_QUEUE_NAME, null, message.getBytes("UTF-8"));
+                channel.basicPublish("", queueName,
+                        MessageProperties.PERSISTENT_TEXT_PLAIN,
+                        message.getBytes());
+                System.out.println(" [x] Sent '" + message + "'");
 
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
+            } catch (TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+            time = newTime;
+            client2Exchange(arguments);
+
         }
-
-        client2Exchange(arguments);
-
     }
 
     public static void start_frogger() throws IOException, TimeoutException {
@@ -405,7 +411,11 @@ public class FroggerClient {
         DeliverCallback deliverCallback=(consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             System.out.println(" [X] Consumer tag [" + consumerTag + "] - Received '" + message + "'");
-            doWork(message);
+            try {
+                doWork(message);
+            } catch (TimeoutException e) {
+                throw new RuntimeException(e);
+            }
         };
         CancelCallback cancelCallback = (consumerTag) -> System.out.println(" [X] Consumer tag [" + consumerTag + "] - Cancel Callback invoked!");
         channel.basicConsume(queue, true, deliverCallback, cancelCallback);
