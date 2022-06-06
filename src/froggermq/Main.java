@@ -224,8 +224,8 @@ public class Main extends StaticScreenGame {
 		}
 			
 		/* Build some traffic before game starts buy running MovingEntityFactories for fews cycles */
-		for (int i=0; i<500; i++)
-			cycleTraffic(10);
+		/*for (int i=0; i<500; i++)
+			cycleTraffic(10);*/
 	}
 	
 	
@@ -414,7 +414,7 @@ public class Main extends StaticScreenGame {
 					FROGGERS.get(i).update(deltaMs);
 				}
 
-				audiofx.update(deltaMs);
+				//audiofx.update(deltaMs);
 				ui.update(deltaMs);
 
 				cycleTraffic(deltaMs);
