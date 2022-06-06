@@ -25,7 +25,10 @@
 
 package frogger;
 
+import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
 import jig.engine.util.Vector2D;
+
+import java.rmi.RemoteException;
 
 import static java.lang.Math.random;
 
@@ -53,7 +56,7 @@ public class Frogger extends MovingEntity {
 	private MovingEntity followObject = null;
 	
 	
-	public boolean isAlive = false;
+	public boolean isAlive;
     private long timeOfDeath = 0;
     
     // Current sprite frame displayed
@@ -75,14 +78,14 @@ public class Frogger extends MovingEntity {
     /**
      * Build frogger!
      */
-	public Frogger (Main g) {
+	public Frogger (Main g) throws RemoteException {
 		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
 		game = g;
 		resetFrog();
 		collisionObjects.add(new CollisionObject(position));
 	}
 
-	public Frogger (Main g, Vector2D v) {
+	public Frogger (Main g, Vector2D v) throws RemoteException {
 		super(Main.SPRITE_SHEET + "#frog" + (int)(random() * 3 + 1));
 		game = g;
 		pos = v;
@@ -94,8 +97,10 @@ public class Frogger extends MovingEntity {
 	/**
 	 * Reset the Frogger to default state and position
 	 */
-	public void resetFrog() {
+	public void resetFrog() throws RemoteException {
+		FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive.set(frognum, true);
 		isAlive = true;
+
 		isAnimating = false;
 		currentFrame = 0;
 		followObject = null;
@@ -106,7 +111,7 @@ public class Frogger extends MovingEntity {
 	/**
 	 * Moving methods, called from Main upon key strokes
 	 */
-	public void moveLeft() {
+	public void moveLeft() throws RemoteException {
 		if (getCenterPosition().getX()-16 > 0 && isAlive && !isAnimating) {
 			currentFrame = 3;
 		    move(new Vector2D(-1,0));
@@ -114,7 +119,7 @@ public class Frogger extends MovingEntity {
 		}
 	}
 	
-	public void moveRight() {
+	public void moveRight() throws RemoteException {
 		
 		if (getCenterPosition().getX()+32 < Main.WORLD_WIDTH && isAlive && !isAnimating) {
 			currentFrame = 2;
@@ -123,7 +128,7 @@ public class Frogger extends MovingEntity {
 		}
 	}
 	
-	public void moveUp() {
+	public void moveUp() throws RemoteException {
 		if (position.getY() > 32  && isAlive && !isAnimating) {
 			currentFrame = 0;
 		    move(new Vector2D(0,-1));
@@ -131,7 +136,7 @@ public class Frogger extends MovingEntity {
 		}
 	}
 	
-	public void moveDown() {
+	public void moveDown() throws RemoteException {
 		if (position.getY() < Main.WORLD_HEIGHT - MOVE_STEP && isAlive && !isAnimating) {
 			currentFrame = 1;
 		    move(new Vector2D(0,1));
@@ -178,7 +183,7 @@ public class Frogger extends MovingEntity {
 	/**
 	 * Cycle through the animation frames
 	 */
-	public void updateAnimation() {
+	public void updateAnimation() throws RemoteException {
 		// If not animating, sync position of the sprite with its collision sphere
 		if (!isAnimating || !isAlive) {
 			sync(position);
@@ -220,8 +225,8 @@ public class Frogger extends MovingEntity {
 	 * Following a Tree Log on a river by getting it's velocity vector
 	 * @param deltaMs
 	 */
-	public void updateFollow(long deltaMs) {
-		if (followObject == null || !isAlive) 
+	public void updateFollow(long deltaMs) throws RemoteException {
+		if (followObject == null || !isAlive)
 			return;
 		Vector2D dS = followObject.getVelocity().scale(deltaMs);
 		position = new Vector2D(position.getX()+dS.getX(), position.getY()+dS.getY());
@@ -240,7 +245,7 @@ public class Frogger extends MovingEntity {
 	 * Effect of a wind gust on Frogger
 	 * @param d
 	 */
-	public void windReposition(Vector2D d) {
+	public void windReposition(Vector2D d) throws RemoteException {
 		if (isAlive) {
 			hw_hasMoved = true;
 			setPosition(new Vector2D(getPosition().getX()+d.getX(), getPosition().getY()));
@@ -252,7 +257,7 @@ public class Frogger extends MovingEntity {
 	 * Effect of Heat Wave on Frogger
 	 * @param rDir
 	 */
-	public void randomJump(final int rDir) {
+	public void randomJump(final int rDir) throws RemoteException {
 		switch(rDir) {
 		case 0:
 			moveLeft();
@@ -271,15 +276,16 @@ public class Frogger extends MovingEntity {
     /**
      * Frogger dies
      */
-	public void die() {
+	public void die() throws RemoteException {
 		if (isAnimating)
 			return;
 		
 		if (!cheating) {
 		    AudioEfx.frogDie.play(0.2);
 		    followObject = null;
-		    isAlive = false;
-		    currentFrame = 4;	// dead sprite   
+			FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive.set(frognum, false);
+			isAlive = false;
+		    currentFrame = 4;	// dead sprite
 		    game.GameLives--;
 		    hw_hasMoved = true;
 		}
@@ -291,8 +297,8 @@ public class Frogger extends MovingEntity {
 	/**
 	 * Frogger reaches a goal
 	 */
-	public void reach(final Goal g) {
-		if (g.isReached == false) {
+	public void reach(final Goal g) throws RemoteException {
+		if (!g.isReached) {
 			AudioEfx.frogGoal.play(0.4);
 			game.GameScore += 100;
 			game.GameScore += game.levelTimer;
@@ -313,11 +319,24 @@ public class Frogger extends MovingEntity {
 			return;
 		
 		// if dead, stay dead for 2 seconds.
-		if (!isAlive && timeOfDeath + 2000 < System.currentTimeMillis())
+		if (!isAlive && timeOfDeath + 2000 < System.currentTimeMillis()) {
+			try {
 				resetFrog();
-		
-		updateAnimation();	
-		updateFollow(deltaMs);
+			} catch (RemoteException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		try {
+			updateAnimation();
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
+		try {
+			updateFollow(deltaMs);
+		} catch (RemoteException e) {
+			throw new RuntimeException(e);
+		}
 		setFrame(currentFrame);
 		
 		/*// Level timer stuff

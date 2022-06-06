@@ -25,6 +25,7 @@
 
 package frogger;
 
+import java.rmi.RemoteException;
 import java.util.Random;
 
 import jig.engine.util.Vector2D;
@@ -57,7 +58,7 @@ public class WindGust {
 	 * @param f - Frogger
 	 * @param level 
 	 */
-	public void perform(Frogger f, int level, final long deltaMs) {
+	public void perform(Frogger f, int level, final long deltaMs) throws RemoteException {
 		if (!f.isAlive) {
 			isWindy = false;
 			return;

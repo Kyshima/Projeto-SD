@@ -28,7 +28,6 @@ package frogger;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
 import edu.ufp.inf.sd.rmi.project.client.ObserverImpl;
@@ -338,7 +337,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (upPressed) {
@@ -351,7 +350,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (leftPressed) {
@@ -364,7 +363,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 	 	    if (rightPressed) {
@@ -377,7 +376,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(arr);
+				State s = new State(arr, FroggerClient.froggerGameRI.getUpdate(gameNum).alive);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 
@@ -488,9 +487,13 @@ public class Main extends StaticScreenGame {
 							} catch (RemoteException e) {
 								throw new RuntimeException(e);
 							}
-							frogCol.testCollision(movingObjectsLayer);
+							try {
+								frogCol.testCollision(movingObjectsLayer);
+							} catch (RemoteException e) {
+								throw new RuntimeException(e);
+							}
 
-						// Wind gusts work only when Frogger is on the river
+							// Wind gusts work only when Frogger is on the river
 						if (frogCol.isInRiver())
 							wind.start(GameLevel);
 
@@ -504,7 +507,7 @@ public class Main extends StaticScreenGame {
 								hwave.perform(FROGGERS.get(i), deltaMs, GameLevel);
 
 
-								if (!FROGGERS.get(i).isAlive)
+								if (!FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(froggerNum))
 									particleLayer.clear();
 
 								FROGGERS.get(froggerNum).deltaTime += deltaMs;
@@ -513,8 +516,9 @@ public class Main extends StaticScreenGame {
 									levelTimer--;
 								}
 
-								if (levelTimer <= 0)
+								if (levelTimer <= 0) {
 									FROGGERS.get(froggerNum).die();
+								}
 
 							}
 						}catch(RemoteException ignored){}
@@ -602,16 +606,20 @@ public class Main extends StaticScreenGame {
 		case GAME_PLAY:
 			backgroundLayer.render(rc);
 
-			if (FROGGERS.get(froggerNum).isAlive) {
-				movingObjectsLayer.render(rc);
-				for (int i = 0; i < FROGGERS.size(); i++) {
-					FROGGERS.get(i).render(rc);
+			try {
+				if (!FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(froggerNum)) {
+					movingObjectsLayer.render(rc);
+					for (int i = 0; i < FROGGERS.size(); i++) {
+						FROGGERS.get(i).render(rc);
+					}
+				} else {
+					for (int i = 0; i < FROGGERS.size(); i++) {
+						FROGGERS.get(i).render(rc);
+					}
+					movingObjectsLayer.render(rc);
 				}
-			} else {
-				for (int i = 0; i < FROGGERS.size(); i++) {
-					FROGGERS.get(i).render(rc);
-				}
-				movingObjectsLayer.render(rc);
+			} catch (RemoteException e) {
+				throw new RuntimeException(e);
 			}
 
 			particleLayer.render(rc);

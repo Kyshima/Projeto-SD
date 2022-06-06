@@ -13,6 +13,9 @@ import jig.engine.physics.AbstractBodyLayer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 
@@ -20,13 +23,16 @@ import java.util.ArrayList;
  */
 public class State implements Serializable {
     public ArrayList<Movement> mov;
+    public List<Boolean> alive = new ArrayList<Boolean>(Arrays.asList(new Boolean[20]));
 
     public State(){
         mov = new ArrayList<>();
+        Collections.fill(alive, Boolean.TRUE);
     }
 
-    public State(ArrayList<Movement> mov) {
+    public State(ArrayList<Movement> mov, List<Boolean> alive) {
         this.mov = mov;
+        this.alive = alive;
     }
 
     public ArrayList<Movement> getMov() { return mov; }

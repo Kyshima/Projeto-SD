@@ -25,6 +25,7 @@
 
 package frogger;
 
+import java.rmi.RemoteException;
 import java.util.Random;
 
 import jig.engine.util.Vector2D;
@@ -53,7 +54,7 @@ public class HeatWave {
 	 * @param f - reference Frogger's hw_hasMoved
 	 * @param deltaMs
 	 */
-	public void perform (Frogger f, final long deltaMs, final int level) {	
+	public void perform (Frogger f, final long deltaMs, final int level) throws RemoteException {
 		if (!f.isAlive) {
 			isHot = false;
 			return;
