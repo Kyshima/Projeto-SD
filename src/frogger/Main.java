@@ -143,87 +143,61 @@ public class Main extends StaticScreenGame {
 		movingObjectsLayer = new AbstractBodyLayer.IterativeUpdate<>();
 		particleLayer = new AbstractBodyLayer.IterativeUpdate<>();
 
+		FroggerClient.froggerGameRI.update(gameNum, new State());
 		System.out.println("FroggerNUM: "+froggerNum);
 		//initializeLevel(1);
 	}
 
-	public void initializeLevel(int level) throws RemoteException {
-		if(FroggerClient.create == -1) {
-			ArrayList<String> lines = new ArrayList<>();
-			/* dV is the velocity multiplier for all moving objects at the current game level */
-			double dV = level * 0.05 + 1;
+	public void initializeLevel(int level) {
 
-			movingObjectsLayer.clear();
-			ArrayList<Integer> rd = genRand();
-			MovingEntityFactory.rands = rd;
+		/* dV is the velocity multiplier for all moving objects at the current game level */
+		double dV = level*0.05 + 1;
 
-			// Road Traffic
-			roadLine1 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 8 * 32), new Vector2D(-0.1 * dV, 0));
-			lines.add(0,MovEntToString(roadLine1));
-			roadLine2 = new MovingEntityFactory(new Vector2D(-(32 * 4), 9 * 32), new Vector2D(0.08 * dV, 0));
-			lines.add(1,MovEntToString(roadLine2));
-			roadLine3 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 10 * 32), new Vector2D(-0.12 * dV, 0));
-			lines.add(2,MovEntToString(roadLine3));
-			roadLine4 = new MovingEntityFactory(new Vector2D(-(32 * 4), 11 * 32), new Vector2D(0.075 * dV, 0));
-			lines.add(3,MovEntToString(roadLine4));
-			roadLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 12 * 32), new Vector2D(-0.05 * dV, 0));
-			lines.add(4,MovEntToString(roadLine5));
+		movingObjectsLayer.clear();
 
-			// River Traffic
-			riverLine1 = new MovingEntityFactory(new Vector2D(-(32 * 3), 2 * 32), new Vector2D(0.06 * dV, 0));
-			lines.add(5,MovEntToString(riverLine1));
-			riverLine2 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 3 * 32), new Vector2D(-0.04 * dV, 0));
-			lines.add(6,MovEntToString(riverLine2));
-			riverLine3 = new MovingEntityFactory(new Vector2D(-(32 * 3), 4 * 32), new Vector2D(0.09 * dV, 0));
-			lines.add(7,MovEntToString(riverLine3));
-			riverLine4 = new MovingEntityFactory(new Vector2D(-(32 * 4), 5 * 32), new Vector2D(0.045 * dV, 0));
-			lines.add(8,MovEntToString(riverLine4));
-			riverLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 6 * 32), new Vector2D(-0.045 * dV, 0));
-			lines.add(9,MovEntToString(riverLine5));
+		/* River Traffic */
+		riverLine1 = new MovingEntityFactory(new Vector2D(-(32*3),2*32),
+				new Vector2D(0.06*dV,0));
 
-			State s = new State(lines);
-			int size = FroggerClient.froggerGame.getObservers().size();
-			//System.out.println("Ini 1 Size: " + size);
-			for(int i=0;i<size;i++){
-				if(FroggerGameImpl.observers.get(i)==null) size++;
-				else{
-					FroggerClient.froggerGameRI.update(gameNum, s);
-					//FroggerClient.froggerGameRI.getState().rand = rd;
-				}
-			}
+		riverLine2 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,3*32),
+				new Vector2D(-0.04*dV,0));
 
-			/* Build some traffic before game starts buy running MovingEntityFactories for fews cycles */
-			for (int i = 0; i < 500; i++)
-				cycleTraffic(10);
+		riverLine3 = new MovingEntityFactory(new Vector2D(-(32*3),4*32),
+				new Vector2D(0.09*dV,0));
 
-		} else {
-			State s = FroggerClient.froggerGameRI.getUpdate(gameNum);
-			//MovingEntityFactory.rands = FroggerClient.froggerGameRI.getState().rand;
+		riverLine4 = new MovingEntityFactory(new Vector2D(-(32*4),5*32),
+				new Vector2D(0.045*dV,0));
 
-			ArrayList<String> lines = new ArrayList<>(s.getTraffic());
+		riverLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH,6*32),
+				new Vector2D(-0.045*dV,0));
 
-			roadLine1 = StringToMovEnt(lines.get(0));
-			roadLine2 = StringToMovEnt(lines.get(1));
-			roadLine3 = StringToMovEnt(lines.get(2));
-			roadLine4 = StringToMovEnt(lines.get(3));
-			roadLine5 = StringToMovEnt(lines.get(4));
+		/* Road Traffic */
+		roadLine1 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 8*32),
+				new Vector2D(-0.1*dV, 0));
 
-			riverLine1 = StringToMovEnt(lines.get(5));
-			riverLine2 = StringToMovEnt(lines.get(6));
-			riverLine3 = StringToMovEnt(lines.get(7));
-			riverLine4 = StringToMovEnt(lines.get(8));
-			riverLine5 = StringToMovEnt(lines.get(9));
+		roadLine2 = new MovingEntityFactory(new Vector2D(-(32*4), 9*32),
+				new Vector2D(0.08*dV, 0));
 
-			cycleTraffic(10);
-		}
+		roadLine3 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 10*32),
+				new Vector2D(-0.12*dV, 0));
+
+		roadLine4 = new MovingEntityFactory(new Vector2D(-(32*4), 11*32),
+				new Vector2D(0.075*dV, 0));
+
+		roadLine5 = new MovingEntityFactory(new Vector2D(Main.WORLD_WIDTH, 12*32),
+				new Vector2D(-0.05*dV, 0));
 
 		goalmanager.init(level);
 		for (Goal g : goalmanager.get()) {
 			movingObjectsLayer.add(g);
 		}
+
+		/* Build some traffic before game starts buy running MovingEntityFactories for fews cycles */
+        /*for (int i=0; i<500; i++)
+            cycleTraffic(10);*/
 	}
 
-	public String MovEntToString(MovingEntityFactory mef){
+	/*public String MovEntToString(MovingEntityFactory mef){
 		return mef.position.getX() + ";" + mef.position.getY() + ";" + mef.velocity.getX() + ";" + mef.velocity.getY() + ";" + mef.time;
 	}
 
@@ -250,7 +224,7 @@ public class Main extends StaticScreenGame {
 		genRand.add(0,r.nextInt(100));
 		genRand.add(0,r.nextInt(100));
 		return genRand;
-	}
+	}*/
 
 
 	/**
@@ -258,104 +232,54 @@ public class Main extends StaticScreenGame {
 	 *
 	 * @param deltaMs
 	 */
-	public void cycleTraffic(long deltaMs) throws RemoteException, NullPointerException {
+	public void cycleTraffic(long deltaMs) throws RemoteException {
 		MovingEntity m;
-		if(FroggerClient.create == -1){
-			ArrayList<String> up = new ArrayList<>();
-			/* Road traffic updates */
-			roadLine1.update(deltaMs);
-			if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
-			up.add(0,UpdateToString(roadLine1));
-			roadLine2.update(deltaMs);
-			if ((m = roadLine2.buildVehicle()) != null) movingObjectsLayer.add(m);
-			up.add(1,UpdateToString(roadLine2));
-			roadLine3.update(deltaMs);
-			if ((m = roadLine3.buildVehicle()) != null) movingObjectsLayer.add(m);
-			up.add(2,UpdateToString(roadLine3));
-			roadLine4.update(deltaMs);
-			if ((m = roadLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
-			up.add(3,UpdateToString(roadLine4));
-			roadLine5.update(deltaMs);
-			if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
-			up.add(4,UpdateToString(roadLine5));
+		/* Road traffic updates */
+		roadLine1.update(deltaMs);
+		if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
 
-			/* River traffic updates */
-			riverLine1.update(deltaMs);
-			if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
-			up.add(5,UpdateToString(riverLine1));
-			riverLine2.update(deltaMs);
-			if ((m = riverLine2.buildLongLogWithCrocodile(30)) != null) movingObjectsLayer.add(m);
-			up.add(6,UpdateToString(riverLine2));
-			riverLine3.update(deltaMs);
-			if ((m = riverLine3.buildShortLogWithTurtles(50)) != null) movingObjectsLayer.add(m);
-			up.add(7,UpdateToString(riverLine3));
-			riverLine4.update(deltaMs);
-			if ((m = riverLine4.buildLongLogWithCrocodile(20)) != null) movingObjectsLayer.add(m);
-			up.add(8,UpdateToString(riverLine4));
-			riverLine5.update(deltaMs);
-			if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
-			up.add(9,UpdateToString(riverLine5));
+		roadLine2.update(deltaMs);
+		if ((m = roadLine2.buildVehicle()) != null) movingObjectsLayer.add(m);
 
-			int size = FroggerClient.froggerGame.getObservers().size();
-			for(int i=0;i<size;i++){
-				if(FroggerGameImpl.observers.get(i)==null) size++;
-				else{
-					State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(), up);
-					FroggerClient.froggerGameRI.update(gameNum,s);
-					//System.out.println(FroggerClient.froggerGameRI.getState().getUpdate());
-				}
-			}
-		} else {
-			State s = FroggerClient.froggerGameRI.getUpdate(gameNum);
+		roadLine3.update(deltaMs);
+		if ((m = roadLine3.buildVehicle()) != null) movingObjectsLayer.add(m);
 
-			ArrayList<String> up = new ArrayList<>(s.getUpdate());
-			//System.out.println(s.getUpdate());
-			StringToUpdate(roadLine1,up.get(0));
-			roadLine1.update(deltaMs);
-			if ((m = roadLine1.buildVehicle()) != null) movingObjectsLayer.add(m);
-			StringToUpdate(roadLine2,up.get(1));
-			roadLine2.update(deltaMs);
-			if ((m = roadLine2.buildVehicle()) != null) movingObjectsLayer.add(m);
-			StringToUpdate(roadLine3,up.get(2));
-			roadLine3.update(deltaMs);
-			if ((m = roadLine3.buildVehicle()) != null) movingObjectsLayer.add(m);
-			StringToUpdate(roadLine4,up.get(3));
-			roadLine4.update(deltaMs);
-			if ((m = roadLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
-			StringToUpdate(roadLine5,up.get(4));
-			roadLine5.update(deltaMs);
-			if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
+		roadLine4.update(deltaMs);
+		if ((m = roadLine4.buildVehicle()) != null) movingObjectsLayer.add(m);
 
-			StringToUpdate(riverLine1,up.get(5));
-			riverLine1.update(deltaMs);
-			if ((m = riverLine1.buildShortLogWithTurtles(40)) != null) movingObjectsLayer.add(m);
-			StringToUpdate(riverLine2,up.get(6));
-			riverLine2.update(deltaMs);
-			if ((m = riverLine2.buildLongLogWithCrocodile(30)) != null) movingObjectsLayer.add(m);
-			StringToUpdate(riverLine3,up.get(7));
-			riverLine3.update(deltaMs);
-			if ((m = riverLine3.buildShortLogWithTurtles(50)) != null) movingObjectsLayer.add(m);
-			StringToUpdate(riverLine4,up.get(8));
-			riverLine4.update(deltaMs);
-			if ((m = riverLine4.buildLongLogWithCrocodile(20)) != null) movingObjectsLayer.add(m);
-			StringToUpdate(riverLine5,up.get(9));
-			riverLine5.update(deltaMs);
-			if ((m = riverLine5.buildShortLogWithTurtles(10)) != null) movingObjectsLayer.add(m);
-		}
+		roadLine5.update(deltaMs);
+		if ((m = roadLine5.buildVehicle()) != null) movingObjectsLayer.add(m);
 
-	    // Do Wind
-	    if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
 
-	    // HeatWave
+		/* River traffic updates */
+		riverLine1.update(deltaMs);
+		if ((m = riverLine1.buildShortLogWithTurtles()) != null) movingObjectsLayer.add(m);
+
+		riverLine2.update(deltaMs);
+		if ((m = riverLine2.buildLongLogWithCrocodile()) != null) movingObjectsLayer.add(m);
+
+		riverLine3.update(deltaMs);
+		if ((m = riverLine3.buildShortLogWithTurtles()) != null) movingObjectsLayer.add(m);
+
+		riverLine4.update(deltaMs);
+		if ((m = riverLine4.buildLongLogWithCrocodile()) != null) movingObjectsLayer.add(m);
+
+		riverLine5.update(deltaMs);
+		if ((m = riverLine5.buildShortLogWithTurtles()) != null) movingObjectsLayer.add(m);
+
+		// Do Wind
+		if ((m = wind.genParticles(GameLevel)) != null) particleLayer.add(m);
+
+		// HeatWave
 		for (int i = 0; i < FroggerClient.froggerGameRI.getAllUpdates(gameNum).size(); i++){
 			if ((m = hwave.genParticles(FROGGERS.get(i).getCenterPosition())) != null) particleLayer.add(m);
 		}
 
-	    movingObjectsLayer.update(deltaMs);
-	    particleLayer.update(deltaMs);
+		movingObjectsLayer.update(deltaMs);
+		particleLayer.update(deltaMs);
 	}
 
-	public String UpdateToString(MovingEntityFactory mef){
+	/*public String UpdateToString(MovingEntityFactory mef){
 		return mef.updateMs + ";" + mef.copCarDelay;
 	}
 
@@ -366,7 +290,7 @@ public class Main extends StaticScreenGame {
 		cop = Long.parseLong(novo[1]);
 
 		mef.update(up,cop);
-	}
+	}*/
 
 	/**
 	 * Handling Frogger movement from keyboard input
@@ -414,7 +338,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				State s = new State(arr);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (upPressed) {
@@ -427,7 +351,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				State s = new State(arr);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 		    if (leftPressed) {
@@ -440,7 +364,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				State s = new State(arr);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 	 	    if (rightPressed) {
@@ -453,7 +377,7 @@ public class Main extends StaticScreenGame {
 					arr = new ArrayList<>();
 					arr.add(m);
 				}
-				State s = new State(FroggerClient.froggerGameRI.getUpdate(gameNum).getTraffic(),FroggerClient.froggerGameRI.getUpdate(gameNum).getUpdate(),arr);
+				State s = new State(arr);
 				FroggerClient.froggerGameRI.update(gameNum, s);
 			}
 
@@ -539,9 +463,11 @@ public class Main extends StaticScreenGame {
 						if(enable) {
 						try {
 							froggerKeyboardHandler();
-							if (FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size()>0) {
-								System.out.println(FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size());
-								moveFroggers();
+							if (FroggerClient.froggerGameRI.getUpdate(gameNum) != null) {
+								if (FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size() > 0) {
+									System.out.println(FroggerClient.froggerGameRI.getUpdate(gameNum).mov.size());
+									moveFroggers();
+								}
 							}
 						} catch (RemoteException e) {
 							throw new RuntimeException(e);
@@ -557,12 +483,12 @@ public class Main extends StaticScreenGame {
 						audiofx.update(deltaMs);
 						ui.update(deltaMs);
 
-						try {
-							cycleTraffic(deltaMs);
-						} catch (RemoteException e) {
-							throw new RuntimeException(e);
-						}
-						frogCol.testCollision(movingObjectsLayer);
+							try {
+								cycleTraffic(deltaMs);
+							} catch (RemoteException e) {
+								throw new RuntimeException(e);
+							}
+							frogCol.testCollision(movingObjectsLayer);
 
 						// Wind gusts work only when Frogger is on the river
 						if (frogCol.isInRiver())
@@ -632,28 +558,38 @@ public class Main extends StaticScreenGame {
 
 	private void moveFroggers() throws RemoteException {
 		State s = FroggerClient.froggerGameRI.getUpdate(gameNum);
-		int temp = s.mov.size()-1;
-		Movement m = s.mov.get(temp);
+		int temp = s.mov.size() - 1;
+		if (temp >= 0) {
+			Movement m = s.mov.get(temp);
 
-		int frogNum = m.FroggerNum;
-		int dir = m.Direction;
-		int total = m.TotalDone+1;
-		System.out.println("FN: "+frogNum+" D: "+dir+" T: "+total);
+			int frogNum = m.FroggerNum;
+			int dir = m.Direction;
+			int total = m.TotalDone + 1;
+			System.out.println("FN: " + frogNum + " D: " + dir + " T: " + total);
 
-		switch(dir){
-			case 0: FROGGERS.get(frogNum).moveDown(); break;
-			case 1: FROGGERS.get(frogNum).moveUp(); break;
-			case 2: FROGGERS.get(frogNum).moveLeft(); break;
-			case 3: FROGGERS.get(frogNum).moveRight(); break;
+			switch (dir) {
+				case 0:
+					FROGGERS.get(frogNum).moveDown();
+					break;
+				case 1:
+					FROGGERS.get(frogNum).moveUp();
+					break;
+				case 2:
+					FROGGERS.get(frogNum).moveLeft();
+					break;
+				case 3:
+					FROGGERS.get(frogNum).moveRight();
+					break;
+			}
+
+			s.mov.get(temp).setTotalDone(total);
+			if (s.mov.get(temp).TotalDone == FroggerClient.froggerGameRI.getAllUpdates(gameNum).size()) {
+				System.out.println("eliminou");
+				s.mov.remove(temp);
+			}
+
+			FroggerClient.froggerGameRI.update(gameNum, s);
 		}
-
-		s.mov.get(temp).setTotalDone(total);
-		if(s.mov.get(temp).TotalDone == FroggerClient.froggerGameRI.getAllUpdates(gameNum).size()){
-			System.out.println("eliminou");
-			s.mov.remove(temp);
-		}
-
-		FroggerClient.froggerGameRI.update(gameNum, s);
 	}
 
 
