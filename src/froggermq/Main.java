@@ -88,6 +88,8 @@ public class Main extends StaticScreenGame {
     static final int GAME_FINISH_LEVEL = 2;
     static final int GAME_INSTRUCTIONS = 3;
     static final int GAME_OVER         = 4;
+
+	static final int GAME_BREAK         = 5;
     
 	protected int GameState = GAME_INTRO;
 	protected int GameLevel = STARTING_LEVEL;
@@ -106,6 +108,8 @@ public class Main extends StaticScreenGame {
 	public FroggerClient fc;
 
 	public boolean enabled = false;
+
+	public boolean building = false;
 	
     /**
 	 * Initialize game objects
@@ -378,12 +382,13 @@ public class Main extends StaticScreenGame {
 	/**
 	 * Handle keyboard when finished a level
 	 */
-	public void finishLevelKeyboardHandler() {
+	public void finishLevelKeyboardHandler() throws IOException, TimeoutException, InterruptedException {
 		keyboard.poll();
 		if (keyboard.isPressed(KeyEvent.VK_SPACE)) {
-			GameState = GAME_PLAY;
-			audiofx.playGameMusic();
-			initializeLevel(++GameLevel);
+			GameState = GAME_BREAK;
+			building = true;
+			Thread.sleep(1000);
+			FroggerClient.nextLevel();
 		}
 	}
 	
@@ -439,9 +444,11 @@ public class Main extends StaticScreenGame {
 				goalmanager.update(deltaMs);
 
 				if (goalmanager.getUnreached().size() == 0) {
-					GameState = GAME_FINISH_LEVEL;
-					audiofx.playCompleteLevel();
-					particleLayer.clear();
+					try {
+						FroggerClient.endLevel();
+					} catch (IOException | TimeoutException e) {
+						throw new RuntimeException(e);
+					}
 				}
 
 				FROGGERS.get(id).deltaTime += deltaMs;
@@ -481,8 +488,14 @@ public class Main extends StaticScreenGame {
 			break;
 			
 		case GAME_FINISH_LEVEL:
-			finishLevelKeyboardHandler();
+			try {
+				finishLevelKeyboardHandler();
+			} catch (IOException | TimeoutException | InterruptedException e) {
+				throw new RuntimeException(e);
+			}
 			break;		
+		case GAME_BREAK:
+			break;
 		}
 	}
 	
@@ -565,6 +578,21 @@ public class Main extends StaticScreenGame {
 
 	public void godMode(int id) throws RemoteException{
 		FROGGERS.get(id).cheating = true;
+	}
+
+	public void finished() throws RemoteException {
+		GameState = GAME_FINISH_LEVEL;
+		audiofx.playCompleteLevel();
+		particleLayer.clear();
+	}
+
+	public void nextLevel() throws RemoteException {
+		if(building) {
+			building = false;
+			GameState = GAME_PLAY;
+			audiofx.playGameMusic();
+			initializeLevel(++GameLevel);
+		}
 	}
 
 }

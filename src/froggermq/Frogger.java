@@ -312,7 +312,7 @@ public class Frogger extends MovingEntity {
 	 * Frogger reaches a goal
 	 */
 	public void reach(final Goal g) throws IOException, TimeoutException {
-		if (g.isReached == false) {
+		if (!g.isReached) {
 			AudioEfx.frogGoal.play(0.4);
 			game.GameScore += 100;
 			game.GameScore += game.levelTimer;
