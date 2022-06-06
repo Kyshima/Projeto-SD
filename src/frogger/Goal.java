@@ -25,6 +25,7 @@
 
 package frogger;
 import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
+import edu.ufp.inf.sd.rmi.project.server.FroggerGameRI;
 import edu.ufp.inf.sd.rmi.project.server.State;
 import jig.engine.util.Vector2D;
 
@@ -33,7 +34,7 @@ import java.util.List;
 
 public class Goal extends MovingEntity {
 
-	public Main g;
+	public static Main g;
 	public boolean isReached = false;
 	public boolean isBonus = false;
 	
@@ -55,14 +56,13 @@ public class Goal extends MovingEntity {
 	
 	public void reached() throws RemoteException {
 		isReached = true;
-		try{
-			List<Boolean> b = FroggerClient.froggerGameRI.getUpdate(g.gameNum).alive;
-			int r = FroggerClient.froggerGameRI.getUpdate(g.gameNum).unreached;
-			State s = new State(FroggerClient.froggerGameRI.getUpdate(g.gameNum).mov, b, r - 1);
-			FroggerClient.froggerGameRI.update(g.gameNum, s);
-		} catch (NullPointerException e){
-			System.out.println("null");
-		}
+		FroggerGameRI fr = FroggerClient.froggerGameRI;
+		int num = g.gameNum;
+		State os = fr.getUpdate(num);
+		List<Boolean> b = os.alive;
+		int r = FroggerClient.froggerGameRI.getUpdate(g.gameNum).unreached;
+		State s = new State(FroggerClient.froggerGameRI.getUpdate(g.gameNum).mov, b, r - 1);
+		FroggerClient.froggerGameRI.update(g.gameNum, s);
 		setFrame(1);
 	}
 	

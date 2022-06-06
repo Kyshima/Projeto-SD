@@ -321,7 +321,6 @@ public class Frogger extends MovingEntity {
 				game.GameLives++;
 			}
 			g.reached();
-			resetFrog();
 		}
 		else {
 			setPosition(g.getPosition());

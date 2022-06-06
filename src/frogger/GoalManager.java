@@ -122,10 +122,13 @@ public class GoalManager {
 	 */
 	public void doBonusCheck() {
 		if (!showingBonus && dRMs > bonusRateMs) {
-			dSMs = 0;
-			showingBonus = true;
-			List<Goal> l = getUnreached();
-			l.get(r.nextInt(l.size())).setBonus(true);
+			try {
+				dSMs = 0;
+				showingBonus = true;
+				List<Goal> l = getUnreached();
+				l.get(r.nextInt(l.size())).setBonus(true);
+			} catch (Exception ignored){}
+
 		}
 		
 		if (showingBonus && dSMs > bonusShowMs) {
