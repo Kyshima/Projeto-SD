@@ -189,282 +189,307 @@ public class FroggerServer {
     private static void doWork(String task) throws InterruptedException {
         System.out.println(task);
         String[] a = task.split("!", 0);
-        if(a[0].equals("criar"))
-        {
+        switch (a[0]) {
+            case "criar": {
             /*Main f = new Main();
             f.run();*/
-            String exchangeName = "Exchange " + Integer.parseInt(a[1]);
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+                String exchangeName = "Exchange " + Integer.parseInt(a[1]);
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
 
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
 
-                //Gets the message
-                games[Integer.parseInt(a[1])][0] = 1;
-                String message = "Jogo criado!0";
-                TimeUnit.SECONDS.sleep(2);
-
-
-            /* Publish a message to the logs_exchange instead of the nameless one
-            Fanout exchanges will ignore routingKey (hence set routingKey="")
-            Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
-
-            } catch (IOException | TimeoutException ignored) {
-
-            }
-        } else if (a[0].equals("juntar")) {
-            String exchangeName = "Exchange "+Integer.parseInt(a[1]);
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
-
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
-
-                //Gets the message
-                int p = 0;
-                String message = "";
-                for (int i = 0; i < 4; i++)
-                {
-                    if (games[Integer.parseInt(a[1])][i] == 0)
-                    {
-                        p = i;
-                        games[Integer.parseInt(a[1])][i] = 1;
-                        message = "Game joined!"+p;
-                        break;
-                    }
-                    else if(i==3) {
-                        message = "Erro";
-                    }
-
-                }
-                //String message = "Game joined!"+p;
-                TimeUnit.SECONDS.sleep(2);
+                    //Gets the message
+                    games[Integer.parseInt(a[1])][0] = 1;
+                    String message = "Jogo criado!0";
+                    TimeUnit.SECONDS.sleep(2);
 
 
             /* Publish a message to the logs_exchange instead of the nameless one
             Fanout exchanges will ignore routingKey (hence set routingKey="")
             Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
 
-            } catch (IOException | TimeoutException ignored) {
+                } catch (IOException | TimeoutException ignored) {
 
-            }
-        }else if (a[0].equals("move")) {
-            String exchangeName = a[3];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
-
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
-
-                //Gets the message
-                String message = "";
-                switch (Integer.parseInt(a[2])){
-                    case 0: message = "move!"+Integer.parseInt(a[1])+"!"+0; break;
-                    case 1: message = "move!"+Integer.parseInt(a[1])+"!"+1; break;
-                    case 2: message = "move!"+Integer.parseInt(a[1])+"!"+2; break;
-                    case 3: message = "move!"+Integer.parseInt(a[1])+"!"+3; break;
                 }
-                //String message = "Game joined!"+p;
+                break;
+            }
+            case "juntar": {
+                String exchangeName = "Exchange " + Integer.parseInt(a[1]);
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
+
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                    //Gets the message
+                    int p = 0;
+                    String message = "";
+                    for (int i = 0; i < 4; i++) {
+                        if (games[Integer.parseInt(a[1])][i] == 0) {
+                            p = i;
+                            games[Integer.parseInt(a[1])][i] = 1;
+                            message = "Game joined!" + p;
+                            break;
+                        } else if (i == 3) {
+                            message = "Erro";
+                        }
+
+                    }
+                    //String message = "Game joined!"+p;
+                    TimeUnit.SECONDS.sleep(2);
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
+
+                } catch (IOException | TimeoutException ignored) {
+
+                }
+                break;
+            }
+            case "move": {
+                String exchangeName = a[3];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
+
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                    //Gets the message
+                    String message = "";
+                    switch (Integer.parseInt(a[2])) {
+                        case 0:
+                            message = "move!" + Integer.parseInt(a[1]) + "!" + 0;
+                            break;
+                        case 1:
+                            message = "move!" + Integer.parseInt(a[1]) + "!" + 1;
+                            break;
+                        case 2:
+                            message = "move!" + Integer.parseInt(a[1]) + "!" + 2;
+                            break;
+                        case 3:
+                            message = "move!" + Integer.parseInt(a[1]) + "!" + 3;
+                            break;
+                    }
+                    //String message = "Game joined!"+p;
 //                TimeUnit.SECONDS.sleep(1);
 
 
             /* Publish a message to the logs_exchange instead of the nameless one
             Fanout exchanges will ignore routingKey (hence set routingKey="")
             Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
 
-            } catch (IOException | TimeoutException ignored) {}
-    } else if (a[0].equals("die")) {
-            String exchangeName = a[2];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
+            case "die": {
+                String exchangeName = a[2];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
 
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
 
-                //Gets the message
-                String message = "kill!"+Integer.parseInt(a[1]);
-                //String message = "Game joined!"+p;
-                //TimeUnit.SECONDS.sleep(1);
-
-
-            /* Publish a message to the logs_exchange instead of the nameless one
-            Fanout exchanges will ignore routingKey (hence set routingKey="")
-            Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
-
-            } catch (IOException | TimeoutException ignored) {}
-        }
-        else if (a[0].equals("reset")) {
-            String exchangeName = a[2];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
-
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
-
-                //Gets the message
-                String message = "reset!"+Integer.parseInt(a[1]);
-                //String message = "Game joined!"+p;
-                //TimeUnit.SECONDS.sleep(1);
+                    //Gets the message
+                    String message = "kill!" + Integer.parseInt(a[1]);
+                    //String message = "Game joined!"+p;
+                    //TimeUnit.SECONDS.sleep(1);
 
 
             /* Publish a message to the logs_exchange instead of the nameless one
             Fanout exchanges will ignore routingKey (hence set routingKey="")
             Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
 
-            } catch (IOException | TimeoutException ignored) {}
-        }
-        else if (a[0].equals("start")) {
-            String exchangeName = a[1];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
+            case "reset": {
+                String exchangeName = a[2];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
 
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
 
-                //Gets the message
-                String message = "start!";
-                //String message = "Game joined!"+p;
-                //TimeUnit.SECONDS.sleep(1);
-
-
-            /* Publish a message to the logs_exchange instead of the nameless one
-            Fanout exchanges will ignore routingKey (hence set routingKey="")
-            Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
-
-            } catch (IOException | TimeoutException ignored) {}
-        }
-        else if (a[0].equals("godMode")) {
-            String exchangeName = a[2];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
-
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
-
-                //Gets the message
-                String message = "godMode!"+Integer.parseInt(a[1]);
-                //String message = "Game joined!"+p;
-                //TimeUnit.SECONDS.sleep(1);
+                    //Gets the message
+                    String message = "reset!" + Integer.parseInt(a[1]);
+                    //String message = "Game joined!"+p;
+                    //TimeUnit.SECONDS.sleep(1);
 
 
             /* Publish a message to the logs_exchange instead of the nameless one
             Fanout exchanges will ignore routingKey (hence set routingKey="")
             Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
 
-            } catch (IOException | TimeoutException ignored) {}
-        }
-        else if (a[0].equals("end")) {
-            String exchangeName = a[1];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
+            case "start": {
+                String exchangeName = a[1];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
 
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
 
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
 
-                //Gets the message
-                String message = "end!";
-                //String message = "Game joined!"+p;
-                //TimeUnit.SECONDS.sleep(1);
-
-
-            /* Publish a message to the logs_exchange instead of the nameless one
-            Fanout exchanges will ignore routingKey (hence set routingKey="")
-            Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
-
-            } catch (IOException | TimeoutException ignored) {}
-        }
-        else if (a[0].equals("next")) {
-            String exchangeName = a[1];
-            try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
-                 Channel channel=RabbitUtils.createChannel2Server(connection)) {
-
-                // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
-                //channel.queueDeclare(queueName, false, false, false, null);
-                //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-
-                System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
-                /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
-                //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
-
-                //Gets the message
-                String message = "next!";
-                //String message = "Game joined!"+p;
-                TimeUnit.SECONDS.sleep(5);
+                    //Gets the message
+                    String message = "start!";
+                    //String message = "Game joined!"+p;
+                    //TimeUnit.SECONDS.sleep(1);
 
 
             /* Publish a message to the logs_exchange instead of the nameless one
             Fanout exchanges will ignore routingKey (hence set routingKey="")
             Messages will be lost if no queue is bound to the exchange yet */
-                String routingKey="";
-                channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
-                System.out.println(" [x] Sent '" + message + "'");
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
 
-            } catch (IOException | TimeoutException ignored) {}
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
+            case "godMode": {
+                String exchangeName = a[2];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
+
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                    //Gets the message
+                    String message = "godMode!" + Integer.parseInt(a[1]);
+                    //String message = "Game joined!"+p;
+                    //TimeUnit.SECONDS.sleep(1);
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
+
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
+            case "end": {
+                String exchangeName = a[1];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
+
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                    //Gets the message
+                    String message = "end!";
+                    //String message = "Game joined!"+p;
+                    //TimeUnit.SECONDS.sleep(1);
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
+
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
+            case "next": {
+                String exchangeName = a[1];
+                try (Connection connection = RabbitUtils.newConnection2Server(host, port, "guest", "guest");
+                     Channel channel = RabbitUtils.createChannel2Server(connection)) {
+
+                    // Declare a queue where to send msg (idempotent, i.e., it will only be created if it doesn't exist);
+                    //channel.queueDeclare(queueName, false, false, false, null);
+                    //channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+
+                    System.out.println("[X] Declare exchange: '" + exchangeName + "' of type " + BuiltinExchangeType.FANOUT.toString());
+                    /* Set the Exchange type to MAIL_TO_ADDR FANOUT (multicast to all queues)*/
+                    //channel.exchangeDeclare(exchangeName, BuiltinExchangeType.FANOUT);
+
+                    //Gets the message
+                    String message = "next!";
+                    //String message = "Game joined!"+p;
+                    TimeUnit.SECONDS.sleep(5);
+
+
+            /* Publish a message to the logs_exchange instead of the nameless one
+            Fanout exchanges will ignore routingKey (hence set routingKey="")
+            Messages will be lost if no queue is bound to the exchange yet */
+                    String routingKey = "";
+                    channel.basicPublish(exchangeName, routingKey, null, message.getBytes("UTF-8"));
+                    System.out.println(" [x] Sent '" + message + "'");
+
+                } catch (IOException | TimeoutException ignored) {
+                }
+                break;
+            }
         }
     }
 }
