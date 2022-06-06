@@ -26,9 +26,12 @@
 package frogger;
 
 import edu.ufp.inf.sd.rmi.project.client.FroggerClient;
+import edu.ufp.inf.sd.rmi.project.server.State;
 import jig.engine.util.Vector2D;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Math.random;
 
@@ -56,7 +59,7 @@ public class Frogger extends MovingEntity {
 	private MovingEntity followObject = null;
 	
 	
-	public boolean isAlive;
+	public static boolean isAlive;
     private long timeOfDeath = 0;
     
     // Current sprite frame displayed
@@ -98,7 +101,10 @@ public class Frogger extends MovingEntity {
 	 * Reset the Frogger to default state and position
 	 */
 	public void resetFrog() throws RemoteException {
-		FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive.set(frognum, true);
+		List<Boolean> b = FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive;
+		b.set(frognum,true);
+		State s = new State(FroggerClient.froggerGameRI.getUpdate(game.gameNum).mov,b);
+		FroggerClient.froggerGameRI.update(game.gameNum,s);
 		isAlive = true;
 
 		isAnimating = false;
@@ -279,11 +285,17 @@ public class Frogger extends MovingEntity {
 	public void die() throws RemoteException {
 		if (isAnimating)
 			return;
-		
+
+		System.out.println("Frogger "+frognum+" morreu!");
+
 		if (!cheating) {
+			List<Boolean> b = FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive;
+			b.set(frognum,false);
+			State s = new State(FroggerClient.froggerGameRI.getUpdate(game.gameNum).mov,b);
+			FroggerClient.froggerGameRI.update(game.gameNum,s);
+
 		    AudioEfx.frogDie.play(0.2);
 		    followObject = null;
-			FroggerClient.froggerGameRI.getUpdate(game.gameNum).alive.set(frognum, false);
 			isAlive = false;
 		    currentFrame = 4;	// dead sprite
 		    game.GameLives--;
@@ -317,7 +329,7 @@ public class Frogger extends MovingEntity {
 	public void update(final long deltaMs) {
 		if (game.GameLives <= 0)
 			return;
-		
+
 		// if dead, stay dead for 2 seconds.
 		if (!isAlive && timeOfDeath + 2000 < System.currentTimeMillis()) {
 			try {
@@ -338,15 +350,6 @@ public class Frogger extends MovingEntity {
 			throw new RuntimeException(e);
 		}
 		setFrame(currentFrame);
-		
-		/*// Level timer stuff
-		deltaTime += deltaMs;
-		if (deltaTime > 1000) {
-			deltaTime = 0;
-			game.levelTimer--;
-		}
-		
-		if (game.levelTimer <= 0)
-			die();*/
+
 	}
 }

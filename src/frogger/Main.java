@@ -476,6 +476,7 @@ public class Main extends StaticScreenGame {
 						hwave.update(deltaMs);
 						try{
 							for (int i = 0; i < FroggerClient.froggerGameRI.getAllUpdates(gameNum).size(); i++) {
+								Frogger.isAlive = FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(i);
 								FROGGERS.get(i).update(deltaMs);
 							}
 						}catch(RemoteException ignored){}
@@ -484,10 +485,6 @@ public class Main extends StaticScreenGame {
 
 							try {
 								cycleTraffic(deltaMs);
-							} catch (RemoteException e) {
-								throw new RuntimeException(e);
-							}
-							try {
 								frogCol.testCollision(movingObjectsLayer);
 							} catch (RemoteException e) {
 								throw new RuntimeException(e);
@@ -507,8 +504,9 @@ public class Main extends StaticScreenGame {
 								hwave.perform(FROGGERS.get(i), deltaMs, GameLevel);
 
 
-								if (!FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(froggerNum))
+								if (/*!FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(froggerNum)*/!FROGGERS.get(i).isAlive)
 									particleLayer.clear();
+							}
 
 								FROGGERS.get(froggerNum).deltaTime += deltaMs;
 								if (FROGGERS.get(froggerNum).deltaTime > 1000) {
@@ -520,7 +518,6 @@ public class Main extends StaticScreenGame {
 									FROGGERS.get(froggerNum).die();
 								}
 
-							}
 						}catch(RemoteException ignored){}
 
 						goalmanager.update(deltaMs);
@@ -606,20 +603,17 @@ public class Main extends StaticScreenGame {
 		case GAME_PLAY:
 			backgroundLayer.render(rc);
 
-			try {
-				if (!FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(froggerNum)) {
-					movingObjectsLayer.render(rc);
-					for (int i = 0; i < FROGGERS.size(); i++) {
-						FROGGERS.get(i).render(rc);
-					}
-				} else {
-					for (int i = 0; i < FROGGERS.size(); i++) {
-						FROGGERS.get(i).render(rc);
-					}
-					movingObjectsLayer.render(rc);
+
+			if (/*!FroggerClient.froggerGameRI.getUpdate(gameNum).alive.get(froggerNum)*/!FROGGERS.get(froggerNum).isAlive) {
+				movingObjectsLayer.render(rc);
+				for (int i = 0; i < FROGGERS.size(); i++) {
+					FROGGERS.get(i).render(rc);
 				}
-			} catch (RemoteException e) {
-				throw new RuntimeException(e);
+			} else {
+				for (int i = 0; i < FROGGERS.size(); i++) {
+					FROGGERS.get(i).render(rc);
+				}
+				movingObjectsLayer.render(rc);
 			}
 
 			particleLayer.render(rc);

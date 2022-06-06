@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class State implements Serializable {
     public ArrayList<Movement> mov;
-    public List<Boolean> alive = new ArrayList<Boolean>(Arrays.asList(new Boolean[20]));
+    public List<Boolean> alive = new ArrayList<Boolean>(Arrays.asList(new Boolean[10]));
 
     public State(){
         mov = new ArrayList<>();
