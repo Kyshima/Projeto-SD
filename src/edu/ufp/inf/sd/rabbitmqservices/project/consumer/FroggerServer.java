@@ -96,8 +96,6 @@ public class FroggerServer {
     public static String host;
     public static int port;
 
-    public static ArrayList <String> exchange = new ArrayList<>();
-
 
     public static void main(String[] argv) throws Exception {
         Info.main();
@@ -196,7 +194,6 @@ public class FroggerServer {
             /*Main f = new Main();
             f.run();*/
             String exchangeName = "Exchange " + Integer.parseInt(a[1]);
-            exchange.add(exchangeName);
             try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
                  Channel channel=RabbitUtils.createChannel2Server(connection)) {
 
@@ -225,7 +222,7 @@ public class FroggerServer {
 
             }
         } else if (a[0].equals("juntar")) {
-            String exchangeName = exchange.get(Integer.parseInt(a[1])-1);
+            String exchangeName = "Exchange "+Integer.parseInt(a[1]);
             try (Connection connection=RabbitUtils.newConnection2Server(host, port, "guest", "guest");
                  Channel channel=RabbitUtils.createChannel2Server(connection)) {
 
